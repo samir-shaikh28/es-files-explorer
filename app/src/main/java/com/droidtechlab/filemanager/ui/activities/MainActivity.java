@@ -589,7 +589,7 @@ public class MainActivity extends PermissionsActivity
   public void clearFabActionItems() {
     floatingActionButton.removeActionItemById(R.id.menu_new_folder);
     floatingActionButton.removeActionItemById(R.id.menu_new_file);
-    floatingActionButton.removeActionItemById(R.id.menu_new_cloud);
+//    floatingActionButton.removeActionItemById(R.id.menu_new_cloud);
   }
 
   /**
@@ -1602,7 +1602,7 @@ public class MainActivity extends PermissionsActivity
 
   public void initializeFabActionViews() {
     // NOTE: SpeedDial inverts insert index than FABsmenu
-    initFabTitle(R.id.menu_new_cloud, R.string.cloud_connection, R.drawable.ic_cloud_white_24dp);
+//    initFabTitle(R.id.menu_new_cloud, R.string.cloud_connection, R.drawable.ic_cloud_white_24dp);
     initFabTitle(R.id.menu_new_file, R.string.file, R.drawable.ic_insert_drive_file_white_48dp);
     initFabTitle(R.id.menu_new_folder, R.string.folder, R.drawable.folder_fab);
 
@@ -2081,11 +2081,11 @@ public class MainActivity extends PermissionsActivity
         case R.id.menu_new_file:
           mainActivity.mainActivityHelper.mkfile(ma.openMode, path, ma);
           break;
-        case R.id.menu_new_cloud:
-          BottomSheetDialogFragment fragment = new CloudSheetFragment();
-          fragment.show(
-              ma.getActivity().getSupportFragmentManager(), CloudSheetFragment.TAG_FRAGMENT);
-          break;
+//        case R.id.menu_new_cloud:
+//          BottomSheetDialogFragment fragment = new CloudSheetFragment();
+//          fragment.show(
+//              ma.getActivity().getSupportFragmentManager(), CloudSheetFragment.TAG_FRAGMENT);
+//          break;
       }
 
       floatingActionButton.close(true);

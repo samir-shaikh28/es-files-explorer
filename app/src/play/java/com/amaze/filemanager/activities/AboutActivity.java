@@ -48,7 +48,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.palette.graphics.Palette;
 
-/** Created by vishal on 27/7/16. */
 public class AboutActivity extends BasicActivity implements View.OnClickListener {
 
   private static final String TAG = "AboutActivity";
