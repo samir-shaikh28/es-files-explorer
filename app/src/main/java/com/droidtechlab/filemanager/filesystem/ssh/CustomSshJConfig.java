@@ -20,6 +20,9 @@
 
 package com.droidtechlab.filemanager.filesystem.ssh;
 
+import android.util.Log;
+
+import java.security.NoSuchProviderException;
 import java.security.Security;
 
 import net.schmizz.sshj.DefaultConfig;
@@ -41,17 +44,11 @@ public class CustomSshJConfig extends DefaultConfig {
   // This is where we different from the original AndroidConfig. Found it only work if we remove
   // BouncyCastle bundled with Android before registering our BouncyCastle provider
   public static void init() {
-    Security.removeProvider("BC");
+    try {
+      Security.removeProvider("BC");
+    }  finally {
+      Log.d("###", "NoSuchProviderExceptionFinally");
+    }
     Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 0);
-  }
-
-  // don't add ECDSA
-  protected void initSignatureFactories() {
-    setSignatureFactories(new SignatureRSA.Factory(), new SignatureDSA.Factory());
-  }
-
-  @Override
-  protected void initRandomFactory(boolean ignored) {
-    setRandomFactory(new SingletonRandomFactory(new JCERandom.Factory()));
   }
 }

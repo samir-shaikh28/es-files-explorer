@@ -660,6 +660,7 @@
     <string name="some_files_failed_invalid_operation">Some files failed due to invalid operation</string>
     <string name="ftp_server_prompt_connect_to_network">Connect to a network or enable AP</string>
     <string name="ftp_server_open_settings">Open settings</string>
+    <string name="select_save_location">Select location to save</string>
     <string name="move">Move</string>
 </resources>
 

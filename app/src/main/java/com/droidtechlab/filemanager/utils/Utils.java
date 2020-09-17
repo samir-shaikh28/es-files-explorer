@@ -52,6 +52,7 @@ import android.widget.Toast;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -87,18 +88,18 @@ public class Utils {
   public static void setTint(Context context, CheckBox box, int color) {
     if (Build.VERSION.SDK_INT >= 21) return;
     ColorStateList sl =
-        new ColorStateList(
-            new int[][] {
-              new int[] {-android.R.attr.state_checked}, new int[] {android.R.attr.state_checked}
-            },
-            new int[] {getColor(context, R.color.grey), color});
+            new ColorStateList(
+                    new int[][] {
+                            new int[] {-android.R.attr.state_checked}, new int[] {android.R.attr.state_checked}
+                    },
+                    new int[] {getColor(context, R.color.grey), color});
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       box.setButtonTintList(sl);
     } else {
       Drawable drawable =
-          DrawableCompat.wrap(
-              ContextCompat.getDrawable(box.getContext(), R.drawable.abc_btn_check_material));
+              DrawableCompat.wrap(
+                      ContextCompat.getDrawable(box.getContext(), R.drawable.abc_btn_check_material));
       DrawableCompat.setTintList(drawable, sl);
       box.setButtonDrawable(drawable);
     }
@@ -106,9 +107,9 @@ public class Utils {
 
   public static String getDate(@NonNull Context c, long f) {
     return String.format(
-        DATE_TIME_FORMAT,
-        DateUtils.formatDateTime(c, f, DateUtils.FORMAT_SHOW_DATE),
-        DateUtils.formatDateTime(c, f, DateUtils.FORMAT_SHOW_TIME));
+            DATE_TIME_FORMAT,
+            DateUtils.formatDateTime(c, f, DateUtils.FORMAT_ABBREV_MONTH),
+            DateUtils.formatDateTime(c, f, DateUtils.FORMAT_SHOW_TIME));
   }
 
   /**
@@ -194,7 +195,7 @@ public class Utils {
 
   public static boolean isDeviceInLandScape(Activity activity) {
     return activity.getResources().getConfiguration().orientation
-        == Configuration.ORIENTATION_LANDSCAPE;
+            == Configuration.ORIENTATION_LANDSCAPE;
   }
 
   /** Sanitizes input from external application to avoid any attempt of command injection */
@@ -214,21 +215,21 @@ public class Utils {
 
   private static String sanitizeInputOnce(String input) {
     return input
-        .replaceAll(INPUT_INTENT_BLACKLIST_PIPE, "")
-        .replaceAll(INPUT_INTENT_BLACKLIST_AMP, "")
-        .replaceAll(INPUT_INTENT_BLACKLIST_DOTS, "")
-        .replaceAll(INPUT_INTENT_BLACKLIST_COLON, "");
+            .replaceAll(INPUT_INTENT_BLACKLIST_PIPE, "")
+            .replaceAll(INPUT_INTENT_BLACKLIST_AMP, "")
+            .replaceAll(INPUT_INTENT_BLACKLIST_DOTS, "")
+            .replaceAll(INPUT_INTENT_BLACKLIST_COLON, "");
   }
 
   /** Returns uri associated to specific basefile */
-  public static Uri getUriForBaseFile(Context context, HybridFileParcelable baseFile) {
+  public static Uri getUriForBaseFile(
+          @NonNull Context context, @NonNull HybridFileParcelable baseFile) {
     switch (baseFile.getMode()) {
       case FILE:
       case ROOT:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
           return FileProvider.getUriForFile(
-              context, context.getPackageName(), new File(baseFile.getPath()));
+                  context, context.getPackageName(), new File(baseFile.getPath()));
         } else {
           return Uri.fromFile(new File(baseFile.getPath()));
         }
@@ -240,7 +241,7 @@ public class Utils {
       case ONEDRIVE:
       case BOX:
         Toast.makeText(context, context.getString(R.string.smb_launch_error), Toast.LENGTH_LONG)
-            .show();
+                .show();
         return null;
       default:
         return null;
@@ -305,27 +306,27 @@ public class Utils {
    * @param open should open / close the fab
    */
   public static void invalidateFab(
-      MainActivity mainActivity, @Nullable Runnable callback, boolean open) {
+          MainActivity mainActivity, @Nullable Runnable callback, boolean open) {
     if (open) {
       mainActivity.clearFabActionItems();
       mainActivity.getFAB().getMainFab().setImageResource(R.drawable.ic_close_white_24dp);
       mainActivity
-          .getFAB()
-          .setOnChangeListener(
-              new SpeedDialView.OnChangeListener() {
-                @Override
-                public boolean onMainActionSelected() {
-                  if (callback != null) {
-                    callback.run();
-                  }
-                  return false;
-                }
+              .getFAB()
+              .setOnChangeListener(
+                      new SpeedDialView.OnChangeListener() {
+                        @Override
+                        public boolean onMainActionSelected() {
+                          if (callback != null) {
+                            callback.run();
+                          }
+                          return false;
+                        }
 
-                @Override
-                public void onToggleChanged(boolean isOpen) {
-                  // do nothing
-                }
-              });
+                        @Override
+                        public void onToggleChanged(boolean isOpen) {
+                          // do nothing
+                        }
+                      });
       // Ensure the FAB menu is visible
       mainActivity.getFAB().setVisibility(View.VISIBLE);
     } else {
@@ -337,18 +338,18 @@ public class Utils {
   }
 
   public static Snackbar showThemedSnackbar(
-      MainActivity mainActivity,
-      CharSequence text,
-      int length,
-      int actionTextId,
-      Runnable actionCallback) {
+          MainActivity mainActivity,
+          CharSequence text,
+          int length,
+          @StringRes int actionTextId,
+          Runnable actionCallback) {
     Snackbar snackbar =
-        Snackbar.make(mainActivity.findViewById(R.id.content_frame), text, length)
-            .setAction(actionTextId, v -> actionCallback.run());
+            Snackbar.make(mainActivity.findViewById(R.id.content_frame), text, length)
+                    .setAction(actionTextId, v -> actionCallback.run());
     if (mainActivity.getAppTheme().equals(AppTheme.LIGHT)) {
       snackbar
-          .getView()
-          .setBackgroundColor(mainActivity.getResources().getColor(android.R.color.white));
+              .getView()
+              .setBackgroundColor(mainActivity.getResources().getColor(android.R.color.white));
       snackbar.setTextColor(mainActivity.getResources().getColor(android.R.color.black));
     }
     snackbar.show();

@@ -21,9 +21,17 @@
 package com.droidtechlab.filemanager.filesystem;
 
 import com.droidtechlab.filemanager.utils.OpenMode;
+import com.droidtechlab.filemanager.utils.Utils;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import net.schmizz.sshj.sftp.RemoteResourceInfo;
+import net.schmizz.sshj.xfer.FilePermission;
+
+import jcifs.smb.SmbException;
+import jcifs.smb.SmbFile;
 
 /** Created by arpitkh996 on 11-01-2016. */
 public class HybridFileParcelable extends HybridFile implements Parcelable {
@@ -40,7 +48,7 @@ public class HybridFileParcelable extends HybridFile implements Parcelable {
   }
 
   public HybridFileParcelable(
-      String path, String permission, long date, long size, boolean isDirectory) {
+          String path, String permission, long date, long size, boolean isDirectory) {
     super(OpenMode.FILE, path);
     this.date = date;
     this.size = size;
@@ -49,10 +57,47 @@ public class HybridFileParcelable extends HybridFile implements Parcelable {
     this.permission = permission;
   }
 
+  /**
+   * Constructor for jcifs {@link SmbFile}.
+   *
+   * @param smbFile
+   * @throws SmbException
+   */
+  public HybridFileParcelable(SmbFile smbFile) throws SmbException {
+    super(OpenMode.SMB, smbFile.getPath());
+    setName(smbFile.getName());
+    setDirectory(smbFile.isDirectory());
+    setDate(smbFile.lastModified());
+    setSize(smbFile.isDirectory() ? 0 : smbFile.length());
+  }
+
+  /**
+   * Constructor for sshj {@link RemoteResourceInfo}.
+   *
+   * @param path
+   * @param isDirectory
+   * @param sshFile
+   */
+  public HybridFileParcelable(String path, boolean isDirectory, RemoteResourceInfo sshFile) {
+    super(OpenMode.SFTP, String.format("%s/%s", path, sshFile.getName()));
+    setName(sshFile.getName());
+    setDirectory(isDirectory);
+    setDate(sshFile.getAttributes().getMtime() * 1000);
+    setSize(isDirectory ? 0 : sshFile.getAttributes().getSize());
+    setPermission(
+            Integer.toString(FilePermission.toMask(sshFile.getAttributes().getPermissions()), 8));
+  }
+
   @Override
   public String getName() {
-    if (name != null && name.length() > 0) return name;
+    if (!Utils.isNullOrEmpty(name)) return name;
     else return super.getName();
+  }
+
+  @Override
+  public String getName(Context context) {
+    if (!Utils.isNullOrEmpty(name)) return name;
+    else return super.getName(context);
   }
 
   public void setName(String name) {
@@ -121,17 +166,17 @@ public class HybridFileParcelable extends HybridFile implements Parcelable {
   }
 
   public static final Creator<HybridFileParcelable> CREATOR =
-      new Creator<HybridFileParcelable>() {
-        @Override
-        public HybridFileParcelable createFromParcel(Parcel in) {
-          return new HybridFileParcelable(in);
-        }
+          new Creator<HybridFileParcelable>() {
+            @Override
+            public HybridFileParcelable createFromParcel(Parcel in) {
+              return new HybridFileParcelable(in);
+            }
 
-        @Override
-        public HybridFileParcelable[] newArray(int size) {
-          return new HybridFileParcelable[size];
-        }
-      };
+            @Override
+            public HybridFileParcelable[] newArray(int size) {
+              return new HybridFileParcelable[size];
+            }
+          };
 
   @Override
   public int describeContents() {
@@ -152,21 +197,21 @@ public class HybridFileParcelable extends HybridFile implements Parcelable {
   @Override
   public String toString() {
     return new StringBuilder("HybridFileParcelable, path=[")
-        .append(path)
-        .append(']')
-        .append(", name=[")
-        .append(name)
-        .append(']')
-        .append(", size=[")
-        .append(size)
-        .append(']')
-        .append(", date=[")
-        .append(date)
-        .append(']')
-        .append(", permission=[")
-        .append(permission)
-        .append(']')
-        .toString();
+            .append(path)
+            .append(']')
+            .append(", name=[")
+            .append(name)
+            .append(']')
+            .append(", size=[")
+            .append(size)
+            .append(']')
+            .append(", date=[")
+            .append(date)
+            .append(']')
+            .append(", permission=[")
+            .append(permission)
+            .append(']')
+            .toString();
   }
 
   @Override

@@ -20,6 +20,8 @@
 
 package com.droidtechlab.filemanager.ui.activities;
 
+import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.CONTENT;
+import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.FILE;
 import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_COLORED_NAVIGATION;
 import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_TEXTEDITOR_NEWSTACK;
 
@@ -35,12 +37,14 @@ import com.droidtechlab.filemanager.asynchronous.asynctasks.ReadFileTask;
 import com.droidtechlab.filemanager.asynchronous.asynctasks.SearchTextTask;
 import com.droidtechlab.filemanager.asynchronous.asynctasks.WriteFileAbstraction;
 import com.droidtechlab.filemanager.filesystem.EditableFileAbstraction;
+import com.droidtechlab.filemanager.filesystem.HybridFileParcelable;
 import com.droidtechlab.filemanager.filesystem.files.FileUtils;
 import com.droidtechlab.filemanager.ui.activities.superclasses.ThemedActivity;
 import com.droidtechlab.filemanager.ui.colors.ColorPreferenceHelper;
 import com.droidtechlab.filemanager.ui.dialogs.GeneralDialogCreation;
 import com.droidtechlab.filemanager.ui.theme.AppTheme;
 import com.droidtechlab.filemanager.utils.MapEntry;
+import com.droidtechlab.filemanager.utils.OpenMode;
 import com.droidtechlab.filemanager.utils.PreferenceUtils;
 import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.material.snackbar.Snackbar;
@@ -83,7 +87,7 @@ import android.widget.Toast;
 import androidx.annotation.ColorInt;
 
 public class TextEditorActivity extends ThemedActivity
-    implements TextWatcher, View.OnClickListener {
+        implements TextWatcher, View.OnClickListener {
 
   public EditText mInput, searchEditText;
   private EditableFileAbstraction mFile;
@@ -127,8 +131,8 @@ public class TextEditorActivity extends ThemedActivity
 
     if (getAppTheme().equals(AppTheme.DARK))
       getWindow()
-          .getDecorView()
-          .setBackgroundColor(Utils.getColor(this, R.color.holo_dark_background));
+              .getDecorView()
+              .setBackgroundColor(Utils.getColor(this, R.color.holo_dark_background));
     else if (getAppTheme().equals(AppTheme.BLACK))
       getWindow().getDecorView().setBackgroundColor(Utils.getColor(this, android.R.color.black));
 
@@ -139,16 +143,16 @@ public class TextEditorActivity extends ThemedActivity
 
     @ColorInt
     int primaryColor =
-        ColorPreferenceHelper.getPrimary(getCurrentColorPreference(), MainActivity.currentTab);
+            ColorPreferenceHelper.getPrimary(getCurrentColorPreference(), MainActivity.currentTab);
 
     toolbar.setBackgroundColor(primaryColor);
     searchViewLayout.setBackgroundColor(primaryColor);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       ActivityManager.TaskDescription taskDescription =
-          new ActivityManager.TaskDescription(
-              "Amaze",
-              ((BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher)).getBitmap(),
-              primaryColor);
+              new ActivityManager.TaskDescription(
+                      "Amaze",
+                      ((BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher)).getBitmap(),
+                      primaryColor);
       setTaskDescription(taskDescription);
     }
 
@@ -172,12 +176,12 @@ public class TextEditorActivity extends ThemedActivity
     getSupportActionBar().setDisplayHomeAsUpEnabled(!useNewStack);
 
     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH
-        || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
       SystemBarTintManager tintManager = new SystemBarTintManager(this);
       tintManager.setStatusBarTintEnabled(true);
       tintManager.setStatusBarTintColor(primaryColor);
       FrameLayout.MarginLayoutParams p =
-          (ViewGroup.MarginLayoutParams) findViewById(R.id.texteditor).getLayoutParams();
+              (ViewGroup.MarginLayoutParams) findViewById(R.id.texteditor).getLayoutParams();
       SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
       p.setMargins(0, config.getStatusBarHeight(), 0, 0);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -237,20 +241,20 @@ public class TextEditorActivity extends ThemedActivity
   private void checkUnsavedChanges() {
     if (mOriginal != null && mInput.isShown() && !mOriginal.equals(mInput.getText().toString())) {
       new MaterialDialog.Builder(this)
-          .title(R.string.unsaved_changes)
-          .content(R.string.unsaved_changes_description)
-          .positiveText(R.string.yes)
-          .negativeText(R.string.no)
-          .positiveColor(getAccent())
-          .negativeColor(getAccent())
-          .onPositive(
-              (dialog, which) -> {
-                saveFile(mInput.getText().toString());
-                finish();
-              })
-          .onNegative((dialog, which) -> finish())
-          .build()
-          .show();
+              .title(R.string.unsaved_changes)
+              .content(R.string.unsaved_changes_description)
+              .positiveText(R.string.yes)
+              .negativeText(R.string.no)
+              .positiveColor(getAccent())
+              .negativeColor(getAccent())
+              .onPositive(
+                      (dialog, which) -> {
+                        saveFile(mInput.getText().toString());
+                        finish();
+                      })
+              .onNegative((dialog, which) -> finish())
+              .build()
+              .show();
     } else {
       finish();
     }
@@ -280,26 +284,26 @@ public class TextEditorActivity extends ThemedActivity
                   invalidateOptionsMenu();
                   Toast.makeText(
                           getApplicationContext(), getString(R.string.done), Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   break;
                 case WriteFileAbstraction.EXCEPTION_STREAM_NOT_FOUND:
                   Toast.makeText(
                           getApplicationContext(),
                           R.string.error_file_not_found,
                           Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   break;
                 case WriteFileAbstraction.EXCEPTION_IO:
                   Toast.makeText(getApplicationContext(), R.string.error_io, Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   break;
                 case WriteFileAbstraction.EXCEPTION_SHELL_NOT_RUNNING:
                   Toast.makeText(getApplicationContext(), R.string.root_failure, Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   break;
               }
             })
-        .execute();
+            .execute();
   }
 
   /**
@@ -322,26 +326,26 @@ public class TextEditorActivity extends ThemedActivity
                   try {
                     mInput.setText(data.fileContents);
 
-                    if (mFile.scheme == EditableFileAbstraction.SCHEME_FILE
-                        && getExternalCacheDir() != null
-                        && mFile
+                    if (mFile.scheme.equals(FILE)
+                            && getExternalCacheDir() != null
+                            && mFile
                             .hybridFileParcelable
                             .getPath()
                             .contains(getExternalCacheDir().getPath())
-                        && cacheFile == null) {
+                            && cacheFile == null) {
                       // file in cache, and not a root temporary file
                       mInput.setInputType(EditorInfo.TYPE_NULL);
                       mInput.setSingleLine(false);
                       mInput.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
 
                       Snackbar snackbar =
-                          Snackbar.make(
-                              mInput,
-                              getResources().getString(R.string.file_read_only),
-                              Snackbar.LENGTH_INDEFINITE);
+                              Snackbar.make(
+                                      mInput,
+                                      getResources().getString(R.string.file_read_only),
+                                      Snackbar.LENGTH_INDEFINITE);
                       snackbar.setAction(
-                          getResources().getString(R.string.got_it).toUpperCase(),
-                          v -> snackbar.dismiss());
+                              getResources().getString(R.string.got_it).toUpperCase(),
+                              v -> snackbar.dismiss());
                       snackbar.show();
                     }
 
@@ -352,7 +356,7 @@ public class TextEditorActivity extends ThemedActivity
                     }
                   } catch (OutOfMemoryError e) {
                     Toast.makeText(getApplicationContext(), R.string.error, Toast.LENGTH_SHORT)
-                        .show();
+                            .show();
                     finish();
                   }
                   break;
@@ -361,17 +365,17 @@ public class TextEditorActivity extends ThemedActivity
                           getApplicationContext(),
                           R.string.error_file_not_found,
                           Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   finish();
                   break;
                 case ReadFileTask.EXCEPTION_IO:
                   Toast.makeText(getApplicationContext(), R.string.error_io, Toast.LENGTH_SHORT)
-                      .show();
+                          .show();
                   finish();
                   break;
               }
             })
-        .execute();
+            .execute();
   }
 
   @Override
@@ -403,16 +407,22 @@ public class TextEditorActivity extends ThemedActivity
         saveFile(mInput.getText().toString());
         break;
       case R.id.details:
-        if (mFile.scheme == EditableFileAbstraction.SCHEME_FILE
-            && mFile.hybridFileParcelable.getFile().exists()) {
+        if (mFile.scheme.equals(FILE) && mFile.hybridFileParcelable.getFile().exists()) {
           GeneralDialogCreation.showPropertiesDialogWithoutPermissions(
-              mFile.hybridFileParcelable, this, getAppTheme());
+                  mFile.hybridFileParcelable, this, getAppTheme());
+        } else if (mFile.scheme.equals(CONTENT)) {
+          if (getApplicationContext().getPackageName().equals(mFile.uri.getAuthority())) {
+            File file = FileUtils.fromContentUri(mFile.uri);
+            HybridFileParcelable p = new HybridFileParcelable(file.getAbsolutePath());
+            if (isRootExplorer()) p.setMode(OpenMode.ROOT);
+            GeneralDialogCreation.showPropertiesDialogWithoutPermissions(p, this, getAppTheme());
+          }
         } else {
           Toast.makeText(this, R.string.no_obtainable_info, Toast.LENGTH_SHORT).show();
         }
         break;
       case R.id.openwith:
-        if (mFile.scheme == EditableFileAbstraction.SCHEME_FILE) {
+        if (mFile.scheme.equals(FILE)) {
           File currentFile = mFile.hybridFileParcelable.getFile();
           if (currentFile.exists()) {
             boolean useNewStack = getBoolean(PREFERENCE_TEXTEDITOR_NEWSTACK);
@@ -467,19 +477,19 @@ public class TextEditorActivity extends ThemedActivity
       }
       mTimer = new Timer();
       mTimer.schedule(
-          new TimerTask() {
-            boolean modified;
+              new TimerTask() {
+                boolean modified;
 
-            @Override
-            public void run() {
-              modified = !mInput.getText().toString().equals(mOriginal);
-              if (mModified != modified) {
-                mModified = modified;
-                invalidateOptionsMenu();
-              }
-            }
-          },
-          250);
+                @Override
+                public void run() {
+                  modified = !mInput.getText().toString().equals(mOriginal);
+                  if (mModified != modified) {
+                    mModified = modified;
+                    invalidateOptionsMenu();
+                  }
+                }
+              },
+              250);
     }
   }
 
@@ -508,7 +518,7 @@ public class TextEditorActivity extends ThemedActivity
     // FIXME: 2016/11/18   ViewAnimationUtils Compatibility
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
       animator =
-          ViewAnimationUtils.createCircularReveal(searchViewLayout, cx, cy, startRadius, endRadius);
+              ViewAnimationUtils.createCircularReveal(searchViewLayout, cx, cy, startRadius, endRadius);
     else animator = ObjectAnimator.ofFloat(searchViewLayout, "alpha", 0f, 1f);
 
     animator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -517,15 +527,15 @@ public class TextEditorActivity extends ThemedActivity
     searchEditText.setText("");
     animator.start();
     animator.addListener(
-        new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
-            searchEditText.requestFocus();
-            InputMethodManager imm =
-                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
-          }
-        });
+            new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                searchEditText.requestFocus();
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
+              }
+            });
   }
 
   /** hide search view with a circular reveal animation */
@@ -544,7 +554,7 @@ public class TextEditorActivity extends ThemedActivity
     // FIXME: 2016/11/18   ViewAnimationUtils Compatibility
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       animator =
-          ViewAnimationUtils.createCircularReveal(searchViewLayout, cx, cy, startRadius, endRadius);
+              ViewAnimationUtils.createCircularReveal(searchViewLayout, cx, cy, startRadius, endRadius);
     } else {
       animator = ObjectAnimator.ofFloat(searchViewLayout, "alpha", 0f, 1f);
     }
@@ -553,16 +563,16 @@ public class TextEditorActivity extends ThemedActivity
     animator.setDuration(600);
     animator.start();
     animator.addListener(
-        new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
-            searchViewLayout.setVisibility(View.GONE);
-            InputMethodManager inputMethodManager =
-                (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(
-                searchEditText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-          }
-        });
+            new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                searchViewLayout.setVisibility(View.GONE);
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(
+                        searchEditText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+              }
+            });
   }
 
   @Override
@@ -576,38 +586,38 @@ public class TextEditorActivity extends ThemedActivity
           Map.Entry keyValueOld = nodes.get(mCurrent).getKey();
           if (getAppTheme().equals(AppTheme.LIGHT)) {
             mInput
-                .getText()
-                .setSpan(
-                    new BackgroundColorSpan(Color.YELLOW),
-                    (Integer) keyValueOld.getKey(),
-                    (Integer) keyValueOld.getValue(),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    .getText()
+                    .setSpan(
+                            new BackgroundColorSpan(Color.YELLOW),
+                            (Integer) keyValueOld.getKey(),
+                            (Integer) keyValueOld.getValue(),
+                            Spanned.SPAN_INCLUSIVE_INCLUSIVE);
           } else {
             mInput
-                .getText()
-                .setSpan(
-                    new BackgroundColorSpan(Color.LTGRAY),
-                    (Integer) keyValueOld.getKey(),
-                    (Integer) keyValueOld.getValue(),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    .getText()
+                    .setSpan(
+                            new BackgroundColorSpan(Color.LTGRAY),
+                            (Integer) keyValueOld.getKey(),
+                            (Integer) keyValueOld.getValue(),
+                            Spanned.SPAN_INCLUSIVE_INCLUSIVE);
           }
           // highlighting previous element in list
           Map.Entry keyValueNew = nodes.get(--mCurrent).getKey();
           mInput
-              .getText()
-              .setSpan(
-                  new BackgroundColorSpan(Utils.getColor(this, R.color.search_text_highlight)),
-                  (Integer) keyValueNew.getKey(),
-                  (Integer) keyValueNew.getValue(),
-                  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                  .getText()
+                  .setSpan(
+                          new BackgroundColorSpan(Utils.getColor(this, R.color.search_text_highlight)),
+                          (Integer) keyValueNew.getKey(),
+                          (Integer) keyValueNew.getValue(),
+                          Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
           // scrolling to the highlighted element
           scrollView.scrollTo(
-              0,
-              (Integer) keyValueNew.getValue()
-                  + mInput.getLineHeight()
-                  + Math.round(mInput.getLineSpacingExtra())
-                  - getSupportActionBar().getHeight());
+                  0,
+                  (Integer) keyValueNew.getValue()
+                          + mInput.getLineHeight()
+                          + Math.round(mInput.getLineSpacingExtra())
+                          - getSupportActionBar().getHeight());
         }
         break;
       case R.id.next:
@@ -620,39 +630,39 @@ public class TextEditorActivity extends ThemedActivity
             Map.Entry keyValueOld = nodes.get(mCurrent).getKey();
             if (getAppTheme().equals(AppTheme.LIGHT)) {
               mInput
-                  .getText()
-                  .setSpan(
-                      new BackgroundColorSpan(Color.YELLOW),
-                      (Integer) keyValueOld.getKey(),
-                      (Integer) keyValueOld.getValue(),
-                      Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                      .getText()
+                      .setSpan(
+                              new BackgroundColorSpan(Color.YELLOW),
+                              (Integer) keyValueOld.getKey(),
+                              (Integer) keyValueOld.getValue(),
+                              Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             } else {
               mInput
-                  .getText()
-                  .setSpan(
-                      new BackgroundColorSpan(Color.LTGRAY),
-                      (Integer) keyValueOld.getKey(),
-                      (Integer) keyValueOld.getValue(),
-                      Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                      .getText()
+                      .setSpan(
+                              new BackgroundColorSpan(Color.LTGRAY),
+                              (Integer) keyValueOld.getKey(),
+                              (Integer) keyValueOld.getValue(),
+                              Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
           }
 
           Map.Entry keyValueNew = nodes.get(++mCurrent).getKey();
           mInput
-              .getText()
-              .setSpan(
-                  new BackgroundColorSpan(Utils.getColor(this, R.color.search_text_highlight)),
-                  (Integer) keyValueNew.getKey(),
-                  (Integer) keyValueNew.getValue(),
-                  Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                  .getText()
+                  .setSpan(
+                          new BackgroundColorSpan(Utils.getColor(this, R.color.search_text_highlight)),
+                          (Integer) keyValueNew.getKey(),
+                          (Integer) keyValueNew.getValue(),
+                          Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
           // scrolling to the highlighted element
           scrollView.scrollTo(
-              0,
-              (Integer) keyValueNew.getValue()
-                  + mInput.getLineHeight()
-                  + Math.round(mInput.getLineSpacingExtra())
-                  - getSupportActionBar().getHeight());
+                  0,
+                  (Integer) keyValueNew.getValue()
+                          + mInput.getLineHeight()
+                          + Math.round(mInput.getLineSpacingExtra())
+                          - getSupportActionBar().getHeight());
         }
         break;
       case R.id.close:
@@ -671,7 +681,7 @@ public class TextEditorActivity extends ThemedActivity
 
     // clearing textView spans
     BackgroundColorSpan[] colorSpans =
-        mInput.getText().getSpans(0, mInput.length(), BackgroundColorSpan.class);
+            mInput.getText().getSpans(0, mInput.length(), BackgroundColorSpan.class);
     for (BackgroundColorSpan colorSpan : colorSpans) {
       mInput.getText().removeSpan(colorSpan);
     }

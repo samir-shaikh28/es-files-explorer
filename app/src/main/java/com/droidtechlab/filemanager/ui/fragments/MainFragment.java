@@ -173,9 +173,9 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   private CustomFileObserver customFileObserver;
   private DataUtils dataUtils;
   private boolean isEncryptOpen =
-      false; // do we have to open a file when service is begin destroyed
+          false; // do we have to open a file when service is begin destroyed
   private HybridFileParcelable
-      encryptBaseFile; // the cached base file which we're to open, delete it later
+          encryptBaseFile; // the cached base file which we're to open, delete it later
   private int ordinalValue;
 
   /** a list of encrypted base files which are supposed to be deleted */
@@ -230,7 +230,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     rootView = inflater.inflate(R.layout.main_frag, container, false);
     setRetainInstance(true);
     listView = rootView.findViewById(R.id.listView);
@@ -238,21 +238,21 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     fastScroller = rootView.findViewById(R.id.fastscroll);
     fastScroller.setPressedHandleColor(accentColor);
     listView.setOnTouchListener(
-        (view, motionEvent) -> {
-          if (adapter != null && stopAnims) {
-            stopAnimation();
-            stopAnims = false;
-          }
-          return false;
-        });
+            (view, motionEvent) -> {
+              if (adapter != null && stopAnims) {
+                stopAnimation();
+                stopAnims = false;
+              }
+              return false;
+            });
     mToolbarContainer.setOnTouchListener(
-        (view, motionEvent) -> {
-          if (adapter != null && stopAnims) {
-            stopAnimation();
-            stopAnims = false;
-          }
-          return false;
-        });
+            (view, motionEvent) -> {
+              if (adapter != null && stopAnims) {
+                stopAnimation();
+                stopAnims = false;
+              }
+              return false;
+            });
 
     mSwipeRefreshLayout = rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
 
@@ -260,7 +260,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     // String itemsstring = res.getString(R.string.items);// TODO: 23/5/2017 use or delete
     mToolbarContainer.setBackgroundColor(
-        MainActivity.currentTab == 1 ? primaryTwoColor : primaryColor);
+            MainActivity.currentTab == 1 ? primaryTwoColor : primaryColor);
 
     //   listView.setPadding(listView.getPaddingLeft(), paddingTop, listView.getPaddingRight(),
     // listView.getPaddingBottom());
@@ -280,6 +280,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     AppRate.showRateDialogIfMeetsConditions(getActivity());
   }
 
+
   @Override
   public void onActivityCreated(final Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
@@ -288,7 +289,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     // getMainActivity() = (MainActivity) getActivity();
     initNoFileLayout();
     getSortModes();
-    this.setRetainInstance(false);
+    setRetainInstance(true);
     HybridFile f = new HybridFile(OpenMode.UNKNOWN, CURRENT_PATH);
     f.generateMode(getActivity());
     getMainActivity().getAppbar().getBottomBar().setClickListener();
@@ -315,33 +316,33 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     // View footerView = getActivity().getLayoutInflater().inflate(R.layout.divider, null);// TODO:
     // 23/5/2017 use or delete
     dividerItemDecoration =
-        new DividerItemDecoration(getActivity(), false, getBoolean(PREFERENCE_SHOW_DIVIDERS));
+            new DividerItemDecoration(getActivity(), false, getBoolean(PREFERENCE_SHOW_DIVIDERS));
     listView.addItemDecoration(dividerItemDecoration);
     mSwipeRefreshLayout.setColorSchemeColors(accentColor);
     DefaultItemAnimator animator = new DefaultItemAnimator();
     listView.setItemAnimator(animator);
     mToolbarContainer
-        .getViewTreeObserver()
-        .addOnGlobalLayoutListener(
-            new ViewTreeObserver.OnGlobalLayoutListener() {
-              @Override
-              public void onGlobalLayout() {
-                if ((columns == 0 || columns == -1)) {
-                  int screen_width = listView.getWidth();
-                  int dptopx = Utils.dpToPx(getContext(), 115);
-                  columns = screen_width / dptopx;
-                  if (columns == 0 || columns == -1) columns = 3;
-                  if (!IS_LIST) mLayoutManagerGrid.setSpanCount(columns);
-                }
-                if (savedInstanceState != null && !IS_LIST)
-                  onSavedInstanceState(savedInstanceState);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                  mToolbarContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                  mToolbarContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-              }
-            });
+            .getViewTreeObserver()
+            .addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                      @Override
+                      public void onGlobalLayout() {
+                        if ((columns == 0 || columns == -1)) {
+                          int screen_width = listView.getWidth();
+                          int dptopx = Utils.dpToPx(getContext(), 115);
+                          columns = screen_width / dptopx;
+                          if (columns == 0 || columns == -1) columns = 3;
+                          if (!IS_LIST) mLayoutManagerGrid.setSpanCount(columns);
+                        }
+                        if (savedInstanceState != null && !IS_LIST)
+                          onSavedInstanceState(savedInstanceState);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                          mToolbarContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        } else {
+                          mToolbarContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        }
+                      }
+                    });
 
     if (savedInstanceState == null) {
       loadlist(CURRENT_PATH, false, openMode);
@@ -353,19 +354,19 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   void setGridLayoutSpanSizeLookup(GridLayoutManager mLayoutManagerGrid) {
 
     mLayoutManagerGrid.setSpanSizeLookup(
-        new GridLayoutManager.SpanSizeLookup() {
+            new GridLayoutManager.SpanSizeLookup() {
 
-          @Override
-          public int getSpanSize(int position) {
-            switch (adapter.getItemViewType(position)) {
-              case RecyclerAdapter.TYPE_HEADER_FILES:
-              case RecyclerAdapter.TYPE_HEADER_FOLDERS:
-                return columns;
-              default:
-                return 1;
-            }
-          }
-        });
+              @Override
+              public int getSpanSize(int position) {
+                switch (adapter.getItemViewType(position)) {
+                  case RecyclerAdapter.TYPE_HEADER_FILES:
+                  case RecyclerAdapter.TYPE_HEADER_FOLDERS:
+                    return columns;
+                  default:
+                    return 1;
+                }
+              }
+            });
   }
 
   void switchToGrid() {
@@ -403,7 +404,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
   public void switchView() {
     boolean isPathLayoutGrid =
-        dataUtils.getListOrGridForPath(CURRENT_PATH, DataUtils.LIST) == DataUtils.GRID;
+            dataUtils.getListOrGridForPath(CURRENT_PATH, DataUtils.LIST) == DataUtils.GRID;
     reloadListElements(false, results, isPathLayoutGrid);
   }
 
@@ -462,16 +463,16 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       file_count = savedInstanceState.getInt("file_count", 0);
       results = savedInstanceState.getBoolean("results");
       getMainActivity()
-          .getAppbar()
-          .getBottomBar()
-          .updatePath(
-              CURRENT_PATH,
-              results,
-              MainActivityHelper.SEARCH_TEXT,
-              openMode,
-              folder_count,
-              file_count,
-              this);
+              .getAppbar()
+              .getBottomBar()
+              .updatePath(
+                      CURRENT_PATH,
+                      results,
+                      MainActivityHelper.SEARCH_TEXT,
+                      openMode,
+                      folder_count,
+                      file_count,
+                      this);
       if ((LIST_ELEMENTS == null || LIST_ELEMENTS.size() == 0) && !results) {
         loadlist(home, true, OpenMode.FILE);
       } else {
@@ -486,354 +487,354 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   }
 
   public ActionMode.Callback mActionModeCallback =
-      new ActionMode.Callback() {
-        private void hideOption(int id, Menu menu) {
-          MenuItem item = menu.findItem(id);
-          item.setVisible(false);
-        }
+          new ActionMode.Callback() {
+            private void hideOption(int id, Menu menu) {
+              MenuItem item = menu.findItem(id);
+              item.setVisible(false);
+            }
 
-        private void showOption(int id, Menu menu) {
-          MenuItem item = menu.findItem(id);
-          item.setVisible(true);
-        }
+            private void showOption(int id, Menu menu) {
+              MenuItem item = menu.findItem(id);
+              item.setVisible(true);
+            }
 
-        void initMenu(Menu menu) {
+            void initMenu(Menu menu) {
           /*
           menu.findItem(R.id.cpy).setIcon(icons.getCopyDrawable());
           menu.findItem(R.id.cut).setIcon(icons.getCutDrawable());
           menu.findItem(R.id.delete).setIcon(icons.getDeleteDrawable());
           menu.findItem(R.id.all).setIcon(icons.getAllDrawable());
           */
-        }
-
-        // called when the action mode is created; startActionMode() was called
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-          // Inflate a menu resource providing context menu items
-          MenuInflater inflater = mode.getMenuInflater();
-          actionModeView = getActivity().getLayoutInflater().inflate(R.layout.actionmode, null);
-          mode.setCustomView(actionModeView);
-
-          getMainActivity().setPagingEnabled(false);
-          getMainActivity().getFAB().hide();
-
-          // translates the drawable content down
-          // if (getMainActivity().isDrawerLocked) getMainActivity().translateDrawerList(true);
-
-          // assumes that you have "contexual.xml" menu resources
-          inflater.inflate(R.menu.contextual, menu);
-          initMenu(menu);
-          hideOption(R.id.addshortcut, menu);
-          hideOption(R.id.share, menu);
-          hideOption(R.id.openwith, menu);
-          if (getMainActivity().mReturnIntent) showOption(R.id.openmulti, menu);
-          // hideOption(R.id.setringtone,menu);
-          mode.setTitle(getResources().getString(R.string.select));
-
-          getMainActivity()
-              .updateViews(new ColorDrawable(res.getColor(R.color.holo_dark_action_mode)));
-
-          // do not allow drawer to open when item gets selected
-          if (!getMainActivity().getDrawer().isLocked()) {
-            getMainActivity().getDrawer().lockIfNotOnTablet(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-          }
-          return true;
-        }
-
-        /**
-         * the following method is called each time the action mode is shown. Always called after
-         * onCreateActionMode, but may be called multiple times if the mode is invalidated.
-         */
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-          ArrayList<LayoutElementParcelable> positions = adapter.getCheckedItems();
-          TextView textView1 = actionModeView.findViewById(R.id.item_count);
-          textView1.setText(String.valueOf(positions.size()));
-          textView1.setOnClickListener(null);
-          mode.setTitle(positions.size() + "");
-          hideOption(R.id.openmulti, menu);
-          menu.findItem(R.id.all)
-              .setTitle(
-                  positions.size() == folder_count + file_count
-                      ? R.string.deselect_all
-                      : R.string.select_all);
-
-          if (openMode != OpenMode.FILE) {
-            hideOption(R.id.addshortcut, menu);
-            hideOption(R.id.compress, menu);
-            return true;
-          }
-
-          if (getMainActivity().mReturnIntent)
-            if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
-          // tv.setText(positions.size());
-          if (!results) {
-            hideOption(R.id.openparent, menu);
-            if (positions.size() == 1) {
-              showOption(R.id.addshortcut, menu);
-              showOption(R.id.openwith, menu);
-              showOption(R.id.share, menu);
-
-              File x = new File(adapter.getCheckedItems().get(0).desc);
-
-              if (x.isDirectory()) {
-                hideOption(R.id.openwith, menu);
-                hideOption(R.id.share, menu);
-                hideOption(R.id.openmulti, menu);
-              }
-
-              if (getMainActivity().mReturnIntent)
-                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
-
-            } else {
-              try {
-                showOption(R.id.share, menu);
-                if (getMainActivity().mReturnIntent)
-                  if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
-                for (LayoutElementParcelable e : adapter.getCheckedItems()) {
-                  File x = new File(e.desc);
-                  if (x.isDirectory()) {
-                    hideOption(R.id.share, menu);
-                    hideOption(R.id.openmulti, menu);
-                  }
-                }
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-              hideOption(R.id.openwith, menu);
-              hideOption(R.id.addshortcut, menu);
             }
-          } else {
-            if (positions.size() == 1) {
-              showOption(R.id.addshortcut, menu);
-              showOption(R.id.openparent, menu);
-              showOption(R.id.openwith, menu);
-              showOption(R.id.share, menu);
 
-              File x = new File(adapter.getCheckedItems().get(0).desc);
+            // called when the action mode is created; startActionMode() was called
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+              // Inflate a menu resource providing context menu items
+              MenuInflater inflater = mode.getMenuInflater();
+              actionModeView = getActivity().getLayoutInflater().inflate(R.layout.actionmode, null);
+              mode.setCustomView(actionModeView);
 
-              if (x.isDirectory()) {
-                hideOption(R.id.openwith, menu);
-                hideOption(R.id.share, menu);
-                hideOption(R.id.openmulti, menu);
-              }
-              if (getMainActivity().mReturnIntent)
-                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+              getMainActivity().setPagingEnabled(false);
+              getMainActivity().getFAB().hide();
 
-            } else {
-              hideOption(R.id.openparent, menu);
+              // translates the drawable content down
+              // if (getMainActivity().isDrawerLocked) getMainActivity().translateDrawerList(true);
+
+              // assumes that you have "contexual.xml" menu resources
+              inflater.inflate(R.menu.contextual, menu);
+              initMenu(menu);
               hideOption(R.id.addshortcut, menu);
-
-              if (getMainActivity().mReturnIntent)
-                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
-              try {
-                for (LayoutElementParcelable e : adapter.getCheckedItems()) {
-                  File x = new File(e.desc);
-                  if (x.isDirectory()) {
-                    hideOption(R.id.share, menu);
-                    hideOption(R.id.openmulti, menu);
-                  }
-                }
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-
+              hideOption(R.id.share, menu);
               hideOption(R.id.openwith, menu);
+              if (getMainActivity().mReturnIntent) showOption(R.id.openmulti, menu);
+              // hideOption(R.id.setringtone,menu);
+              mode.setTitle(getResources().getString(R.string.select));
+
+              getMainActivity()
+                      .updateViews(new ColorDrawable(res.getColor(R.color.holo_dark_action_mode)));
+
+              // do not allow drawer to open when item gets selected
+              if (!getMainActivity().getDrawer().isLocked()) {
+                getMainActivity().getDrawer().lockIfNotOnTablet(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+              }
+              return true;
             }
-          }
 
-          return true; // Return false if nothing is done
-        }
+            /**
+             * the following method is called each time the action mode is shown. Always called after
+             * onCreateActionMode, but may be called multiple times if the mode is invalidated.
+             */
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+              ArrayList<LayoutElementParcelable> positions = adapter.getCheckedItems();
+              TextView textView1 = actionModeView.findViewById(R.id.item_count);
+              textView1.setText(String.valueOf(positions.size()));
+              textView1.setOnClickListener(null);
+              mode.setTitle(positions.size() + "");
+              hideOption(R.id.openmulti, menu);
+              menu.findItem(R.id.all)
+                      .setTitle(
+                              positions.size() == folder_count + file_count
+                                      ? R.string.deselect_all
+                                      : R.string.select_all);
 
-        // called when the user selects a contextual menu item
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-          computeScroll();
-          ArrayList<LayoutElementParcelable> checkedItems = adapter.getCheckedItems();
-          switch (item.getItemId()) {
-            case R.id.openmulti:
-              try {
-
-                Intent intent_result = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                ArrayList<Uri> resulturis = new ArrayList<>();
-
-                for (LayoutElementParcelable element : checkedItems) {
-                  HybridFileParcelable baseFile = element.generateBaseFile();
-                  Uri resultUri = Utils.getUriForBaseFile(getActivity(), baseFile);
-
-                  if (resultUri != null) {
-                    resulturis.add(resultUri);
-                  }
-                }
-
-                intent_result.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                getActivity().setResult(FragmentActivity.RESULT_OK, intent_result);
-                intent_result.putParcelableArrayListExtra(Intent.EXTRA_STREAM, resulturis);
-                getActivity().finish();
-                // mode.finish();
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-              return true;
-            case R.id.about:
-              LayoutElementParcelable x = checkedItems.get(0);
-              GeneralDialogCreation.showPropertiesDialogWithPermissions(
-                  (x).generateBaseFile(),
-                  x.permissions,
-                  (ThemedActivity) getActivity(),
-                  getMainActivity().isRootExplorer(),
-                  utilsProvider.getAppTheme());
-              mode.finish();
-              return true;
-            case R.id.delete:
-              GeneralDialogCreation.deleteFilesDialog(
-                  getContext(),
-                  LIST_ELEMENTS,
-                  getMainActivity(),
-                  checkedItems,
-                  utilsProvider.getAppTheme());
-              return true;
-            case R.id.share:
-              ArrayList<File> arrayList = new ArrayList<>();
-              for (LayoutElementParcelable e : checkedItems) {
-                arrayList.add(new File(e.desc));
-              }
-              if (arrayList.size() > 100)
-                Toast.makeText(
-                        getActivity(),
-                        getResources().getString(R.string.share_limit),
-                        Toast.LENGTH_SHORT)
-                    .show();
-              else {
-
-                switch (LIST_ELEMENTS.get(0).getMode()) {
-                  case DROPBOX:
-                  case BOX:
-                  case GDRIVE:
-                  case ONEDRIVE:
-                    FileUtils.shareCloudFile(
-                        LIST_ELEMENTS.get(0).desc, LIST_ELEMENTS.get(0).getMode(), getContext());
-                    break;
-                  default:
-                    FileUtils.shareFiles(
-                        arrayList, getActivity(), utilsProvider.getAppTheme(), accentColor);
-                    break;
-                }
-              }
-              return true;
-            case R.id.openparent:
-              loadlist(new File(checkedItems.get(0).desc).getParent(), false, OpenMode.FILE);
-              return true;
-            case R.id.all:
-              if (adapter.areAllChecked(CURRENT_PATH)) {
-                adapter.toggleChecked(false, CURRENT_PATH);
-                item.setTitle(R.string.select_all);
-              } else {
-                adapter.toggleChecked(true, CURRENT_PATH);
-                item.setTitle(R.string.deselect_all);
-              }
-              mode.invalidate();
-
-              return true;
-            case R.id.rename:
-              final HybridFileParcelable f;
-              f = checkedItems.get(0).generateBaseFile();
-              rename(f);
-              mode.finish();
-              return true;
-            case R.id.hide:
-              for (int i1 = 0; i1 < checkedItems.size(); i1++) {
-                hide(checkedItems.get(i1).desc);
-              }
-              updateList();
-              mode.finish();
-              return true;
-            case R.id.ex:
-              getMainActivity().mainActivityHelper.extractFile(new File(checkedItems.get(0).desc));
-              mode.finish();
-              return true;
-            case R.id.cpy:
-            case R.id.cut:
-              {
-                HybridFileParcelable[] copies = new HybridFileParcelable[checkedItems.size()];
-                for (int i = 0; i < checkedItems.size(); i++) {
-                  copies[i] = checkedItems.get(i).generateBaseFile();
-                }
-                int op =
-                    item.getItemId() == R.id.cpy
-                        ? PasteHelper.OPERATION_COPY
-                        : PasteHelper.OPERATION_CUT;
-
-                PasteHelper pasteHelper = new PasteHelper(getMainActivity(), op, copies);
-                getMainActivity().setPaste(pasteHelper);
-                mode.finish();
+              if (openMode != OpenMode.FILE) {
+                hideOption(R.id.addshortcut, menu);
+                hideOption(R.id.compress, menu);
                 return true;
               }
-            case R.id.compress:
-              ArrayList<HybridFileParcelable> copies1 = new ArrayList<>();
-              for (int i4 = 0; i4 < checkedItems.size(); i4++) {
-                copies1.add(checkedItems.get(i4).generateBaseFile());
+
+              if (getMainActivity().mReturnIntent)
+                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+              // tv.setText(positions.size());
+              if (!results) {
+                hideOption(R.id.openparent, menu);
+                if (positions.size() == 1) {
+                  showOption(R.id.addshortcut, menu);
+                  showOption(R.id.openwith, menu);
+                  showOption(R.id.share, menu);
+
+                  File x = new File(adapter.getCheckedItems().get(0).desc);
+
+                  if (x.isDirectory()) {
+                    hideOption(R.id.openwith, menu);
+                    hideOption(R.id.share, menu);
+                    hideOption(R.id.openmulti, menu);
+                  }
+
+                  if (getMainActivity().mReturnIntent)
+                    if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+
+                } else {
+                  try {
+                    showOption(R.id.share, menu);
+                    if (getMainActivity().mReturnIntent)
+                      if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                    for (LayoutElementParcelable e : adapter.getCheckedItems()) {
+                      File x = new File(e.desc);
+                      if (x.isDirectory()) {
+                        hideOption(R.id.share, menu);
+                        hideOption(R.id.openmulti, menu);
+                      }
+                    }
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+                  hideOption(R.id.openwith, menu);
+                  hideOption(R.id.addshortcut, menu);
+                }
+              } else {
+                if (positions.size() == 1) {
+                  showOption(R.id.addshortcut, menu);
+                  showOption(R.id.openparent, menu);
+                  showOption(R.id.openwith, menu);
+                  showOption(R.id.share, menu);
+
+                  File x = new File(adapter.getCheckedItems().get(0).desc);
+
+                  if (x.isDirectory()) {
+                    hideOption(R.id.openwith, menu);
+                    hideOption(R.id.share, menu);
+                    hideOption(R.id.openmulti, menu);
+                  }
+                  if (getMainActivity().mReturnIntent)
+                    if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+
+                } else {
+                  hideOption(R.id.openparent, menu);
+                  hideOption(R.id.addshortcut, menu);
+
+                  if (getMainActivity().mReturnIntent)
+                    if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                  try {
+                    for (LayoutElementParcelable e : adapter.getCheckedItems()) {
+                      File x = new File(e.desc);
+                      if (x.isDirectory()) {
+                        hideOption(R.id.share, menu);
+                        hideOption(R.id.openmulti, menu);
+                      }
+                    }
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+
+                  hideOption(R.id.openwith, menu);
+                }
               }
-              GeneralDialogCreation.showCompressDialog(
-                  (MainActivity) getActivity(), copies1, CURRENT_PATH);
-              mode.finish();
-              return true;
-            case R.id.openwith:
-              FileUtils.openFile(new File(checkedItems.get(0).desc), getMainActivity(), sharedPref);
-              return true;
-            case R.id.addshortcut:
-              addShortcut(checkedItems.get(0));
-              mode.finish();
-              return true;
-            default:
-              return false;
-          }
-        }
 
-        // called when the user exits the action mode
-        public void onDestroyActionMode(ActionMode mode) {
-          mActionMode = null;
-          selection = false;
+              return true; // Return false if nothing is done
+            }
 
-          // translates the drawer content up
-          // if (getMainActivity().isDrawerLocked) getMainActivity().translateDrawerList(false);
+            // called when the user selects a contextual menu item
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+              computeScroll();
+              ArrayList<LayoutElementParcelable> checkedItems = adapter.getCheckedItems();
+              switch (item.getItemId()) {
+                case R.id.openmulti:
+                  try {
 
-          getMainActivity().getFAB().show();
-          if (!results) adapter.toggleChecked(false, CURRENT_PATH);
-          else adapter.toggleChecked(false);
-          getMainActivity().setPagingEnabled(true);
+                    Intent intent_result = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    ArrayList<Uri> resulturis = new ArrayList<>();
 
-          getMainActivity()
-              .updateViews(
-                  new ColorDrawable(MainActivity.currentTab == 1 ? primaryTwoColor : primaryColor));
+                    for (LayoutElementParcelable element : checkedItems) {
+                      HybridFileParcelable baseFile = element.generateBaseFile();
+                      Uri resultUri = Utils.getUriForBaseFile(getActivity(), baseFile);
 
-          if (getMainActivity().getDrawer().isLocked()) {
-            getMainActivity().getDrawer().unlockIfNotOnTablet();
-          }
-        }
-      };
+                      if (resultUri != null) {
+                        resulturis.add(resultUri);
+                      }
+                    }
+
+                    intent_result.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    getActivity().setResult(FragmentActivity.RESULT_OK, intent_result);
+                    intent_result.putParcelableArrayListExtra(Intent.EXTRA_STREAM, resulturis);
+                    getActivity().finish();
+                    // mode.finish();
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+                  return true;
+                case R.id.about:
+                  LayoutElementParcelable x = checkedItems.get(0);
+                  GeneralDialogCreation.showPropertiesDialogWithPermissions(
+                          (x).generateBaseFile(),
+                          x.permissions,
+                          (ThemedActivity) getActivity(),
+                          getMainActivity().isRootExplorer(),
+                          utilsProvider.getAppTheme());
+                  mode.finish();
+                  return true;
+                case R.id.delete:
+                  GeneralDialogCreation.deleteFilesDialog(
+                          getContext(),
+                          LIST_ELEMENTS,
+                          getMainActivity(),
+                          checkedItems,
+                          utilsProvider.getAppTheme());
+                  return true;
+                case R.id.share:
+                  ArrayList<File> arrayList = new ArrayList<>();
+                  for (LayoutElementParcelable e : checkedItems) {
+                    arrayList.add(new File(e.desc));
+                  }
+                  if (arrayList.size() > 100)
+                    Toast.makeText(
+                            getActivity(),
+                            getResources().getString(R.string.share_limit),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                  else {
+
+                    switch (LIST_ELEMENTS.get(0).getMode()) {
+                      case DROPBOX:
+                      case BOX:
+                      case GDRIVE:
+                      case ONEDRIVE:
+                        FileUtils.shareCloudFile(
+                                LIST_ELEMENTS.get(0).desc, LIST_ELEMENTS.get(0).getMode(), getContext());
+                        break;
+                      default:
+                        FileUtils.shareFiles(
+                                arrayList, getActivity(), utilsProvider.getAppTheme(), accentColor);
+                        break;
+                    }
+                  }
+                  return true;
+                case R.id.openparent:
+                  loadlist(new File(checkedItems.get(0).desc).getParent(), false, OpenMode.FILE);
+                  return true;
+                case R.id.all:
+                  if (adapter.areAllChecked(CURRENT_PATH)) {
+                    adapter.toggleChecked(false, CURRENT_PATH);
+                    item.setTitle(R.string.select_all);
+                  } else {
+                    adapter.toggleChecked(true, CURRENT_PATH);
+                    item.setTitle(R.string.deselect_all);
+                  }
+                  mode.invalidate();
+
+                  return true;
+                case R.id.rename:
+                  final HybridFileParcelable f;
+                  f = checkedItems.get(0).generateBaseFile();
+                  rename(f);
+                  mode.finish();
+                  return true;
+                case R.id.hide:
+                  for (int i1 = 0; i1 < checkedItems.size(); i1++) {
+                    hide(checkedItems.get(i1).desc);
+                  }
+                  updateList();
+                  mode.finish();
+                  return true;
+                case R.id.ex:
+                  getMainActivity().mainActivityHelper.extractFile(new File(checkedItems.get(0).desc));
+                  mode.finish();
+                  return true;
+                case R.id.cpy:
+                case R.id.cut:
+                {
+                  HybridFileParcelable[] copies = new HybridFileParcelable[checkedItems.size()];
+                  for (int i = 0; i < checkedItems.size(); i++) {
+                    copies[i] = checkedItems.get(i).generateBaseFile();
+                  }
+                  int op =
+                          item.getItemId() == R.id.cpy
+                                  ? PasteHelper.OPERATION_COPY
+                                  : PasteHelper.OPERATION_CUT;
+
+                  PasteHelper pasteHelper = new PasteHelper(getMainActivity(), op, copies);
+                  getMainActivity().setPaste(pasteHelper);
+                  mode.finish();
+                  return true;
+                }
+                case R.id.compress:
+                  ArrayList<HybridFileParcelable> copies1 = new ArrayList<>();
+                  for (int i4 = 0; i4 < checkedItems.size(); i4++) {
+                    copies1.add(checkedItems.get(i4).generateBaseFile());
+                  }
+                  GeneralDialogCreation.showCompressDialog(
+                          (MainActivity) getActivity(), copies1, CURRENT_PATH);
+                  mode.finish();
+                  return true;
+                case R.id.openwith:
+                  FileUtils.openFile(new File(checkedItems.get(0).desc), getMainActivity(), sharedPref);
+                  return true;
+                case R.id.addshortcut:
+                  addShortcut(checkedItems.get(0));
+                  mode.finish();
+                  return true;
+                default:
+                  return false;
+              }
+            }
+
+            // called when the user exits the action mode
+            public void onDestroyActionMode(ActionMode mode) {
+              mActionMode = null;
+              selection = false;
+
+              // translates the drawer content up
+              // if (getMainActivity().isDrawerLocked) getMainActivity().translateDrawerList(false);
+
+              getMainActivity().getFAB().show();
+              if (!results) adapter.toggleChecked(false, CURRENT_PATH);
+              else adapter.toggleChecked(false);
+              getMainActivity().setPagingEnabled(true);
+
+              getMainActivity()
+                      .updateViews(
+                              new ColorDrawable(MainActivity.currentTab == 1 ? primaryTwoColor : primaryColor));
+
+              if (getMainActivity().getDrawer().isLocked()) {
+                getMainActivity().getDrawer().unlockIfNotOnTablet();
+              }
+            }
+          };
 
   private BroadcastReceiver receiver2 =
-      new BroadcastReceiver() {
+          new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-          // load the list on a load broadcast
-          // local file system don't need an explicit load, we've set an observer to
-          // take actions on creation/moving/deletion/modification of file on current path
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              // load the list on a load broadcast
+              // local file system don't need an explicit load, we've set an observer to
+              // take actions on creation/moving/deletion/modification of file on current path
 
-          updateList();
-        }
-      };
+              updateList();
+            }
+          };
 
   private BroadcastReceiver decryptReceiver =
-      new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+          new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
 
-          if (isEncryptOpen && encryptBaseFile != null) {
-            FileUtils.openFile(encryptBaseFile.getFile(), getMainActivity(), sharedPref);
-            isEncryptOpen = false;
-          }
-        }
-      };
+              if (isEncryptOpen && encryptBaseFile != null) {
+                FileUtils.openFile(encryptBaseFile.getFile(), getMainActivity(), sharedPref);
+                isEncryptOpen = false;
+              }
+            }
+          };
 
   public void home() {
     ma.loadlist((ma.home), false, OpenMode.FILE);
@@ -848,13 +849,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
    * @param imageView the check {@link RoundedImageView} that is to be animated
    */
   public void onListItemClicked(
-      boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
+          boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
     if (results) {
       // check to initialize search results
       // if search task is been running, cancel it
       FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
       SearchWorkerFragment fragment =
-          (SearchWorkerFragment) fragmentManager.findFragmentByTag(MainActivity.TAG_ASYNC_HELPER);
+              (SearchWorkerFragment) fragmentManager.findFragmentByTag(MainActivity.TAG_ASYNC_HELPER);
       if (fragment != null) {
         if (fragment.searchAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
           fragment.searchAsyncTask.cancel(true);
@@ -897,23 +898,23 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
           isEncryptOpen = true;
 
           encryptBaseFile =
-              new HybridFileParcelable(
-                  getActivity().getExternalCacheDir().getPath()
-                      + "/"
-                      + e.generateBaseFile()
-                          .getName(getMainActivity())
-                          .replace(CryptUtil.CRYPT_EXTENSION, ""));
+                  new HybridFileParcelable(
+                          getActivity().getExternalCacheDir().getPath()
+                                  + "/"
+                                  + e.generateBaseFile()
+                                  .getName(getMainActivity())
+                                  .replace(CryptUtil.CRYPT_EXTENSION, ""));
           encryptBaseFiles.add(encryptBaseFile);
 
           EncryptDecryptUtils.decryptFile(
-              getContext(),
-              getMainActivity(),
-              ma,
-              openMode,
-              e.generateBaseFile(),
-              getActivity().getExternalCacheDir().getPath(),
-              utilsProvider,
-              true);
+                  getContext(),
+                  getMainActivity(),
+                  ma,
+                  openMode,
+                  e.generateBaseFile(),
+                  getActivity().getExternalCacheDir().getPath(),
+                  utilsProvider,
+                  true);
         } else {
           if (getMainActivity().mReturnIntent) {
             // are we here to return an intent to another app
@@ -928,14 +929,14 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         getContext(),
                         getResources().getString(R.string.please_wait),
                         Toast.LENGTH_LONG)
-                    .show();
+                        .show();
                 SshClientUtils.launchSftp(e.generateBaseFile(), getMainActivity());
                 break;
               case OTG:
                 FileUtils.openFile(
-                    OTGUtil.getDocumentFile(e.desc, getContext(), false),
-                    (MainActivity) getActivity(),
-                    sharedPref);
+                        OTGUtil.getDocumentFile(e.desc, getContext(), false),
+                        (MainActivity) getActivity(),
+                        sharedPref);
                 break;
               case DROPBOX:
               case BOX:
@@ -945,7 +946,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         getContext(),
                         getResources().getString(R.string.please_wait),
                         Toast.LENGTH_LONG)
-                    .show();
+                        .show();
                 CloudUtil.launchCloud(e.generateBaseFile(), openMode, getMainActivity());
                 break;
               default:
@@ -979,12 +980,12 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
       Uri mediaStoreUri = MediaStoreHack.getUriFromFile(baseFile.getPath(), getActivity());
       Log.d(
-          getClass().getSimpleName(),
-          mediaStoreUri.toString()
-              + "\t"
-              + MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
+              getClass().getSimpleName(),
+              mediaStoreUri.toString()
+                      + "\t"
+                      + MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
       intent.setDataAndType(
-          mediaStoreUri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
+              mediaStoreUri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
       intent.putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, mediaStoreUri);
       getActivity().setResult(FragmentActivity.RESULT_OK, intent);
       getActivity().finish();
@@ -1026,21 +1027,21 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     loadFilesListTask =
-        new LoadFilesListTask(
-            ma.getActivity(),
-            path,
-            ma,
-            openMode,
-            getBoolean(PREFERENCE_SHOW_THUMB),
-            getBoolean(PREFERENCE_SHOW_HIDDENFILES),
-            (data) -> {
-              if (data != null && data.second != null) {
-                boolean isPathLayoutGrid =
-                    dataUtils.getListOrGridForPath(path, DataUtils.LIST) == DataUtils.GRID;
-                setListElements(data.second, back, path, data.first, false, isPathLayoutGrid);
-                mSwipeRefreshLayout.setRefreshing(false);
-              }
-            });
+            new LoadFilesListTask(
+                    ma.getActivity(),
+                    path,
+                    ma,
+                    openMode,
+                    getBoolean(PREFERENCE_SHOW_THUMB),
+                    getBoolean(PREFERENCE_SHOW_HIDDENFILES),
+                    (data) -> {
+                      if (data != null && data.second != null) {
+                        boolean isPathLayoutGrid =
+                                dataUtils.getListOrGridForPath(path, DataUtils.LIST) == DataUtils.GRID;
+                        setListElements(data.second, back, path, data.first, false, isPathLayoutGrid);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                      }
+                    });
     loadFilesListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
   }
 
@@ -1048,13 +1049,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     nofilesview = rootView.findViewById(R.id.nofilelayout);
     nofilesview.setColorSchemeColors(accentColor);
     nofilesview.setOnRefreshListener(
-        () -> {
-          loadlist((CURRENT_PATH), false, openMode);
-          nofilesview.setRefreshing(false);
-        });
+            () -> {
+              loadlist((CURRENT_PATH), false, openMode);
+              nofilesview.setRefreshing(false);
+            });
     if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
       ((ImageView) nofilesview.findViewById(R.id.image))
-          .setColorFilter(Color.parseColor("#666666"));
+              .setColorFilter(Color.parseColor("#666666"));
     } else if (utilsProvider.getAppTheme().equals(AppTheme.BLACK)) {
       nofilesview.setBackgroundColor(Utils.getColor(getContext(), android.R.color.black));
       ((TextView) nofilesview.findViewById(R.id.nofiletext)).setTextColor(Color.WHITE);
@@ -1075,12 +1076,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
    * @param grid whether to set grid view or list view
    */
   public void setListElements(
-      ArrayList<LayoutElementParcelable> bitmap,
-      boolean back,
-      String path,
-      final OpenMode openMode,
-      boolean results,
-      boolean grid) {
+          ArrayList<LayoutElementParcelable> bitmap,
+          boolean back,
+          String path,
+          final OpenMode openMode,
+          boolean results,
+          boolean grid) {
+
     if (bitmap != null) {
       LIST_ELEMENTS = bitmap;
       CURRENT_PATH = path;
@@ -1094,23 +1096,24 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   }
 
   public void reloadListElements(boolean back, boolean results, boolean grid) {
+
     if (isAdded()) {
       this.results = results;
       boolean isOtg = CURRENT_PATH.equals(OTGUtil.PREFIX_OTG + "/"),
-          isOnTheCloud =
-              CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
-                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/")
-                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
-                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/");
+              isOnTheCloud =
+                      CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
+                              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/")
+                              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
+                              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/");
 
       if (getBoolean(PREFERENCE_SHOW_GOBACK_BUTTON)
-          && !CURRENT_PATH.equals("/")
-          && (openMode == OpenMode.FILE || openMode == OpenMode.ROOT)
-          && !isOtg
-          && !isOnTheCloud
-          && (LIST_ELEMENTS.size() == 0
+              && !CURRENT_PATH.equals("/")
+              && (openMode == OpenMode.FILE || openMode == OpenMode.ROOT)
+              && !isOtg
+              && !isOnTheCloud
+              && (LIST_ELEMENTS.size() == 0
               || !LIST_ELEMENTS.get(0).size.equals(getString(R.string.goback)))
-          && !results) {
+              && !results) {
         LIST_ELEMENTS.add(0, getBackElement());
       }
 
@@ -1129,14 +1132,14 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
       if (adapter == null) {
         adapter =
-            new RecyclerAdapter(
-                getMainActivity(),
-                ma,
-                utilsProvider,
-                sharedPref,
-                listView,
-                LIST_ELEMENTS,
-                ma.getActivity());
+                new RecyclerAdapter(
+                        getMainActivity(),
+                        ma,
+                        utilsProvider,
+                        sharedPref,
+                        listView,
+                        LIST_ELEMENTS,
+                        ma.getActivity());
       } else {
         adapter.setItems(listView, new ArrayList<>(LIST_ELEMENTS));
       }
@@ -1156,7 +1159,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
       if (addheader && IS_LIST) {
         dividerItemDecoration =
-            new DividerItemDecoration(getActivity(), true, getBoolean(PREFERENCE_SHOW_DIVIDERS));
+                new DividerItemDecoration(getActivity(), true, getBoolean(PREFERENCE_SHOW_DIVIDERS));
         listView.addItemDecoration(dividerItemDecoration);
         addheader = false;
       }
@@ -1175,16 +1178,16 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       listView.stopScroll();
       fastScroller.setRecyclerView(listView, IS_LIST ? 1 : columns);
       mToolbarContainer.addOnOffsetChangedListener(
-          (appBarLayout, verticalOffset) -> {
-            fastScroller.updateHandlePosition(verticalOffset, 112);
-          });
+              (appBarLayout, verticalOffset) -> {
+                fastScroller.updateHandlePosition(verticalOffset, 112);
+              });
       fastScroller.registerOnTouchListener(
-          () -> {
-            if (stopAnims && adapter != null) {
-              stopAnimation();
-              stopAnims = false;
-            }
-          });
+              () -> {
+                if (stopAnims && adapter != null) {
+                  stopAnimation();
+                  stopAnims = false;
+                }
+              });
 
       startFileObserver();
     } else {
@@ -1196,8 +1199,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   private LayoutElementParcelable getBackElement() {
     if (back == null) {
       back =
-          new LayoutElementParcelable(
-              getContext(), true, getString(R.string.goback), getBoolean(PREFERENCE_SHOW_THUMB));
+              new LayoutElementParcelable(
+                      getContext(), true, getString(R.string.goback), getBoolean(PREFERENCE_SHOW_THUMB));
     }
 
     return back;
@@ -1210,8 +1213,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   private void resumeDecryptOperations() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
       (getActivity())
-          .registerReceiver(
-              decryptReceiver, new IntentFilter(EncryptDecryptUtils.DECRYPT_BROADCAST));
+              .registerReceiver(
+                      decryptReceiver, new IntentFilter(EncryptDecryptUtils.DECRYPT_BROADCAST));
       if (!isEncryptOpen && !Utils.isNullOrEmpty(encryptBaseFiles)) {
         // we've opened the file and are ready to delete it
         new DeleteTask(getActivity()).execute(encryptBaseFiles);
@@ -1225,8 +1228,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       case ROOT:
       case FILE:
         if (customFileObserver != null
-            && !customFileObserver.wasStopped()
-            && customFileObserver.getPath().equals(getCurrentPath())) {
+                && !customFileObserver.wasStopped()
+                && customFileObserver.getPath().equals(getCurrentPath())) {
           return;
         }
 
@@ -1239,8 +1242,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
           }
 
           customFileObserver =
-              new CustomFileObserver(
-                  CURRENT_PATH, new FileHandler(this, listView, getBoolean(PREFERENCE_SHOW_THUMB)));
+                  new CustomFileObserver(
+                          CURRENT_PATH, new FileHandler(this, listView, getBoolean(PREFERENCE_SHOW_THUMB)));
           customFileObserver.startWatching();
         }
         break;
@@ -1256,51 +1259,51 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
    */
   public void rename(final HybridFileParcelable f) {
     MaterialDialog renameDialog =
-        GeneralDialogCreation.showNameDialog(
-            getMainActivity(),
-            "",
-            f.getName(getMainActivity()),
-            getResources().getString(R.string.rename),
-            getResources().getString(R.string.save),
-            null,
-            getResources().getString(R.string.cancel),
-            (dialog, which) -> {
-              EditText textfield = dialog.getCustomView().findViewById(R.id.singleedittext_input);
-              String name1 = textfield.getText().toString();
+            GeneralDialogCreation.showNameDialog(
+                    getMainActivity(),
+                    "",
+                    f.getName(getMainActivity()),
+                    getResources().getString(R.string.rename),
+                    getResources().getString(R.string.save),
+                    null,
+                    getResources().getString(R.string.cancel),
+                    (dialog, which) -> {
+                      EditText textfield = dialog.getCustomView().findViewById(R.id.singleedittext_input);
+                      String name1 = textfield.getText().toString();
 
-              getMainActivity()
-                  .mainActivityHelper
-                  .rename(
-                      openMode,
-                      f.getPath(),
-                      CURRENT_PATH + "/" + name1,
-                      getActivity(),
-                      getMainActivity().isRootExplorer());
-            },
-            (text) -> {
-              boolean isValidFilename = FileUtil.isValidFilename(text);
+                      getMainActivity()
+                              .mainActivityHelper
+                              .rename(
+                                      openMode,
+                                      f.getPath(),
+                                      CURRENT_PATH + "/" + name1,
+                                      getActivity(),
+                                      getMainActivity().isRootExplorer());
+                    },
+                    (text) -> {
+                      boolean isValidFilename = FileUtil.isValidFilename(text);
 
-              if (!isValidFilename) {
-                return new WarnableTextInputValidator.ReturnState(
-                    WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.invalid_name);
-              } else if (text.length() < 1) {
-                return new WarnableTextInputValidator.ReturnState(
-                    WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-              }
+                      if (!isValidFilename) {
+                        return new WarnableTextInputValidator.ReturnState(
+                                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.invalid_name);
+                      } else if (text.length() < 1) {
+                        return new WarnableTextInputValidator.ReturnState(
+                                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+                      }
 
-              return new WarnableTextInputValidator.ReturnState();
-            });
+                      return new WarnableTextInputValidator.ReturnState();
+                    });
 
     // place cursor at the starting of edit text by posting a runnable to edit text
     // this is done because in case android has not populated the edit text layouts yet, it'll
     // reset calls to selection if not posted in message queue
     EditText textfield = renameDialog.getCustomView().findViewById(R.id.singleedittext_input);
     textfield.post(
-        () -> {
-          if (!f.isDirectory()) {
-            textfield.setSelection(f.getNameString(getContext()).length());
-          }
-        });
+            () -> {
+              if (!f.isDirectory()) {
+                textfield.setSelection(f.getNameString(getContext()).length());
+              }
+            });
   }
 
   public void computeScroll() {
@@ -1344,12 +1347,12 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
               loadlist(home, false, OpenMode.FILE);
             else loadlist(currentFile.getParent(getContext()), true, openMode);
           } else if (CURRENT_PATH.equals("/")
-              || CURRENT_PATH.equals(home)
-              || CURRENT_PATH.equals(OTGUtil.PREFIX_OTG + "/")
-              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
-              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/")
-              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
-              || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/"))
+                  || CURRENT_PATH.equals(home)
+                  || CURRENT_PATH.equals(OTGUtil.PREFIX_OTG + "/")
+                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
+                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/")
+                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
+                  || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/"))
             getMainActivity().exit();
           else if (FileUtils.canGoBack(getContext(), currentFile)) {
             loadlist(currentFile.getParent(getContext()), true, openMode);
@@ -1363,7 +1366,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
           // starting the search query again :O
           getMainActivity().mainFragment =
-              (MainFragment) getMainActivity().getTabFragment().getCurrentTabFragment();
+                  (MainFragment) getMainActivity().getTabFragment().getCurrentTabFragment();
           FragmentManager fm = getMainActivity().getSupportFragmentManager();
 
           // getting parent path to resume search from there
@@ -1373,14 +1376,14 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
           CURRENT_PATH = parentPath;
 
           MainActivityHelper.addSearchFragment(
-              fm,
-              new SearchWorkerFragment(),
-              parentPath,
-              MainActivityHelper.SEARCH_TEXT,
-              openMode,
-              getMainActivity().isRootExplorer(),
-              sharedPref.getBoolean(SearchWorkerFragment.KEY_REGEX, false),
-              sharedPref.getBoolean(SearchWorkerFragment.KEY_REGEX_MATCHES, false));
+                  fm,
+                  new SearchWorkerFragment(),
+                  parentPath,
+                  MainActivityHelper.SEARCH_TEXT,
+                  openMode,
+                  getMainActivity().isRootExplorer(),
+                  sharedPref.getBoolean(SearchWorkerFragment.KEY_REGEX, false),
+                  sharedPref.getBoolean(SearchWorkerFragment.KEY_REGEX_MATCHES, false));
         } else loadlist(CURRENT_PATH, true, OpenMode.UNKNOWN);
 
         mRetainSearchTask = false;
@@ -1389,7 +1392,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       // to go back after search list have been popped
       FragmentManager fm = getActivity().getSupportFragmentManager();
       SearchWorkerFragment fragment =
-          (SearchWorkerFragment) fm.findFragmentByTag(MainActivity.TAG_ASYNC_HELPER);
+              (SearchWorkerFragment) fm.findFragmentByTag(MainActivity.TAG_ASYNC_HELPER);
       if (fragment != null) {
         if (fragment.searchAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
           fragment.searchAsyncTask.cancel(true);
@@ -1404,14 +1407,14 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     if (smbPath != null) {
       try {
         getMainActivity()
-            .runOnUiThread(
-                () -> {
-                  int i;
-                  if ((i = dataUtils.containsServer(smbPath)) != -1) {
-                    getMainActivity()
-                        .showSMBDialog(dataUtils.getServers().get(i)[0], smbPath, true);
-                  }
-                });
+                .runOnUiThread(
+                        () -> {
+                          int i;
+                          if ((i = dataUtils.containsServer(smbPath)) != -1) {
+                            getMainActivity()
+                                    .showSMBDialog(dataUtils.getServers().get(i)[0], smbPath, true);
+                          }
+                        });
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -1438,11 +1441,11 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             e.printStackTrace();
           }
         } else if (CURRENT_PATH.equals("/")
-            || CURRENT_PATH.equals(OTGUtil.PREFIX_OTG)
-            || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
-            || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/")
-            || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
-            || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/")) {
+                || CURRENT_PATH.equals(OTGUtil.PREFIX_OTG)
+                || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_BOX + "/")
+                || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_DROPBOX + "/")
+                || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_GOOGLE_DRIVE + "/")
+                || CURRENT_PATH.equals(CloudHandler.CLOUD_PREFIX_ONE_DRIVE + "/")) {
           getMainActivity().exit();
         } else if (FileUtils.canGoBack(getContext(), currentFile)) {
           loadlist(currentFile.getParent(getContext()), true, openMode);
@@ -1482,9 +1485,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   public void onResume() {
     super.onResume();
     (getActivity())
-        .registerReceiver(receiver2, new IntentFilter(MainActivity.KEY_INTENT_LOAD_LIST));
+            .registerReceiver(receiver2, new IntentFilter(MainActivity.KEY_INTENT_LOAD_LIST));
 
-    getMainActivity().getDrawer().selectCorrectDrawerItemForPath(getPath());
     resumeDecryptOperations();
     startFileObserver();
   }
@@ -1503,7 +1505,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
   }
 
   public ArrayList<LayoutElementParcelable> addToSmb(
-      SmbFile[] mFile, String path, boolean showHiddenFiles) throws SmbException {
+          SmbFile[] mFile, String path, boolean showHiddenFiles) throws SmbException {
     ArrayList<LayoutElementParcelable> smbFileList = new ArrayList<>();
     if (searchHelper.size() > 500) searchHelper.clear();
     for (SmbFile aMFile : mFile) {
@@ -1512,9 +1514,9 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       }
       String name = aMFile.getName();
       name =
-          (aMFile.isDirectory() && name.endsWith("/"))
-              ? name.substring(0, name.length() - 1)
-              : name;
+              (aMFile.isDirectory() && name.endsWith("/"))
+                      ? name.substring(0, name.length() - 1)
+                      : name;
       if (path.equals(smbPath)) {
         if (name.endsWith("$")) continue;
       }
@@ -1522,19 +1524,19 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         folder_count++;
 
         LayoutElementParcelable layoutElement =
-            new LayoutElementParcelable(
-                getContext(),
-                name,
-                aMFile.getPath(),
-                "",
-                "",
-                "",
-                0,
-                false,
-                aMFile.lastModified() + "",
-                true,
-                getBoolean(PREFERENCE_SHOW_THUMB),
-                OpenMode.SMB);
+                new LayoutElementParcelable(
+                        getContext(),
+                        name,
+                        aMFile.getPath(),
+                        "",
+                        "",
+                        "",
+                        0,
+                        false,
+                        aMFile.lastModified() + "",
+                        true,
+                        getBoolean(PREFERENCE_SHOW_THUMB),
+                        OpenMode.SMB);
 
         searchHelper.add(layoutElement.generateBaseFile());
         smbFileList.add(layoutElement);
@@ -1542,19 +1544,19 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       } else {
         file_count++;
         LayoutElementParcelable layoutElement =
-            new LayoutElementParcelable(
-                getContext(),
-                name,
-                aMFile.getPath(),
-                "",
-                "",
-                Formatter.formatFileSize(getContext(), aMFile.length()),
-                aMFile.length(),
-                false,
-                aMFile.lastModified() + "",
-                false,
-                getBoolean(PREFERENCE_SHOW_THUMB),
-                OpenMode.SMB);
+                new LayoutElementParcelable(
+                        getContext(),
+                        name,
+                        aMFile.getPath(),
+                        "",
+                        "",
+                        Formatter.formatFileSize(getContext(), aMFile.length()),
+                        aMFile.length(),
+                        false,
+                        aMFile.lastModified() + "",
+                        false,
+                        getBoolean(PREFERENCE_SHOW_THUMB),
+                        OpenMode.SMB);
         layoutElement.setMode(OpenMode.SMB);
         searchHelper.add(layoutElement.generateBaseFile());
         smbFileList.add(layoutElement);
@@ -1571,18 +1573,18 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       if (mFile.isDirectory()) {
         size = "";
         LayoutElementParcelable layoutElement =
-            new LayoutElementParcelable(
-                getContext(),
-                f.getPath(),
-                mFile.getPermission(),
-                mFile.getLink(),
-                size,
-                0,
-                true,
-                mFile.getDate() + "",
-                true,
-                getBoolean(PREFERENCE_SHOW_THUMB),
-                mFile.getMode());
+                new LayoutElementParcelable(
+                        getContext(),
+                        f.getPath(),
+                        mFile.getPermission(),
+                        mFile.getLink(),
+                        size,
+                        0,
+                        true,
+                        mFile.getDate() + "",
+                        true,
+                        getBoolean(PREFERENCE_SHOW_THUMB),
+                        mFile.getMode());
 
         LIST_ELEMENTS.add(layoutElement);
         folder_count++;
@@ -1602,18 +1604,18 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         }
         try {
           LayoutElementParcelable layoutElement =
-              new LayoutElementParcelable(
-                  getContext(),
-                  f.getPath(),
-                  mFile.getPermission(),
-                  mFile.getLink(),
-                  size,
-                  longSize,
-                  false,
-                  mFile.getDate() + "",
-                  false,
-                  getBoolean(PREFERENCE_SHOW_THUMB),
-                  mFile.getMode());
+                  new LayoutElementParcelable(
+                          getContext(),
+                          f.getPath(),
+                          mFile.getPermission(),
+                          mFile.getLink(),
+                          size,
+                          longSize,
+                          false,
+                          mFile.getDate() + "",
+                          false,
+                          getBoolean(PREFERENCE_SHOW_THUMB),
+                          mFile.getMode());
           LIST_ELEMENTS.add(layoutElement);
           file_count++;
           return layoutElement;
@@ -1643,8 +1645,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       if (!f1.exists()) {
         try {
           getMainActivity()
-              .mainActivityHelper
-              .mkFile(new HybridFile(OpenMode.FILE, f1.getPath()), this);
+                  .mainActivityHelper
+                  .mkFile(new HybridFile(OpenMode.FILE, f1.getPath()), this);
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -1667,7 +1669,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
               getActivity(),
               getString(R.string.add_shortcut_not_supported_by_launcher),
               Toast.LENGTH_SHORT)
-          .show();
+              .show();
       return;
     }
 
@@ -1678,13 +1680,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     // Using file path as shortcut id.
     ShortcutInfoCompat info =
-        new ShortcutInfoCompat.Builder(ctx, path.desc)
-            .setActivity(getMainActivity().getComponentName())
-            .setIcon(IconCompat.createWithResource(ctx, R.mipmap.ic_launcher))
-            .setIntent(shortcutIntent)
-            .setLongLabel(path.desc)
-            .setShortLabel(new File(path.desc).getName())
-            .build();
+            new ShortcutInfoCompat.Builder(ctx, path.desc)
+                    .setActivity(getMainActivity().getComponentName())
+                    .setIcon(IconCompat.createWithResource(ctx, R.mipmap.ic_launcher))
+                    .setIntent(shortcutIntent)
+                    .setLongLabel(path.desc)
+                    .setShortLabel(new File(path.desc).getName())
+                    .build();
 
     ShortcutManagerCompat.requestPinShortcut(ctx, info, null);
   }
@@ -1716,9 +1718,9 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         reloadListElements(false, true, !IS_LIST);
         getMainActivity().getAppbar().getBottomBar().setPathText("");
         getMainActivity()
-            .getAppbar()
-            .getBottomBar()
-            .setFullPathText(getString(R.string.searching, query));
+                .getAppbar()
+                .getBottomBar()
+                .setFullPathText(getString(R.string.searching, query));
       } else {
         adapter.addItem(layoutElementAdded);
       }
@@ -1741,13 +1743,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
       @Override
       public void onPostExecute(Void c) {
         reloadListElements(
-            true, true, !IS_LIST); // TODO: 7/7/2017 this is really inneffient, use RecycleAdapter's
-//         createHeaders();
+                true, true, !IS_LIST); // TODO: 7/7/2017 this is really inneffient, use RecycleAdapter's
+        // createHeaders()
         getMainActivity().getAppbar().getBottomBar().setPathText("");
         getMainActivity()
-            .getAppbar()
-            .getBottomBar()
-            .setFullPathText(getString(R.string.search_results, query));
+                .getAppbar()
+                .getBottomBar()
+                .setFullPathText(getString(R.string.search_results, query));
       }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
   }
@@ -1759,7 +1761,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         try {
           /*
           List<SmbFile> subtitleFiles = new ArrayList<SmbFile>();
-
           // finding subtitles
           for (Layoutelements layoutelement : LIST_ELEMENTS) {
               SmbFile smbFile = new SmbFile(layoutelement.getDesc());
@@ -1769,29 +1770,29 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
           s.setStreamSrc(new SmbFile(baseFile.getPath()), baseFile.getSize());
           activity.runOnUiThread(
-              () -> {
-                try {
-                  Uri uri =
-                      Uri.parse(
-                          Streamer.URL
-                              + Uri.fromFile(new File(Uri.parse(baseFile.getPath()).getPath()))
-                                  .getEncodedPath());
-                  Intent i = new Intent(Intent.ACTION_VIEW);
-                  i.setDataAndType(
-                      uri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
-                  PackageManager packageManager = activity.getPackageManager();
-                  List<ResolveInfo> resInfos = packageManager.queryIntentActivities(i, 0);
-                  if (resInfos != null && resInfos.size() > 0) activity.startActivity(i);
-                  else
-                    Toast.makeText(
-                            activity,
-                            activity.getResources().getString(R.string.smb_launch_error),
-                            Toast.LENGTH_SHORT)
-                        .show();
-                } catch (ActivityNotFoundException e) {
-                  e.printStackTrace();
-                }
-              });
+                  () -> {
+                    try {
+                      Uri uri =
+                              Uri.parse(
+                                      Streamer.URL
+                                              + Uri.fromFile(new File(Uri.parse(baseFile.getPath()).getPath()))
+                                              .getEncodedPath());
+                      Intent i = new Intent(Intent.ACTION_VIEW);
+                      i.setDataAndType(
+                              uri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
+                      PackageManager packageManager = activity.getPackageManager();
+                      List<ResolveInfo> resInfos = packageManager.queryIntentActivities(i, 0);
+                      if (resInfos != null && resInfos.size() > 0) activity.startActivity(i);
+                      else
+                        Toast.makeText(
+                                activity,
+                                activity.getResources().getString(R.string.smb_launch_error),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (ActivityNotFoundException e) {
+                      e.printStackTrace();
+                    }
+                  });
 
         } catch (Exception e) {
           e.printStackTrace();

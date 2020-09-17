@@ -49,6 +49,9 @@ import androidx.annotation.NonNull;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.sftp.FileAttributes;
+import net.schmizz.sshj.sftp.FileMode;
+import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
 
 public abstract class SshClientUtils {
@@ -90,28 +93,28 @@ public abstract class SshClientUtils {
    */
   public static final <T> T execute(@NonNull final SshClientSessionTemplate template) {
     return execute(
-        new SshClientTemplate(template.url, false) {
-          @Override
-          public T execute(SSHClient client) {
-            Session session = null;
-            T retval = null;
-            try {
-              session = client.startSession();
-              retval = template.execute(session);
-            } catch (IOException e) {
-              Log.e(TAG, "Error executing template method", e);
-            } finally {
-              if (session != null && session.isOpen()) {
+            new SshClientTemplate(template.url, false) {
+              @Override
+              public T execute(SSHClient client) {
+                Session session = null;
+                T retval = null;
                 try {
-                  session.close();
+                  session = client.startSession();
+                  retval = template.execute(session);
                 } catch (IOException e) {
-                  Log.w(TAG, "Error closing SFTP client", e);
+                  Log.e(TAG, "Error executing template method", e);
+                } finally {
+                  if (session != null && session.isOpen()) {
+                    try {
+                      session.close();
+                    } catch (IOException e) {
+                      Log.w(TAG, "Error closing SFTP client", e);
+                    }
+                  }
                 }
+                return retval;
               }
-            }
-            return retval;
-          }
-        });
+            });
   }
 
   /**
@@ -123,28 +126,28 @@ public abstract class SshClientUtils {
    */
   public static final <T> T execute(@NonNull final SFtpClientTemplate template) {
     return execute(
-        new SshClientTemplate(template.url, false) {
-          @Override
-          public T execute(SSHClient client) {
-            SFTPClient sftpClient = null;
-            T retval = null;
-            try {
-              sftpClient = client.newSFTPClient();
-              retval = template.execute(sftpClient);
-            } catch (IOException e) {
-              Log.e(TAG, "Error executing template method", e);
-            } finally {
-              if (sftpClient != null && template.closeClientOnFinish) {
+            new SshClientTemplate(template.url, false) {
+              @Override
+              public T execute(SSHClient client) {
+                SFTPClient sftpClient = null;
+                T retval = null;
                 try {
-                  sftpClient.close();
+                  sftpClient = client.newSFTPClient();
+                  retval = template.execute(sftpClient);
                 } catch (IOException e) {
-                  Log.w(TAG, "Error closing SFTP client", e);
+                  Log.e(TAG, "Error executing template method", e);
+                } finally {
+                  if (sftpClient != null && template.closeClientOnFinish) {
+                    try {
+                      sftpClient.close();
+                    } catch (IOException e) {
+                      Log.w(TAG, "Error closing SFTP client", e);
+                    }
+                  }
                 }
+                return retval;
               }
-            }
-            return retval;
-          }
-        });
+            });
   }
 
   /**
@@ -156,11 +159,11 @@ public abstract class SshClientUtils {
    */
   public static final String encryptSshPathAsNecessary(@NonNull String fullUri) {
     String uriWithoutProtocol =
-        fullUri.substring(SSH_URI_PREFIX.length(), fullUri.lastIndexOf('@'));
+            fullUri.substring(SSH_URI_PREFIX.length(), fullUri.lastIndexOf('@'));
     try {
       return (uriWithoutProtocol.lastIndexOf(':') > 0)
-          ? SmbUtil.getSmbEncryptedPath(AppConfig.getInstance(), fullUri)
-          : fullUri;
+              ? SmbUtil.getSmbEncryptedPath(AppConfig.getInstance(), fullUri)
+              : fullUri;
     } catch (IOException | GeneralSecurityException e) {
       Log.e(TAG, "Error encrypting path", e);
       return fullUri;
@@ -176,11 +179,11 @@ public abstract class SshClientUtils {
    */
   public static final String decryptSshPathAsNecessary(@NonNull String fullUri) {
     String uriWithoutProtocol =
-        fullUri.substring(SSH_URI_PREFIX.length(), fullUri.lastIndexOf('@'));
+            fullUri.substring(SSH_URI_PREFIX.length(), fullUri.lastIndexOf('@'));
     try {
       return (uriWithoutProtocol.lastIndexOf(':') > 0)
-          ? SmbUtil.getSmbDecryptedPath(AppConfig.getInstance(), fullUri)
-          : fullUri;
+              ? SmbUtil.getSmbDecryptedPath(AppConfig.getInstance(), fullUri)
+              : fullUri;
     } catch (IOException | GeneralSecurityException e) {
       Log.e(TAG, "Error decrypting path", e);
       return fullUri;
@@ -199,8 +202,8 @@ public abstract class SshClientUtils {
   public static final String extractBaseUriFrom(@NonNull String fullUri) {
     String uriWithoutProtocol = fullUri.substring(SSH_URI_PREFIX.length());
     return uriWithoutProtocol.indexOf('/') == -1
-        ? fullUri
-        : fullUri.substring(0, uriWithoutProtocol.indexOf('/') + SSH_URI_PREFIX.length());
+            ? fullUri
+            : fullUri.substring(0, uriWithoutProtocol.indexOf('/') + SSH_URI_PREFIX.length());
   }
 
   /**
@@ -215,8 +218,8 @@ public abstract class SshClientUtils {
   public static final String extractRemotePathFrom(@NonNull String fullUri) {
     String uriWithoutProtocol = fullUri.substring(SSH_URI_PREFIX.length());
     return uriWithoutProtocol.indexOf('/') == -1
-        ? "/"
-        : uriWithoutProtocol.substring(uriWithoutProtocol.indexOf('/'));
+            ? "/"
+            : uriWithoutProtocol.substring(uriWithoutProtocol.indexOf('/'));
   }
 
   /**
@@ -242,45 +245,60 @@ public abstract class SshClientUtils {
             () -> {
               try {
                 streamer.setStreamSrc(
-                    baseFile.getInputStream(activity),
-                    baseFile.getName(activity),
-                    baseFile.length(activity));
+                        baseFile.getInputStream(activity),
+                        baseFile.getName(activity),
+                        baseFile.length(activity));
                 activity.runOnUiThread(
-                    () -> {
-                      try {
-                        File file =
-                            new File(SshClientUtils.extractRemotePathFrom(baseFile.getPath()));
-                        Uri uri =
-                            Uri.parse(CloudStreamer.URL + Uri.fromFile(file).getEncodedPath());
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setDataAndType(
-                            uri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
-                        PackageManager packageManager = activity.getPackageManager();
-                        List<ResolveInfo> resInfos = packageManager.queryIntentActivities(i, 0);
-                        if (resInfos != null && resInfos.size() > 0) activity.startActivity(i);
-                        else
-                          Toast.makeText(
-                                  activity,
-                                  activity.getResources().getString(R.string.smb_launch_error),
-                                  Toast.LENGTH_SHORT)
-                              .show();
-                      } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                      }
-                    });
+                        () -> {
+                          try {
+                            File file =
+                                    new File(SshClientUtils.extractRemotePathFrom(baseFile.getPath()));
+                            Uri uri =
+                                    Uri.parse(CloudStreamer.URL + Uri.fromFile(file).getEncodedPath());
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setDataAndType(
+                                    uri, MimeTypes.getMimeType(baseFile.getPath(), baseFile.isDirectory()));
+                            PackageManager packageManager = activity.getPackageManager();
+                            List<ResolveInfo> resInfos = packageManager.queryIntentActivities(i, 0);
+                            if (resInfos != null && resInfos.size() > 0) activity.startActivity(i);
+                            else
+                              Toast.makeText(
+                                      activity,
+                                      activity.getResources().getString(R.string.smb_launch_error),
+                                      Toast.LENGTH_SHORT)
+                                      .show();
+                          } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                          }
+                        });
               } catch (Exception e) {
 
                 e.printStackTrace();
               }
             })
-        .start();
+            .start();
   }
 
   // Decide the SSH URL depends on password/selected KeyPair
   public static String deriveSftpPathFrom(
-      String hostname, int port, String username, String password, KeyPair selectedParsedKeyPair) {
+          String hostname, int port, String username, String password, KeyPair selectedParsedKeyPair) {
     return (selectedParsedKeyPair != null || password == null)
-        ? String.format("ssh://%s@%s:%d", username, hostname, port)
-        : String.format("ssh://%s:%s@%s:%d", username, password, hostname, port);
+            ? String.format("ssh://%s@%s:%d", username, hostname, port)
+            : String.format("ssh://%s:%s@%s:%d", username, password, hostname, port);
+  }
+
+  public static boolean isDirectory(@NonNull SFTPClient client, @NonNull RemoteResourceInfo info)
+          throws IOException {
+    boolean isDirectory = info.isDirectory();
+    if (info.getAttributes().getType().equals(FileMode.Type.SYMLINK)) {
+      try {
+        FileAttributes symlinkAttrs = client.stat(info.getPath());
+        isDirectory = symlinkAttrs.getType().equals(FileMode.Type.DIRECTORY);
+      } catch (IOException ifSymlinkIsBroken) {
+        Log.w(TAG, String.format("Symbolic link %s is broken, skipping", info.getPath()));
+        throw ifSymlinkIsBroken;
+      }
+    }
+    return isDirectory;
   }
 }

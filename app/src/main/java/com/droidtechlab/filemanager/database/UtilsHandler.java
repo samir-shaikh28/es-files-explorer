@@ -58,6 +58,8 @@ import androidx.annotation.NonNull;
  */
 public class UtilsHandler {
 
+  private static final String TAG = UtilsHandler.class.getSimpleName();
+
   private final Context context;
 
   private final UtilitiesDatabase utilitiesDatabase;
@@ -79,92 +81,92 @@ public class UtilsHandler {
 
   public void saveToDatabase(OperationData operationData) {
     AppConfig.runInBackground(
-        () -> {
-          switch (operationData.type) {
-            case HIDDEN:
-              utilitiesDatabase.hiddenEntryDao().insert(new Hidden(operationData.path));
-              break;
-            case HISTORY:
-              utilitiesDatabase.historyEntryDao().insert(new History(operationData.path));
-              break;
-            case LIST:
-              utilitiesDatabase
-                  .listEntryDao()
-                  .insert(
-                      new com.droidtechlab.filemanager.database.models.utilities.List(operationData.path));
-              break;
-            case GRID:
-              utilitiesDatabase.gridEntryDao().insert(new Grid(operationData.path));
-              break;
-            case BOOKMARKS:
-              utilitiesDatabase
-                  .bookmarkEntryDao()
-                  .insert(new Bookmark(operationData.name, operationData.path));
-              break;
-            case SMB:
-              utilitiesDatabase
-                  .smbEntryDao()
-                  .insert(new SmbEntry(operationData.name, operationData.path));
-              break;
-            case SFTP:
-              utilitiesDatabase
-                  .sftpEntryDao()
-                  .insert(
-                      new SftpEntry(
-                          operationData.path,
-                          operationData.name,
-                          operationData.hostKey,
-                          operationData.sshKeyName,
-                          operationData.sshKey));
-              break;
-            default:
-              throw new IllegalStateException("Unidentified operation!");
-          }
-        });
+            () -> {
+              switch (operationData.type) {
+                case HIDDEN:
+                  utilitiesDatabase.hiddenEntryDao().insert(new Hidden(operationData.path));
+                  break;
+                case HISTORY:
+                  utilitiesDatabase.historyEntryDao().insert(new History(operationData.path));
+                  break;
+                case LIST:
+                  utilitiesDatabase
+                          .listEntryDao()
+                          .insert(
+                                  new com.droidtechlab.filemanager.database.models.utilities.List(operationData.path));
+                  break;
+                case GRID:
+                  utilitiesDatabase.gridEntryDao().insert(new Grid(operationData.path));
+                  break;
+                case BOOKMARKS:
+                  utilitiesDatabase
+                          .bookmarkEntryDao()
+                          .insert(new Bookmark(operationData.name, operationData.path));
+                  break;
+                case SMB:
+                  utilitiesDatabase
+                          .smbEntryDao()
+                          .insert(new SmbEntry(operationData.name, operationData.path));
+                  break;
+                case SFTP:
+                  utilitiesDatabase
+                          .sftpEntryDao()
+                          .insert(
+                                  new SftpEntry(
+                                          operationData.path,
+                                          operationData.name,
+                                          operationData.hostKey,
+                                          operationData.sshKeyName,
+                                          operationData.sshKey));
+                  break;
+                default:
+                  throw new IllegalStateException("Unidentified operation!");
+              }
+            });
   }
 
   public void removeFromDatabase(OperationData operationData) {
     AppConfig.runInBackground(
-        () -> {
-          switch (operationData.type) {
-            case HIDDEN:
-              utilitiesDatabase.hiddenEntryDao().deleteByPath(operationData.path);
-              break;
-            case HISTORY:
-              utilitiesDatabase.historyEntryDao().deleteByPath(operationData.path);
-              break;
-            case LIST:
-              utilitiesDatabase.listEntryDao().deleteByPath(operationData.path);
-              break;
-            case GRID:
-              utilitiesDatabase.gridEntryDao().deleteByPath(operationData.path);
-              break;
-            case BOOKMARKS:
-              removeBookmarksPath(operationData.name, operationData.path);
-              break;
-            case SMB:
-              removeSmbPath(operationData.name, operationData.path);
-              break;
-            case SFTP:
-              removeSftpPath(operationData.name, operationData.path);
-              break;
-            default:
-              throw new IllegalStateException("Unidentified operation!");
-          }
-        });
+            () -> {
+              switch (operationData.type) {
+                case HIDDEN:
+                  utilitiesDatabase.hiddenEntryDao().deleteByPath(operationData.path);
+                  break;
+                case HISTORY:
+                  utilitiesDatabase.historyEntryDao().deleteByPath(operationData.path);
+                  break;
+                case LIST:
+                  utilitiesDatabase.listEntryDao().deleteByPath(operationData.path);
+                  break;
+                case GRID:
+                  utilitiesDatabase.gridEntryDao().deleteByPath(operationData.path);
+                  break;
+                case BOOKMARKS:
+                  removeBookmarksPath(operationData.name, operationData.path);
+                  break;
+                case SMB:
+                  removeSmbPath(operationData.name, operationData.path);
+                  break;
+                case SFTP:
+                  removeSftpPath(operationData.name, operationData.path);
+                  break;
+                default:
+                  throw new IllegalStateException("Unidentified operation!");
+              }
+            });
   }
 
   public void addCommonBookmarks() {
-    String sd = Environment.getExternalStorageDirectory() + "/";
+    File sd = Environment.getExternalStorageDirectory();
 
     String[] dirs =
-        new String[] {
-          sd + Environment.DIRECTORY_DCIM,
-          sd + Environment.DIRECTORY_DOWNLOADS,
-          sd + Environment.DIRECTORY_MOVIES,
-          sd + Environment.DIRECTORY_MUSIC,
-          sd + Environment.DIRECTORY_PICTURES
-        };
+            new String[] {
+                    new File(sd, Environment.DIRECTORY_DCIM).getAbsolutePath(),
+                    new File(sd, Environment.DIRECTORY_DOWNLOADS).getAbsolutePath(),
+                    new File(sd, Environment.DIRECTORY_MOVIES).getAbsolutePath(),
+                    new File(sd, Environment.DIRECTORY_MUSIC).getAbsolutePath(),
+                    new File(sd, Environment.DIRECTORY_PICTURES).getAbsolutePath()
+            };
 
     for (String dir : dirs) {
       saveToDatabase(new OperationData(Operation.BOOKMARKS, new File(dir).getName(), dir));
@@ -172,12 +174,12 @@ public class UtilsHandler {
   }
 
   public void updateSsh(
-      String connectionName,
-      String oldConnectionName,
-      String path,
-      String hostKey,
-      String sshKeyName,
-      String sshKey) {
+          String connectionName,
+          String oldConnectionName,
+          String path,
+          String hostKey,
+          String sshKeyName,
+          String sshKey) {
 
     SftpEntry entry = utilitiesDatabase.sftpEntryDao().findByName(oldConnectionName);
 
@@ -203,7 +205,7 @@ public class UtilsHandler {
 
   public ConcurrentRadixTree<VoidValue> getHiddenFilesConcurrentRadixTree() {
     ConcurrentRadixTree<VoidValue> paths =
-        new ConcurrentRadixTree<>(new DefaultCharArrayNodeFactory());
+            new ConcurrentRadixTree<>(new DefaultCharArrayNodeFactory());
 
     for (String path : utilitiesDatabase.hiddenEntryDao().listPaths()) {
       paths.put(path, VoidValue.SINGLETON);
@@ -241,7 +243,7 @@ public class UtilsHandler {
         // failing to decrypt the path, removing entry from database
         Toast.makeText(
                 context, context.getString(R.string.failed_smb_decrypt_path), Toast.LENGTH_LONG)
-            .show();
+                .show();
         removeSmbPath(entry.name, "");
         continue;
       }
@@ -259,7 +261,7 @@ public class UtilsHandler {
         // failing to decrypt the path, removing entry from database
         Toast.makeText(
                 context, context.getString(R.string.failed_smb_decrypt_path), Toast.LENGTH_LONG)
-            .show();
+                .show();
       } else {
         retval.add(new String[] {entry.name, path});
       }
@@ -313,6 +315,13 @@ public class UtilsHandler {
   }
 
   public void renameSMB(String oldName, String oldPath, String newName, String newPath) {
+    try {
+      oldPath = SmbUtil.getSmbEncryptedPath(AppConfig.getInstance(), oldPath);
+      newPath = SmbUtil.getSmbEncryptedPath(AppConfig.getInstance(), newPath);
+    } catch (GeneralSecurityException | IOException e) {
+      Log.e(TAG, "Error encrypting SMB path", e);
+    }
+
     SmbEntry smbEntry = utilitiesDatabase.smbEntryDao().findByNameAndPath(oldName, oldPath);
     smbEntry.name = newName;
     smbEntry.path = newPath;
@@ -322,14 +331,14 @@ public class UtilsHandler {
 
   public void clearTable(Operation table) {
     AppConfig.runInBackground(
-        () -> {
-          switch (table) {
-            case HISTORY:
-              utilitiesDatabase.historyEntryDao().clear();
-              break;
-            default:
-              break;
-          }
-        });
+            () -> {
+              switch (table) {
+                case HISTORY:
+                  utilitiesDatabase.historyEntryDao().clear();
+                  break;
+                default:
+                  break;
+              }
+            });
   }
 }

@@ -42,17 +42,17 @@ public class DbViewerTask extends AsyncTask<Void, Integer, Void> {
   String htmlInit;
 
   public DbViewerTask(
-      Cursor schemaCursor,
-      Cursor contentCursor,
-      WebView webView,
-      DbViewerFragment dbViewerFragment) {
+          Cursor schemaCursor,
+          Cursor contentCursor,
+          WebView webView,
+          DbViewerFragment dbViewerFragment) {
     this.schemaCursor = schemaCursor;
     this.contentCursor = contentCursor;
     this.webView = webView;
     this.dbViewerFragment = dbViewerFragment;
     stringBuilder = new StringBuilder();
 
-    webView.getSettings().setDefaultTextEncodingName("utf-8");
+    this.webView.getSettings().setDefaultTextEncodingName("utf-8");
   }
 
   @Override
@@ -60,12 +60,12 @@ public class DbViewerTask extends AsyncTask<Void, Integer, Void> {
     super.onPreExecute();
 
     if (dbViewerFragment.databaseViewerActivity.getAppTheme().equals(AppTheme.DARK)
-        || dbViewerFragment.databaseViewerActivity.getAppTheme().equals(AppTheme.BLACK)) {
+            || dbViewerFragment.databaseViewerActivity.getAppTheme().equals(AppTheme.BLACK)) {
 
-      htmlInit = "<html><body>" + "<table border='1' style='width:100%;color:#ffffff'>";
+      htmlInit = "<html><body><table border='1' style='width:100%;color:#ffffff'>";
     } else {
 
-      htmlInit = "<html><body>" + "<table border='1' style='width:100%;color:#000000'>";
+      htmlInit = "<html><body><table border='1' style='width:100%;color:#000000'>";
     }
     stringBuilder.append(htmlInit);
     dbViewerFragment.loadingText.setVisibility(View.VISIBLE);

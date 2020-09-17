@@ -27,6 +27,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import androidx.annotation.NonNull;
+
 /**
  * This is a special representation of a file that is to be used so that uris can be loaded as
  * editable files.
@@ -35,25 +37,27 @@ import android.provider.OpenableColumns;
  */
 public class EditableFileAbstraction {
 
-  public static final int SCHEME_CONTENT = 0;
-  public static final int SCHEME_FILE = 1;
+  public enum Scheme {
+    CONTENT,
+    FILE
+  }
 
   public final Uri uri;
   public final String name;
-  public final int scheme;
+  public final Scheme scheme;
   public final HybridFileParcelable hybridFileParcelable;
 
-  public EditableFileAbstraction(Context context, Uri uri) {
+  public EditableFileAbstraction(@NonNull Context context, @NonNull Uri uri) {
     switch (uri.getScheme()) {
       case "content":
         this.uri = uri;
-        this.scheme = SCHEME_CONTENT;
+        this.scheme = Scheme.CONTENT;
 
         String tempName = null;
         Cursor c =
-            context
-                .getContentResolver()
-                .query(uri, new String[] {OpenableColumns.DISPLAY_NAME}, null, null, null);
+                context
+                        .getContentResolver()
+                        .query(uri, new String[] {OpenableColumns.DISPLAY_NAME}, null, null, null);
 
         if (c != null) {
           c.moveToFirst();
@@ -79,7 +83,7 @@ public class EditableFileAbstraction {
         this.hybridFileParcelable = null;
         break;
       case "file":
-        this.scheme = SCHEME_FILE;
+        this.scheme = Scheme.FILE;
 
         String path = uri.getPath();
         if (path == null)
@@ -95,7 +99,7 @@ public class EditableFileAbstraction {
         break;
       default:
         throw new IllegalArgumentException(
-            "The scheme '" + uri.getScheme() + "' cannot be processed!");
+                "The scheme '" + uri.getScheme() + "' cannot be processed!");
     }
   }
 }

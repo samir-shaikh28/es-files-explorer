@@ -60,7 +60,7 @@ public class MediaStoreHack {
   private static final String ALBUM_ART_URI = "content://media/external/audio/albumart";
 
   private static final String[] ALBUM_PROJECTION = {
-    BaseColumns._ID, MediaStore.Audio.AlbumColumns.ALBUM_ID, "media_type"
+          BaseColumns._ID, MediaStore.Audio.AlbumColumns.ALBUM_ID, "media_type"
   };
 
   /**
@@ -90,7 +90,7 @@ public class MediaStoreHack {
   }
 
   public static InputStream getInputStream(
-      final Context context, final File file, final long size) {
+          final Context context, final File file, final long size) {
     try {
       final String where = MediaStore.MediaColumns.DATA + "=?";
       final String[] selectionArgs = new String[] {file.getAbsolutePath()};
@@ -123,12 +123,12 @@ public class MediaStoreHack {
     ContentResolver resolver = context.getContentResolver();
 
     Cursor filecursor =
-        resolver.query(
-            MediaStore.Files.getContentUri("external"),
-            new String[] {BaseColumns._ID},
-            MediaStore.MediaColumns.DATA + " = ?",
-            new String[] {path},
-            MediaStore.MediaColumns.DATE_ADDED + " desc");
+            resolver.query(
+                    MediaStore.Files.getContentUri("external"),
+                    new String[] {BaseColumns._ID},
+                    MediaStore.MediaColumns.DATA + " = ?",
+                    new String[] {path},
+                    MediaStore.MediaColumns.DATE_ADDED + " desc");
     filecursor.moveToFirst();
 
     if (filecursor.isAfterLast()) {
@@ -139,10 +139,10 @@ public class MediaStoreHack {
     } else {
       int imageId = filecursor.getInt(filecursor.getColumnIndex(BaseColumns._ID));
       Uri uri =
-          MediaStore.Files.getContentUri("external")
-              .buildUpon()
-              .appendPath(Integer.toString(imageId))
-              .build();
+              MediaStore.Files.getContentUri("external")
+                      .buildUpon()
+                      .appendPath(Integer.toString(imageId))
+                      .build();
       filecursor.close();
       return uri;
     }
@@ -154,15 +154,15 @@ public class MediaStoreHack {
     try {
       temporaryTrack = installTemporaryTrack(context);
     } catch (final IOException ex) {
-      Log.w("MediaFile", "Error installing tempory track.", ex);
+      Log.w("MediaFile", "Error installing temporary track.", ex);
       return 0;
     }
     final Uri filesUri = MediaStore.Files.getContentUri("external");
     final String[] selectionArgs = {temporaryTrack.getAbsolutePath()};
     final ContentResolver contentResolver = context.getContentResolver();
     Cursor cursor =
-        contentResolver.query(
-            filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
+            contentResolver.query(
+                    filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
     if (cursor == null || !cursor.moveToFirst()) {
       if (cursor != null) {
         cursor.close();
@@ -177,8 +177,8 @@ public class MediaStoreHack {
       contentResolver.insert(filesUri, values);
     }
     cursor =
-        contentResolver.query(
-            filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
+            contentResolver.query(
+                    filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
     if (cursor == null) {
       return 0;
     }
@@ -204,8 +204,8 @@ public class MediaStoreHack {
       contentResolver.update(filesUri, values, BaseColumns._ID + "=" + id, null);
     }
     cursor =
-        contentResolver.query(
-            filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
+            contentResolver.query(
+                    filesUri, ALBUM_PROJECTION, MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
     if (cursor == null) {
       return 0;
     }

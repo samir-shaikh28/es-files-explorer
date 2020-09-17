@@ -76,7 +76,7 @@ public class AppConfig extends GlideApplication {
   public void onCreate() {
     super.onCreate();
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(
-        true); // selector in srcCompat isn't supported without this
+            true); // selector in srcCompat isn't supported without this
     backgroundHandlerThread = new HandlerThread("app_background");
     instance = this;
 
@@ -87,11 +87,10 @@ public class AppConfig extends GlideApplication {
     utilsProvider = new UtilitiesProvider(this);
     utilsHandler = new UtilsHandler(this, utilitiesDatabase);
 
-    // FIXME: in unit tests when AppConfig is rapidly created/destroyed this call will cause
-    // IllegalThreadStateException.
-    // Until this gets fixed only one test case can be run in a time. - Raymond, 24/4/2018
     backgroundHandlerThread.start();
     backgroundHandler = new Handler(backgroundHandlerThread.getLooper());
+
+    runInBackground(jcifs.Config::registerSmbURLHandler);
 
     // disabling file exposure method check for api n+
     StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -120,7 +119,7 @@ public class AppConfig extends GlideApplication {
    * class that extends an object as param array, and result too.
    */
   public static <Params, Result> void runInParallel(
-      final CustomAsyncCallbacks<Params, Result> customAsyncCallbacks) {
+          final CustomAsyncCallbacks<Params, Result> customAsyncCallbacks) {
 
     synchronized (customAsyncCallbacks) {
       new AsyncTask<Params, Void, Result>() {
@@ -179,11 +178,7 @@ public class AppConfig extends GlideApplication {
       final Context c = context;
       final @StringRes int m = message;
 
-      ((AppConfig) context)
-          .runInApplicationThread(
-              () -> {
-                Toast.makeText(c, m, Toast.LENGTH_LONG).show();
-              });
+      getInstance().runInApplicationThread(() -> Toast.makeText(c, m, Toast.LENGTH_LONG).show());
     }
   }
 
@@ -207,11 +202,7 @@ public class AppConfig extends GlideApplication {
       final Context c = context;
       final String m = message;
 
-      ((AppConfig) context)
-          .runInApplicationThread(
-              () -> {
-                Toast.makeText(c, m, Toast.LENGTH_LONG).show();
-              });
+      getInstance().runInApplicationThread(() -> Toast.makeText(c, m, Toast.LENGTH_LONG).show());
     }
   }
 

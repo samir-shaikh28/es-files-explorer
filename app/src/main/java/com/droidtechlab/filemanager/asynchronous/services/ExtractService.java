@@ -249,6 +249,7 @@ public class ExtractService extends AbstractProgressiveService {
       while (!isCancelled()) {
         if (paused) continue;
 
+        Log.d("###", "doInBackground:: extract");
         final ExtractService extractService = this.extractService.get();
         if (extractService == null) return null;
 
@@ -280,7 +281,7 @@ public class ExtractService extends AbstractProgressiveService {
                   public void onStart(long totalBytes, String firstEntryName) {
                     // setting total bytes calculated from zip entries
                     progressHandler.setTotalSize(totalBytes);
-
+                    Log.d("###", "onStart:: bfore fDataPoint");
                     extractService.addFirstDatapoint(firstEntryName, 1, totalBytes, false);
 
                     watcherUtil = new ServiceWatcherUtil(progressHandler);

@@ -20,6 +20,9 @@
 
 package com.droidtechlab.filemanager.filesystem.files;
 
+import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.CONTENT;
+
+
 import java.io.File;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -800,7 +803,9 @@ public class FileUtils {
 
   public static boolean isRoot(
           String dir) { // TODO: 5/5/2017 hardcoding root might lead to problems down the line
-    return !dir.contains(OTGUtil.PREFIX_OTG) && !dir.startsWith("/storage");
+    return !dir.contains(OTGUtil.PREFIX_OTG)
+            && !dir.startsWith(OTGUtil.PREFIX_MEDIA_REMOVABLE)
+            && !dir.startsWith("/storage");
   }
 
   /** Converts ArrayList of HybridFileParcelable to ArrayList of File */
@@ -838,6 +843,15 @@ public class FileUtils {
                 @Override
                 public void invalidName(HybridFile file) {}
               });
+    }
+  }
+
+  public static File fromContentUri(@NonNull Uri uri) {
+    if (!CONTENT.name().equalsIgnoreCase(uri.getScheme())) {
+      throw new IllegalArgumentException(
+              "URI must start with content://. URI was [" + uri.toString() + "]");
+    } else {
+      return new File(uri.getPath().substring(FILE_PROVIDER_PREFIX.length() + 1));
     }
   }
 }
