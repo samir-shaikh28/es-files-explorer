@@ -66,10 +66,14 @@ public class Billing extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     this.activity = activity;
 
     skuList = new ArrayList<>();
-    skuList.add("donations");
-    skuList.add("donations_2");
-    skuList.add("donations_3");
-    skuList.add("donations_4");
+
+    skuList.add("c_donation"); // 35 INR
+    skuList.add("donation"); // 75 INR
+    skuList.add("donation_1"); // 150 INR
+    skuList.add("donation_2"); // 300 INR
+    skuList.add("donation_3"); // 600 INR
+    skuList.add("donation_4"); // 1200 INR
+    skuList.add("donation_5"); // 25000 INR
 
     layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -201,7 +205,7 @@ public class Billing extends RecyclerView.Adapter<RecyclerView.ViewHolder>
           public void onBillingSetupFinished(BillingResult billingResponse) {
             Log.d(
                 Billing.this.getClass().getSimpleName(),
-                "Setup finished. Response code: " + billingResponse);
+                "Setup finished. Response code: " + billingResponse.getDebugMessage() + "code: "+billingResponse.getResponseCode());
 
             if (billingResponse.getResponseCode() == BillingClient.BillingResponseCode.OK) {
               isServiceConnected = true;
