@@ -48,8 +48,8 @@ public class UsbOtgRepresentation {
 
     UsbOtgRepresentation other = (UsbOtgRepresentation) obj;
     return productID == other.productID
-        && vendorID == other.vendorID
-        && ((serialNumber == null && other.serialNumber == null)
+            && vendorID == other.vendorID
+            && ((serialNumber == null && other.serialNumber == null)
             || serialNumber.equals(other.serialNumber));
   }
 
