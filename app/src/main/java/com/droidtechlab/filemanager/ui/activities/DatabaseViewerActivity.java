@@ -132,7 +132,7 @@ public class DatabaseViewerActivity extends ThemedActivity {
         window.setNavigationBarColor(PreferenceUtils.getStatusColor(primaryColor));
     }
 
-    path = getIntent().getStringExtra("path");
+    path = getIntent().getStringExtra("path") != null ? getIntent().getStringExtra("path") : "";
     pathFile = new File(path);
     listView = findViewById(R.id.listView);
 

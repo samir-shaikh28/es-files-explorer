@@ -70,8 +70,9 @@ public class RarExtractor extends Extractor {
         }
       }
 
-      listener.onStart(totalBytes, arrayList.get(0).getFileNameString());
-
+      if(arrayList.size() > 0) {
+        listener.onStart(totalBytes, arrayList.get(0).getFileNameString());
+      }
       for (FileHeader entry : arrayList) {
         if (!listener.isCancelled()) {
           listener.onUpdate(entry.getFileNameString());

@@ -58,12 +58,14 @@ public class SshConnectionPool {
 
   private static final String TAG = SshConnectionPool.class.getSimpleName();
 
-  private static SshConnectionPool instance = null;
-
   private final Map<String, SSHClient> connections;
 
   private SshConnectionPool() {
-    connections = new ConcurrentHashMap<String, SSHClient>();
+    connections = new ConcurrentHashMap<>();
+  }
+
+  private static final class SshConnectionPoolHolder {
+    private static final SshConnectionPool instance = new SshConnectionPool();
   }
 
   /**
@@ -72,9 +74,7 @@ public class SshConnectionPool {
    * @return {@link SshConnectionPool} instance
    */
   public static final SshConnectionPool getInstance() {
-    if (instance == null) instance = new SshConnectionPool();
-
-    return instance;
+    return SshConnectionPoolHolder.instance;
   }
 
   /**
@@ -140,12 +140,12 @@ public class SshConnectionPool {
    * @return {@link SSHClient} connection
    */
   public SSHClient getConnection(
-      @NonNull String host,
-      int port,
-      @NonNull String hostFingerprint,
-      @NonNull String username,
-      @Nullable String password,
-      @Nullable KeyPair keyPair) {
+          @NonNull String host,
+          int port,
+          @NonNull String hostFingerprint,
+          @NonNull String username,
+          @Nullable String password,
+          @Nullable KeyPair keyPair) {
 
     String url = SshClientUtils.deriveSftpPathFrom(host, port, username, password, keyPair);
 
@@ -169,19 +169,20 @@ public class SshConnectionPool {
    * Kill any connection that is still in place. Used by {@link
    * com.droidtechlab.filemanager.ui.activities.MainActivity}.
    *
-   * @see MainActivity#onDestroy()
+   *
    * @see MainActivity#exit()
    */
-  public void expungeAllConnections() {
-    AppConfig.runInBackground(
-        () -> {
-          if (!connections.isEmpty()) {
-            for (SSHClient connection : connections.values()) {
-              SshClientUtils.tryDisconnect(connection);
-            }
-            connections.clear();
-          }
-        });
+  public void shutdown() {
+    AppConfig.getInstance()
+            .runInBackground(
+                    () -> {
+                      if (!connections.isEmpty()) {
+                        for (SSHClient connection : connections.values()) {
+                          SshClientUtils.tryDisconnect(connection);
+                        }
+                        connections.clear();
+                      }
+                    });
   }
 
   // Logic for creating SSH connection. Depends on password existence in given Uri password or
@@ -202,7 +203,7 @@ public class SshConnectionPool {
                   keyPair.set(result);
                   latch.countDown();
                 })
-            .execute();
+                .execute();
         latch.await();
       } catch (InterruptedException e) {
         throw new RuntimeException(e);
@@ -213,22 +214,22 @@ public class SshConnectionPool {
     if (hostKey == null) return null;
 
     return create(
-        connInfo.host, connInfo.port, hostKey, connInfo.username, connInfo.password, keyPair.get());
+            connInfo.host, connInfo.port, hostKey, connInfo.username, connInfo.password, keyPair.get());
   }
 
   private SSHClient create(
-      @NonNull String host,
-      int port,
-      @NonNull String hostKey,
-      @NonNull String username,
-      @Nullable String password,
-      @Nullable KeyPair keyPair) {
+          @NonNull String host,
+          int port,
+          @NonNull String hostKey,
+          @NonNull String username,
+          @Nullable String password,
+          @Nullable KeyPair keyPair) {
 
     try {
       AsyncTaskResult<SSHClient> taskResult =
-          new SshAuthenticationTask(host, port, hostKey, username, password, keyPair)
-              .execute()
-              .get();
+              new SshAuthenticationTask(host, port, hostKey, username, password, keyPair)
+                      .execute()
+                      .get();
 
       SSHClient client = taskResult.result;
       return client;

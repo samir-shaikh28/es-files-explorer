@@ -51,6 +51,8 @@ public class OTGUtil {
 
   public static final String PREFIX_OTG = "otg:/";
 
+  public static final String PREFIX_MEDIA_REMOVABLE = "/mnt/media_rw";
+
   /**
    * Returns an array of list of files at a specific path in OTG
    *
@@ -96,12 +98,12 @@ public class OTGUtil {
         if (!file.isDirectory()) size = file.length();
         Log.d(context.getClass().getSimpleName(), "Found file: " + file.getName());
         HybridFileParcelable baseFile =
-            new HybridFileParcelable(
-                path + "/" + file.getName(),
-                RootHelper.parseDocumentFilePermission(file),
-                file.lastModified(),
-                size,
-                file.isDirectory());
+                new HybridFileParcelable(
+                        path + "/" + file.getName(),
+                        RootHelper.parseDocumentFilePermission(file),
+                        file.lastModified(),
+                        size,
+                        file.isDirectory());
         baseFile.setName(file.getName());
         baseFile.setMode(OpenMode.OTG);
         fileFound.onFileFound(baseFile);
@@ -116,7 +118,7 @@ public class OTGUtil {
    *     path, in case path is not present. Notably useful in opening an output stream.
    */
   public static DocumentFile getDocumentFile(
-      String path, Context context, boolean createRecursive) {
+          String path, Context context, boolean createRecursive) {
     Uri rootUriString = SingletonUsbOtg.getInstance().getUsbOtgRoot();
     if (rootUriString == null) throw new NullPointerException("USB OTG root not set!");
 
@@ -149,7 +151,7 @@ public class OTGUtil {
   /** Checks if there is at least one USB device connected with class MASS STORAGE. */
   @NonNull
   public static List<UsbOtgRepresentation> getMassStorageDevicesConnected(
-      @NonNull final Context context) {
+          @NonNull final Context context) {
     UsbManager usbManager = (UsbManager) context.getSystemService(USB_SERVICE);
     if (usbManager == null) return Collections.emptyList();
 
@@ -162,12 +164,12 @@ public class OTGUtil {
       for (int i = 0; i < device.getInterfaceCount(); i++) {
         if (device.getInterface(i).getInterfaceClass() == UsbConstants.USB_CLASS_MASS_STORAGE) {
           final @Nullable String serial =
-              Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                  ? device.getSerialNumber()
-                  : null;
+                  Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                          ? device.getSerialNumber()
+                          : null;
 
           UsbOtgRepresentation usb =
-              new UsbOtgRepresentation(device.getProductId(), device.getVendorId(), serial);
+                  new UsbOtgRepresentation(device.getProductId(), device.getVendorId(), serial);
           usbOtgRepresentations.add(usb);
         }
       }

@@ -81,6 +81,7 @@ import com.droidtechlab.filemanager.ui.fragments.preference_fragments.Preference
 import com.droidtechlab.filemanager.ui.theme.AppTheme;
 import com.droidtechlab.filemanager.ui.views.appbar.AppBar;
 import com.droidtechlab.filemanager.ui.views.drawer.Drawer;
+import com.droidtechlab.filemanager.utils.AppConstants;
 import com.droidtechlab.filemanager.utils.BookSorter;
 import com.droidtechlab.filemanager.utils.DataUtils;
 import com.droidtechlab.filemanager.utils.DataUtils.DataChangeListener;
@@ -92,6 +93,7 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.cloudrail.si.CloudRail;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
@@ -125,6 +127,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.service.quicksettings.TileService;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -151,9 +154,14 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import eu.chainfire.libsuperuser.Shell;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends PermissionsActivity
-    implements SmbConnectionListener,
+        implements SmbConnectionListener,
         DataChangeListener,
         BookmarkCallback,
         SearchWorkerFragment.HelperCallbacks,
@@ -253,7 +261,7 @@ public class MainActivity extends PermissionsActivity
   public static final String ARGS_INTENT_ACTION_VIEW_MIME_FOLDER = "resource/folder";
 
   public static final String CLOUD_AUTHENTICATOR_GDRIVE = "android.intent.category.BROWSABLE";
-  public static final String CLOUD_AUTHENTICATOR_REDIRECT_URI = "com.droidtechlab.filemanager:/auth";
+  public static final String CLOUD_AUTHENTICATOR_REDIRECT_URI = "com.amaze.filemanager:/auth";
 
   // the current visible tab, either 0 or 1
   public static int currentTab;
@@ -269,6 +277,7 @@ public class MainActivity extends PermissionsActivity
   private PasteHelper pasteHelper;
 
   private static final String DEFAULT_FALLBACK_STORAGE_PATH = "/storage/sdcard0";
+  private static final String INTERNAL_SHARED_STORAGE = "Internal shared storage";
 
   /** Called when the activity is first created. */
   @Override
@@ -285,14 +294,14 @@ public class MainActivity extends PermissionsActivity
 
     setContentView(R.layout.main_toolbar);
     appbar =
-        new AppBar(
-            this,
-            getPrefs(),
-            queue -> {
-              if (!queue.isEmpty()) {
-                mainActivityHelper.search(getPrefs(), queue);
-              }
-            });
+            new AppBar(
+                    this,
+                    getPrefs(),
+                    queue -> {
+                      if (!queue.isEmpty()) {
+                        mainActivityHelper.search(getPrefs(), queue);
+                      }
+                    });
     initialiseViews();
     utilsHandler = AppConfig.getInstance().getUtilsHandler();
     cloudHandler = new CloudHandler(this, AppConfig.getInstance().getExplorerDatabase());
@@ -302,7 +311,7 @@ public class MainActivity extends PermissionsActivity
 
     if (CloudSheetFragment.isCloudProviderAvailable(this)) {
 
-      getSupportLoaderManager().initLoader(REQUEST_CODE_CLOUD_LIST_KEYS, null, this);
+      LoaderManager.getInstance(this).initLoader(REQUEST_CODE_CLOUD_LIST_KEYS, null, this);
     }
 
     path = getIntent().getStringExtra("path");
@@ -311,17 +320,13 @@ public class MainActivity extends PermissionsActivity
 
     if (intent.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
       ArrayList<HybridFileParcelable> failedOps =
-          intent.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
+              intent.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
       if (failedOps != null) {
         mainActivityHelper.showFailedOperationDialog(failedOps, this);
       }
     }
 
     checkForExternalIntent(intent);
-
-    if (savedInstanceState != null) {
-      drawer.setSomethingSelected(savedInstanceState.getBoolean(KEY_DRAWER_SELECTED));
-    }
 
     // setting window background color instead of each item, in order to reduce pixel overdraw
     if (getAppTheme().equals(AppTheme.LIGHT)) {
@@ -351,11 +356,11 @@ public class MainActivity extends PermissionsActivity
     // recents header color implementation
     if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       ActivityManager.TaskDescription taskDescription =
-          new ActivityManager.TaskDescription(
-              "Amaze",
-              ((BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher)).getBitmap(),
-              ColorPreferenceHelper.getPrimary(
-                  getCurrentColorPreference(), MainActivity.currentTab));
+              new ActivityManager.TaskDescription(
+                      "Amaze",
+                      ((BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher)).getBitmap(),
+                      ColorPreferenceHelper.getPrimary(
+                              getCurrentColorPreference(), MainActivity.currentTab));
       setTaskDescription(taskDescription);
     }
 
@@ -366,112 +371,120 @@ public class MainActivity extends PermissionsActivity
 
     checkForExternalPermission();
 
-    AppConfig.runInParallel(
-        new AppConfig.CustomAsyncCallbacks<Void, Void>(null) {
-          @Override
-          public Void doInBackground() {
+    Completable.fromRunnable(
+            () -> {
+              dataUtils.setHiddenFiles(utilsHandler.getHiddenFilesConcurrentRadixTree());
+              dataUtils.setHistory(utilsHandler.getHistoryLinkedList());
+              dataUtils.setGridfiles(utilsHandler.getGridViewList());
+              dataUtils.setListfiles(utilsHandler.getListViewList());
+              dataUtils.setBooks(utilsHandler.getBookmarksList());
+              ArrayList<String[]> servers = new ArrayList<>();
+              servers.addAll(utilsHandler.getSmbList());
+              servers.addAll(utilsHandler.getSftpList());
+              dataUtils.setServers(servers);
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                    new CompletableObserver() {
+                      @Override
+                      public void onSubscribe(Disposable d) {}
 
-            dataUtils.setHiddenFiles(utilsHandler.getHiddenFilesConcurrentRadixTree());
-            dataUtils.setHistory(utilsHandler.getHistoryLinkedList());
-            dataUtils.setGridfiles(utilsHandler.getGridViewList());
-            dataUtils.setListfiles(utilsHandler.getListViewList());
-            dataUtils.setBooks(utilsHandler.getBookmarksList());
-            ArrayList<String[]> servers = new ArrayList<String[]>();
-            servers.addAll(utilsHandler.getSmbList());
-            servers.addAll(utilsHandler.getSftpList());
-            dataUtils.setServers(servers);
+                      @Override
+                      public void onComplete() {
+                        drawer.refreshDrawer();
+                        invalidateFragmentAndBundle(savedInstanceState);
+                      }
 
-            return null;
+                      @Override
+                      public void onError(Throwable e) {
+                        e.printStackTrace();
+                      }
+                    });
+  }
+
+  private void invalidateFragmentAndBundle(Bundle savedInstanceState) {
+    if (savedInstanceState == null) {
+      if (openProcesses) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(
+                R.id.content_frame, new ProcessViewerFragment(), KEY_INTENT_PROCESS_VIEWER);
+        // transaction.addToBackStack(null);
+        openProcesses = false;
+        // title.setText(utils.getString(con, R.string.process_viewer));
+        // Commit the transaction
+        transaction.commit();
+        supportInvalidateOptionsMenu();
+      } else if (intent.getAction() != null
+              && intent.getAction().equals(TileService.ACTION_QS_TILE_PREFERENCES)) {
+        // tile preferences, open ftp fragment
+
+        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+        transaction2.replace(R.id.content_frame, new FtpServerFragment());
+        appBarLayout
+                .animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator(2))
+                .start();
+
+        drawer.deselectEverything();
+        transaction2.commit();
+      } else {
+        if (path != null && path.length() > 0) {
+          HybridFile file = new HybridFile(OpenMode.UNKNOWN, path);
+          file.generateMode(MainActivity.this);
+          if (file.isDirectory(MainActivity.this)) goToMain(path);
+          else {
+            goToMain(null);
+            FileUtils.openFile(new File(path), MainActivity.this, getPrefs());
           }
-
-          @Override
-          public void onPostExecute(Void result) {
-
-            drawer.refreshDrawer();
-
-            if (savedInstanceState == null) {
-              if (openProcesses) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(
-                    R.id.content_frame, new ProcessViewerFragment(), KEY_INTENT_PROCESS_VIEWER);
-                // transaction.addToBackStack(null);
-                drawer.setSomethingSelected(true);
-                openProcesses = false;
-                // title.setText(utils.getString(con, R.string.process_viewer));
-                // Commit the transaction
-                transaction.commit();
-                supportInvalidateOptionsMenu();
-              } else if (intent.getAction() != null
-                  && intent.getAction().equals(TileService.ACTION_QS_TILE_PREFERENCES)) {
-                // tile preferences, open ftp fragment
-
-                FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
-                transaction2.replace(R.id.content_frame, new FtpServerFragment());
-                appBarLayout
-                    .animate()
-                    .translationY(0)
-                    .setInterpolator(new DecelerateInterpolator(2))
-                    .start();
-
-                drawer.setSomethingSelected(true);
-                drawer.deselectEverything();
-                transaction2.commit();
-              } else {
-                if (path != null && path.length() > 0) {
-                  HybridFile file = new HybridFile(OpenMode.UNKNOWN, path);
-                  file.generateMode(MainActivity.this);
-                  if (file.isDirectory(MainActivity.this)) goToMain(path);
-                  else {
-                    goToMain(null);
-                    FileUtils.openFile(new File(path), MainActivity.this, getPrefs());
-                  }
-                } else {
-                  goToMain(null);
-                }
-              }
-            } else {
-              pasteHelper = savedInstanceState.getParcelable(PASTEHELPER_BUNDLE);
-              oppathe = savedInstanceState.getString(KEY_OPERATION_PATH);
-              oppathe1 = savedInstanceState.getString(KEY_OPERATED_ON_PATH);
-              oparrayList = savedInstanceState.getParcelableArrayList(KEY_OPERATIONS_PATH_LIST);
-              operation = savedInstanceState.getInt(KEY_OPERATION);
-              // mainFragment = (Main) savedInstanceState.getParcelable("main_fragment");
-            }
-          }
-        });
+        } else {
+          goToMain(null);
+        }
+      }
+    } else {
+      pasteHelper = savedInstanceState.getParcelable(PASTEHELPER_BUNDLE);
+      oppathe = savedInstanceState.getString(KEY_OPERATION_PATH);
+      oppathe1 = savedInstanceState.getString(KEY_OPERATED_ON_PATH);
+      oparrayList = savedInstanceState.getParcelableArrayList(KEY_OPERATIONS_PATH_LIST);
+      operation = savedInstanceState.getInt(KEY_OPERATION);
+      // mainFragment = (Main) savedInstanceState.getParcelable("main_fragment");
+      int selectedStorage = savedInstanceState.getInt(KEY_DRAWER_SELECTED, 0);
+      getDrawer().selectCorrectDrawerItem(selectedStorage);
+    }
   }
 
   private void checkForExternalPermission() {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !checkStoragePermission()) {
       requestStoragePermission(
-          () -> {
-            drawer.refreshDrawer();
-            TabFragment tabFragment = getTabFragment();
-            boolean b = getBoolean(PREFERENCE_NEED_TO_SET_HOME);
-            // reset home and current paths according to new storages
-            if (b) {
-              TabHandler tabHandler = TabHandler.getInstance();
-              tabHandler.clear();
-              if (tabFragment != null) {
-                tabFragment.refactorDrawerStorages(false);
-                Fragment main = tabFragment.getFragmentAtIndex(0);
-                if (main != null) ((MainFragment) main).updateTabWithDb(tabHandler.findTab(1));
-                Fragment main1 = tabFragment.getFragmentAtIndex(1);
-                if (main1 != null) ((MainFragment) main1).updateTabWithDb(tabHandler.findTab(2));
-              }
-              getPrefs().edit().putBoolean(PREFERENCE_NEED_TO_SET_HOME, false).commit();
-            } else {
-              // just refresh list
-              if (tabFragment != null) {
-                Fragment main = tabFragment.getFragmentAtIndex(0);
-                if (main != null) ((MainFragment) main).updateList();
-                Fragment main1 = tabFragment.getFragmentAtIndex(1);
-                if (main1 != null) ((MainFragment) main1).updateList();
-              }
-            }
-          },
-          true);
+              () -> {
+                drawer.refreshDrawer();
+                TabFragment tabFragment = getTabFragment();
+                boolean b = getBoolean(PREFERENCE_NEED_TO_SET_HOME);
+                // reset home and current paths according to new storages
+                if (b) {
+                  TabHandler tabHandler = TabHandler.getInstance();
+                  tabHandler.clear();
+                  if (tabFragment != null) {
+                    tabFragment.refactorDrawerStorages(false);
+                    Fragment main = tabFragment.getFragmentAtIndex(0);
+                    if (main != null) ((MainFragment) main).updateTabWithDb(tabHandler.findTab(1));
+                    Fragment main1 = tabFragment.getFragmentAtIndex(1);
+                    if (main1 != null) ((MainFragment) main1).updateTabWithDb(tabHandler.findTab(2));
+                  }
+                  getPrefs().edit().putBoolean(PREFERENCE_NEED_TO_SET_HOME, false).commit();
+                } else {
+                  // just refresh list
+                  if (tabFragment != null) {
+                    Fragment main = tabFragment.getFragmentAtIndex(0);
+                    if (main != null) ((MainFragment) main).updateList();
+                    Fragment main1 = tabFragment.getFragmentAtIndex(1);
+                    if (main1 != null) ((MainFragment) main1).updateList();
+                  }
+                }
+              },
+              true);
     }
   }
 
@@ -519,16 +532,20 @@ public class MainActivity extends PermissionsActivity
           zippath = Utils.sanitizeInput(uri.toString());
         }
 
-      } else if (actionIntent.equals(Intent.ACTION_SEND) && type != null) {
-        // save a single file to filesystem
-        Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        ArrayList<Uri> uris = new ArrayList<>();
-        uris.add(uri);
-        initFabToSave(uris);
-
+      } else if (actionIntent.equals(Intent.ACTION_SEND)) {
+        if (type.equals("text/plain")) {
+          initFabToSave(null);
+        } else {
+          // save a single file to filesystem
+          Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+          ArrayList<Uri> uris = new ArrayList<>();
+          uris.add(uri);
+          initFabToSave(uris);
+        }
         // disable screen rotation just for convenience purpose
         // TODO: Support screen rotation when saving a file
         Utils.disableScreenRotation(this);
+
       } else if (actionIntent.equals(Intent.ACTION_SEND_MULTIPLE) && type != null) {
         // save multiple files to filesystem
 
@@ -544,46 +561,67 @@ public class MainActivity extends PermissionsActivity
 
   /** Initializes the floating action button to act as to save data from an external intent */
   private void initFabToSave(final ArrayList<Uri> uris) {
-    clearFabActionItems();
-    floatingActionButton.getMainFab().setImageResource(R.drawable.ic_file_download_white_24dp);
-    floatingActionButton
-        .getMainFab()
-        .setOnClickListener(
-            v -> {
-              if (uris != null && uris.size() > 0) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                  File folder = new File(getCurrentMainFragment().getCurrentPath());
-                  int result = mainActivityHelper.checkFolder(folder, MainActivity.this);
-                  if (result == MainActivityHelper.WRITABLE_OR_ON_SDCARD) {
-                    FileUtil.writeUriToStorage(
-                        MainActivity.this,
-                        uris,
-                        getContentResolver(),
-                        getCurrentMainFragment().getCurrentPath());
-                    finish();
-                  } else {
-                    // Trigger SAF intent, keep uri until finish
-                    operation = DataUtils.SAVE_FILE;
-                    urisToBeSaved = uris;
-                    mainActivityHelper.checkFolder(folder, MainActivity.this);
-                  }
-                } else {
-                  FileUtil.writeUriToStorage(
-                      MainActivity.this,
-                      uris,
-                      getContentResolver(),
-                      getCurrentMainFragment().getCurrentPath());
-                  Toast.makeText(
-                          MainActivity.this,
-                          getResources().getString(R.string.saving),
-                          Toast.LENGTH_LONG)
-                      .show();
-                  finish();
-                }
-              }
-            });
-    // Ensure the FAB menu is visible
-    floatingActionButton.setVisibility(View.VISIBLE);
+    Utils.showThemedSnackbar(
+            this,
+            getString(R.string.select_save_location),
+            BaseTransientBottomBar.LENGTH_INDEFINITE,
+            R.string.save,
+            () -> saveExternalIntent(uris));
+  }
+
+  private void saveExternalIntent(final ArrayList<Uri> uris) {
+    if (uris != null && uris.size() > 0) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        File folder = new File(getCurrentMainFragment().getCurrentPath());
+        int result = mainActivityHelper.checkFolder(folder, MainActivity.this);
+        if (result == MainActivityHelper.WRITABLE_OR_ON_SDCARD) {
+          FileUtil.writeUriToStorage(
+                  MainActivity.this,
+                  uris,
+                  getContentResolver(),
+                  getCurrentMainFragment().getCurrentPath());
+          finish();
+        } else {
+          // Trigger SAF intent, keep uri until finish
+          operation = DataUtils.SAVE_FILE;
+          urisToBeSaved = uris;
+          mainActivityHelper.checkFolder(folder, MainActivity.this);
+        }
+      } else {
+        FileUtil.writeUriToStorage(
+                MainActivity.this,
+                uris,
+                getContentResolver(),
+                getCurrentMainFragment().getCurrentPath());
+      }
+    } else {
+      saveExternalIntentExtras();
+    }
+    Toast.makeText(
+            MainActivity.this,
+            getResources().getString(R.string.saving)
+                    + " to "
+                    + getCurrentMainFragment().getCurrentPath(),
+            Toast.LENGTH_LONG)
+            .show();
+    finish();
+  }
+
+  private void saveExternalIntentExtras() {
+    Bundle extras = intent.getExtras();
+    StringBuilder data = new StringBuilder();
+    if (!Utils.isNullOrEmpty(extras.getString(Intent.EXTRA_SUBJECT))) {
+      data.append(extras.getString(Intent.EXTRA_SUBJECT));
+    }
+    if (!Utils.isNullOrEmpty(extras.getString(Intent.EXTRA_TEXT))) {
+      data.append(AppConstants.NEW_LINE).append(extras.getString(Intent.EXTRA_TEXT));
+    }
+    String fileName = Long.toString(System.currentTimeMillis());
+    AppConfig.getInstance()
+            .runInBackground(
+                    () ->
+                            FileUtil.mktextfile(
+                                    data.toString(), getCurrentMainFragment().getCurrentPath(), fileName));
   }
 
   public void clearFabActionItems() {
@@ -631,10 +669,10 @@ public class MainActivity extends PermissionsActivity
     }
     if (isRootExplorer()) {
       volumes.add(
-          new StorageDirectoryParcelable(
-              "/",
-              getResources().getString(R.string.root_directory),
-              R.drawable.ic_drawer_root_white));
+              new StorageDirectoryParcelable(
+                      "/",
+                      getResources().getString(R.string.root_directory),
+                      R.drawable.ic_drawer_root_white));
     }
     return volumes;
   }
@@ -649,11 +687,14 @@ public class MainActivity extends PermissionsActivity
     StorageManager sm = getSystemService(StorageManager.class);
     for (StorageVolume volume : sm.getStorageVolumes()) {
       if (!volume.getState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)
-          && !volume.getState().equalsIgnoreCase(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+              && !volume.getState().equalsIgnoreCase(Environment.MEDIA_MOUNTED_READ_ONLY)) {
         continue;
       }
       File path = Utils.getVolumeDirectory(volume);
       String name = volume.getDescription(this);
+      if (INTERNAL_SHARED_STORAGE.equalsIgnoreCase(name)) {
+        name = getString(R.string.storage_internal);
+      }
       int icon;
       if (!volume.isRemovable()) {
         icon = R.drawable.ic_phone_android_white_24dp;
@@ -757,8 +798,8 @@ public class MainActivity extends PermissionsActivity
       @DrawableRes int icon;
 
       if ("/storage/emulated/legacy".equals(file)
-          || "/storage/emulated/0".equals(file)
-          || "/mnt/sdcard".equals(file)) {
+              || "/storage/emulated/0".equals(file)
+              || "/mnt/sdcard".equals(file)) {
         icon = R.drawable.ic_phone_android_white_24dp;
       } else if ("/storage/sdcard1".equals(file)) {
         icon = R.drawable.ic_sd_storage_white_24dp;
@@ -794,7 +835,7 @@ public class MainActivity extends PermissionsActivity
       }
     } else if (fragment instanceof CompressedExplorerFragment) {
       CompressedExplorerFragment compressedExplorerFragment =
-          (CompressedExplorerFragment) getFragmentAtFrame();
+              (CompressedExplorerFragment) getFragmentAtFrame();
       if (compressedExplorerFragment.mActionMode == null) {
         if (compressedExplorerFragment.canGoBack()) {
           compressedExplorerFragment.goBack();
@@ -838,7 +879,7 @@ public class MainActivity extends PermissionsActivity
 
   public void exit() {
     if (backPressedToExitOnce) {
-      SshConnectionPool.getInstance().expungeAllConnections();
+      SshConnectionPool.getInstance().shutdown();
       finish();
       if (isRootExplorer()) {
         // TODO close all shells
@@ -847,11 +888,11 @@ public class MainActivity extends PermissionsActivity
       this.backPressedToExitOnce = true;
       showToast(getString(R.string.press_again));
       new Handler()
-          .postDelayed(
-              () -> {
-                backPressedToExitOnce = false;
-              },
-              2000);
+              .postDelayed(
+                      () -> {
+                        backPressedToExitOnce = false;
+                      },
+                      2000);
     }
   }
 
@@ -866,7 +907,6 @@ public class MainActivity extends PermissionsActivity
     }
     transaction.replace(R.id.content_frame, tabFragment);
     // Commit the transaction
-    drawer.setSomethingSelected(true);
     transaction.addToBackStack("tabt" + 1);
     transaction.commitAllowingStateLoss();
     appbar.setTitle(null);
@@ -886,7 +926,6 @@ public class MainActivity extends PermissionsActivity
     SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     searchView.setIconifiedByDefault(false);
-
     MenuItem search = menu.findItem(R.id.search);
     MenuItemCompat.setOnActionExpandListener(search, new MenuItemCompat.OnActionExpandListener() {
         @Override
@@ -895,7 +934,6 @@ public class MainActivity extends PermissionsActivity
             toolbar.setContentInsetsRelative(0, 0);
             return true;
         }
-
         @Override
         public boolean onMenuItemActionCollapse(MenuItem item) {
             // Restoring
@@ -924,15 +962,15 @@ public class MainActivity extends PermissionsActivity
         if (ma.IS_LIST) s.setTitle(R.string.gridview);
         else s.setTitle(R.string.listview);
         appbar
-            .getBottomBar()
-            .updatePath(
-                ma.getCurrentPath(),
-                ma.results,
-                MainActivityHelper.SEARCH_TEXT,
-                ma.openMode,
-                ma.folder_count,
-                ma.file_count,
-                ma);
+                .getBottomBar()
+                .updatePath(
+                        ma.getCurrentPath(),
+                        ma.results,
+                        MainActivityHelper.SEARCH_TEXT,
+                        ma.openMode,
+                        ma.folder_count,
+                        ma.file_count,
+                        ma);
       } catch (Exception e) {
       }
 
@@ -951,8 +989,8 @@ public class MainActivity extends PermissionsActivity
       invalidatePasteSnackbar(true);
       findViewById(R.id.buttonbarframe).setVisibility(View.VISIBLE);
     } else if (fragment instanceof AppsListFragment
-        || fragment instanceof ProcessViewerFragment
-        || fragment instanceof FtpServerFragment) {
+            || fragment instanceof ProcessViewerFragment
+            || fragment instanceof FtpServerFragment) {
       appBarLayout.setExpanded(true);
       menu.findItem(R.id.sethome).setVisible(false);
       if (indicator_layout != null) indicator_layout.setVisibility(View.GONE);
@@ -1033,20 +1071,20 @@ public class MainActivity extends PermissionsActivity
           break;
         }
         final MaterialDialog dialog =
-            GeneralDialogCreation.showBasicDialog(
-                mainActivity,
-                R.string.question_set_path_as_home,
-                R.string.set_as_home,
-                R.string.yes,
-                R.string.no);
+                GeneralDialogCreation.showBasicDialog(
+                        mainActivity,
+                        R.string.question_set_path_as_home,
+                        R.string.set_as_home,
+                        R.string.yes,
+                        R.string.no);
         dialog
-            .getActionButton(DialogAction.POSITIVE)
-            .setOnClickListener(
-                (v) -> {
-                  main.home = main.getCurrentPath();
-                  updatePaths(main.no);
-                  dialog.dismiss();
-                });
+                .getActionButton(DialogAction.POSITIVE)
+                .setOnClickListener(
+                        (v) -> {
+                          main.home = main.getCurrentPath();
+                          updatePaths(main.no);
+                          dialog.dismiss();
+                        });
         dialog.show();
         break;
       case R.id.exit:
@@ -1068,25 +1106,25 @@ public class MainActivity extends PermissionsActivity
         builder.theme(getAppTheme().getMaterialDialogTheme());
         builder.title(R.string.directorysort);
         int current =
-            Integer.parseInt(
-                getPrefs().getString(PreferencesConstants.PREFERENCE_DIRECTORY_SORT_MODE, "0"));
+                Integer.parseInt(
+                        getPrefs().getString(PreferencesConstants.PREFERENCE_DIRECTORY_SORT_MODE, "0"));
 
         final MainFragment mainFrag = ma;
 
         builder
-            .items(sort)
-            .itemsCallbackSingleChoice(
-                current,
-                (dialog1, view, which, text) -> {
-                  getPrefs()
-                      .edit()
-                      .putString(PreferencesConstants.PREFERENCE_DIRECTORY_SORT_MODE, "" + which)
-                      .commit();
-                  mainFrag.getSortModes();
-                  mainFrag.updateList();
-                  dialog1.dismiss();
-                  return true;
-                });
+                .items(sort)
+                .itemsCallbackSingleChoice(
+                        current,
+                        (dialog1, view, which, text) -> {
+                          getPrefs()
+                                  .edit()
+                                  .putString(PreferencesConstants.PREFERENCE_DIRECTORY_SORT_MODE, "" + which)
+                                  .commit();
+                          mainFrag.getSortModes();
+                          mainFrag.updateList();
+                          dialog1.dismiss();
+                          return true;
+                        });
         builder.build().show();
         break;
       case R.id.hiddenitems:
@@ -1097,29 +1135,31 @@ public class MainActivity extends PermissionsActivity
         int pathLayout = dataUtils.getListOrGridForPath(ma.getCurrentPath(), DataUtils.LIST);
         if (ma.IS_LIST) {
           if (pathLayout == DataUtils.LIST) {
-            AppConfig.runInBackground(
-                () -> {
-                  utilsHandler.removeFromDatabase(
-                      new OperationData(
-                          UtilsHandler.Operation.LIST, mainFragment.getCurrentPath()));
-                });
+            AppConfig.getInstance()
+                    .runInBackground(
+                            () -> {
+                              utilsHandler.removeFromDatabase(
+                                      new OperationData(
+                                              UtilsHandler.Operation.LIST, mainFragment.getCurrentPath()));
+                            });
           }
           utilsHandler.saveToDatabase(
-              new OperationData(UtilsHandler.Operation.GRID, mainFragment.getCurrentPath()));
+                  new OperationData(UtilsHandler.Operation.GRID, mainFragment.getCurrentPath()));
 
           dataUtils.setPathAsGridOrList(ma.getCurrentPath(), DataUtils.GRID);
         } else {
           if (pathLayout == DataUtils.GRID) {
-            AppConfig.runInBackground(
-                () -> {
-                  utilsHandler.removeFromDatabase(
-                      new OperationData(
-                          UtilsHandler.Operation.GRID, mainFragment.getCurrentPath()));
-                });
+            AppConfig.getInstance()
+                    .runInBackground(
+                            () -> {
+                              utilsHandler.removeFromDatabase(
+                                      new OperationData(
+                                              UtilsHandler.Operation.GRID, mainFragment.getCurrentPath()));
+                            });
           }
 
           utilsHandler.saveToDatabase(
-              new OperationData(UtilsHandler.Operation.LIST, mainFragment.getCurrentPath()));
+                  new OperationData(UtilsHandler.Operation.LIST, mainFragment.getCurrentPath()));
 
           dataUtils.setPathAsGridOrList(ma.getCurrentPath(), DataUtils.LIST);
         }
@@ -1167,7 +1207,7 @@ public class MainActivity extends PermissionsActivity
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putBoolean(KEY_DRAWER_SELECTED, drawer.isSomethingSelected());
+    outState.putInt(KEY_DRAWER_SELECTED, getDrawer().getDrawerSelectedItem());
     if (pasteHelper != null) {
       outState.putParcelable(PASTEHELPER_BUNDLE, pasteHelper);
     }
@@ -1189,7 +1229,7 @@ public class MainActivity extends PermissionsActivity
     unregisterReceiver(mainActivityHelper.mNotificationReceiver);
     unregisterReceiver(receiver2);
 
-    if (SDK_INT >= Build.VERSION_CODES.KITKAT && SDK_INT < Build.VERSION_CODES.N) {
+    if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
       unregisterReceiver(mOtgReceiver);
     }
     killToast();
@@ -1204,7 +1244,7 @@ public class MainActivity extends PermissionsActivity
     }
 
     drawer.refreshDrawer();
-    drawer.deselectEverything();
+    drawer.refactorDrawerLockMode();
 
     IntentFilter newFilter = new IntentFilter();
     newFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
@@ -1213,7 +1253,7 @@ public class MainActivity extends PermissionsActivity
     registerReceiver(mainActivityHelper.mNotificationReceiver, newFilter);
     registerReceiver(receiver2, new IntentFilter(TAG_INTENT_FILTER_GENERAL));
 
-    if (SDK_INT >= Build.VERSION_CODES.KITKAT && SDK_INT < Build.VERSION_CODES.N) {
+    if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
       updateUsbInformation();
     }
   }
@@ -1226,7 +1266,7 @@ public class MainActivity extends PermissionsActivity
 
     if (!connectedDevices.isEmpty()) {
       if (SingletonUsbOtg.getInstance().getUsbOtgRoot() != null
-          && OTGUtil.isUsbUriAccessible(this)) {
+              && OTGUtil.isUsbUriAccessible(this)) {
         for (UsbOtgRepresentation device : connectedDevices) {
           if (SingletonUsbOtg.getInstance().checkIfRootIsFromDevice(device)) {
             isInformationUpdated = true;
@@ -1259,22 +1299,22 @@ public class MainActivity extends PermissionsActivity
 
   /** Receiver to check if a USB device is connected at the runtime of application */
   BroadcastReceiver mOtgReceiver =
-      new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-          if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
-            SingletonUsbOtg.getInstance().resetUsbOtgRoot();
-            List<UsbOtgRepresentation> connectedDevices =
-                OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
-            SingletonUsbOtg.getInstance().setConnectedDevice(connectedDevices.get(0));
-            drawer.refreshDrawer();
-          } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-            SingletonUsbOtg.getInstance().resetUsbOtgRoot();
-            drawer.refreshDrawer();
-            goToMain(null);
-          }
-        }
-      };
+          new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+                SingletonUsbOtg.getInstance().resetUsbOtgRoot();
+                List<UsbOtgRepresentation> connectedDevices =
+                        OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
+                SingletonUsbOtg.getInstance().setConnectedDevice(connectedDevices.get(0));
+                drawer.refreshDrawer();
+              } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
+                SingletonUsbOtg.getInstance().resetUsbOtgRoot();
+                drawer.refreshDrawer();
+                goToMain(null);
+              }
+            }
+          };
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -1298,7 +1338,7 @@ public class MainActivity extends PermissionsActivity
     // TODO: 6/5/2017 Android may choose to not call this method before destruction
     // TODO: https://developer.android.com/reference/android/app/Activity.html#onDestroy%28%29
     closeInteractiveShell();
-    SshConnectionPool.getInstance().expungeAllConnections();
+    SshConnectionPool.getInstance().shutdown();
   }
 
   /** Closes the interactive shell and threads associated */
@@ -1394,9 +1434,9 @@ public class MainActivity extends PermissionsActivity
         // Persist URI - this is required for verification of writability.
         if (treeUri != null)
           getPrefs()
-              .edit()
-              .putString(PreferencesConstants.PREFERENCE_URI, treeUri.toString())
-              .commit();
+                  .edit()
+                  .putString(PreferencesConstants.PREFERENCE_URI, treeUri.toString())
+                  .commit();
       } else {
         // If not confirmed SAF, or if still not writable, then revert settings.
         /* DialogUtil.displayError(getActivity(), R.string.message_dialog_cannot_write_to_folder_saf, false, currentFolder);
@@ -1409,9 +1449,9 @@ public class MainActivity extends PermissionsActivity
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         getContentResolver()
-            .takePersistableUriPermission(
-                treeUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                .takePersistableUriPermission(
+                        treeUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
       }
       switch (operation) {
         case DataUtils.DELETE: // deletion
@@ -1451,21 +1491,21 @@ public class MainActivity extends PermissionsActivity
                   getCurrentMainFragment(),
                   getCurrentMainFragment().getActivity(),
                   OpenMode.FILE)
-              .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, oppatheList);
+                  .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, oppatheList);
           break;
         case DataUtils.NEW_FOLDER: // mkdir
           mainActivityHelper.mkDir(
-              RootHelper.generateBaseFile(new File(oppathe), true), getCurrentMainFragment());
+                  RootHelper.generateBaseFile(new File(oppathe), true), getCurrentMainFragment());
           break;
         case DataUtils.RENAME:
           MainFragment ma = getCurrentMainFragment();
           mainActivityHelper.rename(
-              ma.openMode, (oppathe), (oppathe1), mainActivity, isRootExplorer());
+                  ma.openMode, (oppathe), (oppathe1), mainActivity, isRootExplorer());
           ma.updateList();
           break;
         case DataUtils.NEW_FILE:
           mainActivityHelper.mkFile(
-              new HybridFile(OpenMode.FILE, oppathe), getCurrentMainFragment());
+                  new HybridFile(OpenMode.FILE, oppathe), getCurrentMainFragment());
           break;
         case DataUtils.EXTRACT:
           mainActivityHelper.extractFile(new File(oppathe));
@@ -1475,7 +1515,7 @@ public class MainActivity extends PermissionsActivity
           break;
         case DataUtils.SAVE_FILE:
           FileUtil.writeUriToStorage(
-              this, urisToBeSaved, getContentResolver(), getCurrentMainFragment().getCurrentPath());
+                  this, urisToBeSaved, getContentResolver(), getCurrentMainFragment().getCurrentPath());
           urisToBeSaved = null;
           finish();
           break;
@@ -1484,10 +1524,9 @@ public class MainActivity extends PermissionsActivity
     } else if (requestCode == REQUEST_CODE_SAF) {
       if (responseCode == Activity.RESULT_OK && intent.getData() != null) {
         // otg access
-        Uri usbOtgRoot = Uri.parse(intent.getData().toString());
+        Uri usbOtgRoot = intent.getData();
         SingletonUsbOtg.getInstance().setUsbOtgRoot(usbOtgRoot);
         getCurrentMainFragment().loadlist(OTGUtil.PREFIX_OTG, false, OpenMode.OTG);
-
         drawer.closeIfNotLocked();
         if (drawer.isLocked()) drawer.onDrawerClosed();
       } else {
@@ -1500,12 +1539,12 @@ public class MainActivity extends PermissionsActivity
 
   void initialisePreferences() {
     currentTab =
-        getPrefs()
-            .getInt(
-                PreferencesConstants.PREFERENCE_CURRENT_TAB, PreferenceUtils.DEFAULT_CURRENT_TAB);
+            getPrefs()
+                    .getInt(
+                            PreferencesConstants.PREFERENCE_CURRENT_TAB, PreferenceUtils.DEFAULT_CURRENT_TAB);
     @ColorInt
     int currentPrimary =
-        ColorPreferenceHelper.getPrimary(getCurrentColorPreference(), MainActivity.currentTab);
+            ColorPreferenceHelper.getPrimary(getCurrentColorPreference(), MainActivity.currentTab);
     skinStatusBar = PreferenceUtils.getStatusColor(currentPrimary);
   }
 
@@ -1533,11 +1572,11 @@ public class MainActivity extends PermissionsActivity
     }
 
     fabBgView.setOnClickListener(
-        view -> {
-          if (getAppbar().getSearchView().isEnabled()) getAppbar().getSearchView().hideSearchView();
-        });
+            view -> {
+              if (getAppbar().getSearchView().isEnabled()) getAppbar().getSearchView().hideSearchView();
+            });
 
-    //drawer.setDrawerHeaderBackground();
+    drawer.setDrawerHeaderBackground();
     // getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor((currentTab==1
     // ? skinTwo : skin))));
 
@@ -1547,14 +1586,14 @@ public class MainActivity extends PermissionsActivity
       tintManager.setStatusBarTintEnabled(true);
       // tintManager.setStatusBarTintColor(Color.parseColor((currentTab==1 ? skinTwo : skin)));
       FrameLayout.MarginLayoutParams p =
-          (ViewGroup.MarginLayoutParams) findViewById(R.id.drawer_layout).getLayoutParams();
+              (ViewGroup.MarginLayoutParams) findViewById(R.id.drawer_layout).getLayoutParams();
       SystemBarTintManager.SystemBarConfig config = tintManager.getConfig();
-      if (!drawer.isLocked()) p.setMargins(0, config.getStatusBarHeight(), 0, 0);
+      if (!drawer.isOnTablet()) p.setMargins(0, config.getStatusBarHeight(), 0, 0);
     } else if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       Window window = getWindow();
       window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
       // window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      if (drawer.isLocked()) {
+      if (drawer.isOnTablet()) {
         window.setStatusBarColor((skinStatusBar));
       } else window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
       if (getBoolean(PREFERENCE_COLORED_NAVIGATION)) window.setNavigationBarColor(skinStatusBar);
@@ -1579,10 +1618,10 @@ public class MainActivity extends PermissionsActivity
       mainActivity.getWindow().setStatusBarColor(colorDrawable.getColor());
       if (getBoolean(PREFERENCE_COLORED_NAVIGATION))
         mainActivity
-            .getWindow()
-            .setNavigationBarColor(PreferenceUtils.getStatusColor(colorDrawable.getColor()));
+                .getWindow()
+                .setNavigationBarColor(PreferenceUtils.getStatusColor(colorDrawable.getColor()));
     } else if (SDK_INT == Build.VERSION_CODES.KITKAT_WATCH
-        || SDK_INT == Build.VERSION_CODES.KITKAT) {
+            || SDK_INT == Build.VERSION_CODES.KITKAT) {
 
       // for kitkat devices, the status bar color
       SystemBarTintManager tintManager = new SystemBarTintManager(this);
@@ -1613,9 +1652,9 @@ public class MainActivity extends PermissionsActivity
     int iconSkin = getCurrentColorPreference().iconSkin;
 
     SpeedDialActionItem.Builder builder =
-        new SpeedDialActionItem.Builder(id, icon)
-            .setLabel(fabTitle)
-            .setFabBackgroundColor(iconSkin);
+            new SpeedDialActionItem.Builder(id, icon)
+                    .setLabel(fabTitle)
+                    .setFabBackgroundColor(iconSkin);
 
     switch (getAppTheme().getSimpleTheme()) {
       case LIGHT:
@@ -1623,14 +1662,14 @@ public class MainActivity extends PermissionsActivity
         break;
       case DARK:
         builder
-            .setLabelBackgroundColor(Utils.getColor(this, R.color.holo_dark_background))
-            .setLabelColor(Utils.getColor(this, R.color.text_dark));
+                .setLabelBackgroundColor(Utils.getColor(this, R.color.holo_dark_background))
+                .setLabelColor(Utils.getColor(this, R.color.text_dark));
         fabBgView.setBackgroundResource(R.drawable.fab_shadow_dark);
         break;
       case BLACK:
         builder
-            .setLabelBackgroundColor(Color.BLACK)
-            .setLabelColor(Utils.getColor(this, R.color.text_dark));
+                .setLabelBackgroundColor(Color.BLACK)
+                .setLabelColor(Utils.getColor(this, R.color.text_dark));
         fabBgView.setBackgroundResource(R.drawable.fab_shadow_black);
         break;
     }
@@ -1641,9 +1680,9 @@ public class MainActivity extends PermissionsActivity
   public boolean copyToClipboard(Context context, String text) {
     try {
       android.content.ClipboardManager clipboard =
-          (android.content.ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+              (android.content.ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
       android.content.ClipData clip =
-          android.content.ClipData.newPlainText("Path copied to clipboard", text);
+              android.content.ClipData.newPlainText("Path copied to clipboard", text);
       clipboard.setPrimaryClip(clip);
       return true;
     } catch (Exception e) {
@@ -1681,20 +1720,19 @@ public class MainActivity extends PermissionsActivity
       } else FileUtils.openFile(new File(path), mainActivity, getPrefs());
     } else if (i.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
       ArrayList<HybridFileParcelable> failedOps =
-          i.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
+              i.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
       if (failedOps != null) {
         mainActivityHelper.showFailedOperationDialog(failedOps, this);
       }
     } else if (i.getCategories() != null
-        && i.getCategories().contains(CLOUD_AUTHENTICATOR_GDRIVE)) {
+            && i.getCategories().contains(CLOUD_AUTHENTICATOR_GDRIVE)) {
       // we used an external authenticator instead of APIs. Probably for Google Drive
       CloudRail.setAuthenticationResponse(intent);
     } else if ((openProcesses = i.getBooleanExtra(KEY_INTENT_PROCESS_VIEWER, false))) {
       FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       transaction.replace(
-          R.id.content_frame, new ProcessViewerFragment(), KEY_INTENT_PROCESS_VIEWER);
+              R.id.content_frame, new ProcessViewerFragment(), KEY_INTENT_PROCESS_VIEWER);
       //   transaction.addToBackStack(null);
-      drawer.setSomethingSelected(true);
       openProcesses = false;
       // title.setText(utils.getString(con, R.string.process_viewer));
       // Commit the transaction
@@ -1713,18 +1751,18 @@ public class MainActivity extends PermissionsActivity
   }
 
   private BroadcastReceiver receiver2 =
-      new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent i) {
-          if (i.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
-            ArrayList<HybridFileParcelable> failedOps =
-                i.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
-            if (failedOps != null) {
-              mainActivityHelper.showFailedOperationDialog(failedOps, mainActivity);
+          new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent i) {
+              if (i.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
+                ArrayList<HybridFileParcelable> failedOps =
+                        i.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
+                if (failedOps != null) {
+                  mainActivityHelper.showFailedOperationDialog(failedOps, mainActivity);
+                }
+              }
             }
-          }
-        }
-      };
+          };
 
   public void showSMBDialog(String name, String path, boolean edit) {
     if (path.length() > 0 && name.length() == 0) {
@@ -1754,8 +1792,8 @@ public class MainActivity extends PermissionsActivity
     bundle.putInt("port", uri.getPort());
     bundle.putString("path", path);
     bundle.putString(
-        "username",
-        userinfo.indexOf(':') > 0 ? userinfo.substring(0, userinfo.indexOf(':')) : userinfo);
+            "username",
+            userinfo.indexOf(':') > 0 ? userinfo.substring(0, userinfo.indexOf(':')) : userinfo);
 
     if (userinfo.indexOf(':') < 0) {
       bundle.putBoolean("hasPassword", false);
@@ -1783,12 +1821,12 @@ public class MainActivity extends PermissionsActivity
 
   @Override
   public void addConnection(
-      boolean edit,
-      @NonNull final String name,
-      @NonNull final String path,
-      @Nullable final String encryptedPath,
-      @Nullable final String oldname,
-      @Nullable final String oldPath) {
+          boolean edit,
+          @NonNull final String name,
+          @NonNull final String path,
+          @Nullable final String encryptedPath,
+          @Nullable final String oldname,
+          @Nullable final String oldPath) {
     String[] s = new String[] {name, path};
     if (!edit) {
       if ((dataUtils.containsServer(path)) == -1) {
@@ -1796,7 +1834,7 @@ public class MainActivity extends PermissionsActivity
         drawer.refreshDrawer();
 
         utilsHandler.saveToDatabase(
-            new OperationData(UtilsHandler.Operation.SMB, name, encryptedPath));
+                new OperationData(UtilsHandler.Operation.SMB, name, encryptedPath));
 
         // grid.addPath(name, encryptedPath, DataUtils.SMB, 1);
         MainFragment ma = getCurrentMainFragment();
@@ -1806,17 +1844,18 @@ public class MainActivity extends PermissionsActivity
                 findViewById(R.id.navigation),
                 getString(R.string.connection_exists),
                 Snackbar.LENGTH_SHORT)
-            .show();
+                .show();
       }
     } else {
       int i = dataUtils.containsServer(new String[] {oldname, oldPath});
       if (i != -1) {
         dataUtils.removeServer(i);
 
-        AppConfig.runInBackground(
-            () -> {
-              utilsHandler.renameSMB(oldname, oldPath, name, path);
-            });
+        AppConfig.getInstance()
+                .runInBackground(
+                        () -> {
+                          utilsHandler.renameSMB(oldname, oldPath, name, path);
+                        });
         // mainActivity.grid.removePath(oldname, oldPath, DataUtils.SMB);
       }
       dataUtils.addServer(s);
@@ -1833,11 +1872,12 @@ public class MainActivity extends PermissionsActivity
     if (i != -1) {
       dataUtils.removeServer(i);
 
-      AppConfig.runInBackground(
-          () -> {
-            utilsHandler.removeFromDatabase(
-                new OperationData(UtilsHandler.Operation.SMB, name, path));
-          });
+      AppConfig.getInstance()
+              .runInBackground(
+                      () -> {
+                        utilsHandler.removeFromDatabase(
+                                new OperationData(UtilsHandler.Operation.SMB, name, path));
+                      });
       // grid.removePath(name, path, DataUtils.SMB);
       drawer.refreshDrawer();
     }
@@ -1861,7 +1901,7 @@ public class MainActivity extends PermissionsActivity
   @Override
   public void onBookAdded(String[] path, boolean refreshdrawer) {
     utilsHandler.saveToDatabase(
-        new OperationData(UtilsHandler.Operation.BOOKMARKS, path[0], path[1]));
+            new OperationData(UtilsHandler.Operation.BOOKMARKS, path[0], path[1]));
     if (refreshdrawer) drawer.refreshDrawer();
   }
 
@@ -1873,7 +1913,7 @@ public class MainActivity extends PermissionsActivity
   @Override
   public void delete(String title, String path) {
     utilsHandler.removeFromDatabase(
-        new OperationData(UtilsHandler.Operation.BOOKMARKS, title, path));
+            new OperationData(UtilsHandler.Operation.BOOKMARKS, title, path));
     drawer.refreshDrawer();
   }
 
@@ -1913,13 +1953,13 @@ public class MainActivity extends PermissionsActivity
         // cloud entry already exists
         Toast.makeText(
                 this, getResources().getString(R.string.connection_exists), Toast.LENGTH_LONG)
-            .show();
+                .show();
       } else {
         Toast.makeText(
                 MainActivity.this,
                 getResources().getString(R.string.please_wait),
                 Toast.LENGTH_LONG)
-            .show();
+                .show();
         Bundle args = new Bundle();
         args.putInt(ARGS_KEY_LOADER, service.ordinal());
 
@@ -1936,7 +1976,7 @@ public class MainActivity extends PermissionsActivity
     } catch (CloudPluginException e) {
       e.printStackTrace();
       Toast.makeText(this, getResources().getString(R.string.cloud_error_plugin), Toast.LENGTH_LONG)
-          .show();
+              .show();
     }
   }
 
@@ -1952,15 +1992,15 @@ public class MainActivity extends PermissionsActivity
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     Uri uri =
-        Uri.withAppendedPath(
-            Uri.parse("content://" + CloudContract.PROVIDER_AUTHORITY), "/keys.db/secret_keys");
+            Uri.withAppendedPath(
+                    Uri.parse("content://" + CloudContract.PROVIDER_AUTHORITY), "/keys.db/secret_keys");
 
     String[] projection =
-        new String[] {
-          CloudContract.COLUMN_ID,
-          CloudContract.COLUMN_CLIENT_ID,
-          CloudContract.COLUMN_CLIENT_SECRET_KEY
-        };
+            new String[] {
+                    CloudContract.COLUMN_ID,
+                    CloudContract.COLUMN_CLIENT_ID,
+                    CloudContract.COLUMN_CLIENT_SECRET_KEY
+            };
 
     switch (id) {
       case REQUEST_CODE_CLOUD_LIST_KEY:
@@ -2015,7 +2055,7 @@ public class MainActivity extends PermissionsActivity
 
           Toast.makeText(
                   this, getResources().getString(R.string.cloud_error_plugin), Toast.LENGTH_LONG)
-              .show();
+                  .show();
         }
       default:
         Uri undefinedUriAppendedPath = ContentUris.withAppendedId(uri, 7);
@@ -2030,7 +2070,7 @@ public class MainActivity extends PermissionsActivity
               this,
               getResources().getString(R.string.cloud_error_failed_restart),
               Toast.LENGTH_LONG)
-          .show();
+              .show();
       return;
     }
 
@@ -2045,7 +2085,7 @@ public class MainActivity extends PermissionsActivity
     cloudCursorData = data;
 
     if (cloudLoaderAsyncTask != null
-        && cloudLoaderAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
+            && cloudLoaderAsyncTask.getStatus() == AsyncTask.Status.RUNNING) {
       return;
     }
     cloudLoaderAsyncTask = new CloudLoaderAsyncTask(this, cloudHandler, cloudCursorData);
@@ -2053,7 +2093,9 @@ public class MainActivity extends PermissionsActivity
   }
 
   @Override
-  public void onLoaderReset(Loader<Cursor> loader) {}
+  public void onLoaderReset(Loader<Cursor> loader) {
+    // For passing code check
+  }
 
   private static final class FabActionListener implements SpeedDialView.OnActionSelectedListener {
 
@@ -2068,10 +2110,10 @@ public class MainActivity extends PermissionsActivity
     @Override
     public boolean onActionSelected(SpeedDialActionItem actionItem) {
       final MainFragment ma =
-          (MainFragment)
-              ((TabFragment)
-                      mainActivity.getSupportFragmentManager().findFragmentById(R.id.content_frame))
-                  .getCurrentTabFragment();
+              (MainFragment)
+                      ((TabFragment)
+                              mainActivity.getSupportFragmentManager().findFragmentById(R.id.content_frame))
+                              .getCurrentTabFragment();
       final String path = ma.getCurrentPath();
 
       switch (actionItem.getId()) {
@@ -2084,7 +2126,7 @@ public class MainActivity extends PermissionsActivity
         case R.id.menu_new_cloud:
           BottomSheetDialogFragment fragment = new CloudSheetFragment();
           fragment.show(
-              ma.getActivity().getSupportFragmentManager(), CloudSheetFragment.TAG_FRAGMENT);
+                  ma.getActivity().getSupportFragmentManager(), CloudSheetFragment.TAG_FRAGMENT);
           break;
       }
 

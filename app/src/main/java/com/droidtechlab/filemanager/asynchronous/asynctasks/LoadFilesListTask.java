@@ -51,10 +51,13 @@ import com.cloudrail.si.interfaces.CloudStorage;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.Formatter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import jcifs.smb.SmbAuthException;
@@ -62,8 +65,8 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
 public class LoadFilesListTask
-    extends AsyncTask<Void, Void, Pair<OpenMode, ArrayList<LayoutElementParcelable>>>
-    implements BaseAsyncTask {
+        extends AsyncTask<Void, Void, Pair<OpenMode, ArrayList<LayoutElementParcelable>>>
+        implements BaseAsyncTask {
 
   private String path;
   private MainFragment mainFragment;
@@ -74,13 +77,13 @@ public class LoadFilesListTask
   private OnAsyncTaskFinished<Pair<OpenMode, ArrayList<LayoutElementParcelable>>> listener;
 
   public LoadFilesListTask(
-      Context context,
-      String path,
-      MainFragment mainFragment,
-      OpenMode openmode,
-      boolean showThumbs,
-      boolean showHiddenFiles,
-      OnAsyncTaskFinished<Pair<OpenMode, ArrayList<LayoutElementParcelable>>> l) {
+          Context context,
+          String path,
+          MainFragment mainFragment,
+          OpenMode openmode,
+          boolean showThumbs,
+          boolean showHiddenFiles,
+          OnAsyncTaskFinished<Pair<OpenMode, ArrayList<LayoutElementParcelable>>> l) {
     this.path = path;
     this.mainFragment = mainFragment;
     this.openmode = openmode;
@@ -136,17 +139,17 @@ public class LoadFilesListTask
         list = new ArrayList<LayoutElementParcelable>();
 
         sftpHFile.forEachChildrenFile(
-            nullCheckOrInterrupt(context, this),
-            false,
-            file -> {
-              if (!(dataUtils.isFileHidden(file.getPath())
-                  || file.isHidden() && !showHiddenFiles)) {
-                LayoutElementParcelable elem = createListParcelables(file);
-                if (elem != null) {
-                  list.add(elem);
-                }
-              }
-            });
+                nullCheckOrInterrupt(context, this),
+                false,
+                file -> {
+                  if (!(dataUtils.isFileHidden(file.getPath())
+                          || file.isHidden() && !showHiddenFiles)) {
+                    LayoutElementParcelable elem = createListParcelables(file);
+                    if (elem != null) {
+                      list.add(elem);
+                    }
+                  }
+                });
         break;
       case CUSTOM:
         switch (Integer.parseInt(path)) {
@@ -179,11 +182,11 @@ public class LoadFilesListTask
       case OTG:
         list = new ArrayList<>();
         listOtg(
-            path,
-            file -> {
-              LayoutElementParcelable elem = createListParcelables(file);
-              if (elem != null) list.add(elem);
-            });
+                path,
+                file -> {
+                  LayoutElementParcelable elem = createListParcelables(file);
+                  if (elem != null) list.add(elem);
+                });
         openmode = OpenMode.OTG;
         break;
       case DROPBOX:
@@ -195,20 +198,20 @@ public class LoadFilesListTask
 
         try {
           listCloud(
-              path,
-              cloudStorage,
-              openmode,
-              file -> {
-                LayoutElementParcelable elem = createListParcelables(file);
-                if (elem != null) list.add(elem);
-              });
+                  path,
+                  cloudStorage,
+                  openmode,
+                  file -> {
+                    LayoutElementParcelable elem = createListParcelables(file);
+                    if (elem != null) list.add(elem);
+                  });
         } catch (CloudPluginException e) {
           e.printStackTrace();
           AppConfig.toast(
-              nullCheckOrInterrupt(context, this),
-              nullCheckOrInterrupt(context, this)
-                  .getResources()
-                  .getString(R.string.failed_no_connection));
+                  nullCheckOrInterrupt(context, this),
+                  nullCheckOrInterrupt(context, this)
+                          .getResources()
+                          .getString(R.string.failed_no_connection));
           return new Pair<>(openmode, list);
         }
         break;
@@ -216,19 +219,19 @@ public class LoadFilesListTask
         // we're neither in OTG not in SMB, load the list based on root/general filesystem
         list = new ArrayList<>();
         RootHelper.getFiles(
-            path,
-            nullCheckOrInterrupt(mainFragment, this).getMainActivity().isRootExplorer(),
-            showHiddenFiles,
-            mode -> openmode = mode,
-            file -> {
-              LayoutElementParcelable elem = createListParcelables(file);
-              if (elem != null) list.add(elem);
-            });
+                path,
+                nullCheckOrInterrupt(mainFragment, this).getMainActivity().isRootExplorer(),
+                showHiddenFiles,
+                mode -> openmode = mode,
+                file -> {
+                  LayoutElementParcelable elem = createListParcelables(file);
+                  if (elem != null) list.add(elem);
+                });
         break;
     }
 
     if (list != null
-        && !(openmode == OpenMode.CUSTOM && ((path).equals("5") || (path).equals("6")))) {
+            && !(openmode == OpenMode.CUSTOM && ((path).equals("5") || (path).equals("6")))) {
       int t = SortHandler.getSortType(nullCheckOrInterrupt(context, this), path);
       int sortby;
       int asc;
@@ -240,7 +243,7 @@ public class LoadFilesListTask
         sortby = t - 4;
       }
       Collections.sort(
-          list, new FileListSorter(nullCheckOrInterrupt(mainFragment, this).dsort, sortby, asc));
+              list, new FileListSorter(nullCheckOrInterrupt(mainFragment, this).dsort, sortby, asc));
     }
 
     return new Pair<>(openmode, list);
@@ -278,8 +281,7 @@ public class LoadFilesListTask
         nullCheckOrInterrupt(mainFragment, this).file_count++;
       }
 
-      LayoutElementParcelable layoutElement =
-          new LayoutElementParcelable(
+      return new LayoutElementParcelable(
               nullCheckOrInterrupt(context, this),
               baseFile.getName(nullCheckOrInterrupt(context, this)),
               baseFile.getPath(),
@@ -292,121 +294,87 @@ public class LoadFilesListTask
               baseFile.isDirectory(),
               showThumbs,
               baseFile.getMode());
-      return layoutElement;
     }
 
     return null;
   }
 
   private ArrayList<LayoutElementParcelable> listImages() {
-    ArrayList<LayoutElementParcelable> images = new ArrayList<>();
     final String[] projection = {MediaStore.Images.Media.DATA};
-    final Cursor cursor =
-        context
-            .getContentResolver()
-            .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-    if (cursor == null) return images;
-    else if (cursor.getCount() > 0 && cursor.moveToFirst()) {
-      do {
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-        HybridFileParcelable strings = RootHelper.generateBaseFile(new File(path), showHiddenFiles);
-        if (strings != null) {
-          LayoutElementParcelable parcelable = createListParcelables(strings);
-          if (parcelable != null) images.add(parcelable);
-        }
-      } while (cursor.moveToNext());
-    }
-    cursor.close();
-    return images;
+    return listMediaCommon(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null);
   }
 
   private ArrayList<LayoutElementParcelable> listVideos() {
-    ArrayList<LayoutElementParcelable> videos = new ArrayList<>();
-    final String[] projection = {MediaStore.Images.Media.DATA};
-    final Cursor cursor =
-        context
-            .getContentResolver()
-            .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-    if (cursor == null) return videos;
-    else if (cursor.getCount() > 0 && cursor.moveToFirst()) {
-      do {
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-        HybridFileParcelable strings = RootHelper.generateBaseFile(new File(path), showHiddenFiles);
-        if (strings != null) {
-          LayoutElementParcelable parcelable = createListParcelables(strings);
-          if (parcelable != null) videos.add(parcelable);
-        }
-      } while (cursor.moveToNext());
-    }
-    cursor.close();
-    return videos;
+    final String[] projection = {MediaStore.Video.Media.DATA};
+    return listMediaCommon(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null);
   }
 
   private ArrayList<LayoutElementParcelable> listaudio() {
     String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
     String[] projection = {MediaStore.Audio.Media.DATA};
+    return listMediaCommon(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection);
+  }
 
+  private @NonNull
+  ArrayList<LayoutElementParcelable> listMediaCommon(Uri contentUri, @NonNull String[] projection, @Nullable String selection) {
     Cursor cursor =
-        context
-            .getContentResolver()
-            .query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
+            context.getContentResolver().query(contentUri, projection, selection, null, null);
 
-    ArrayList<LayoutElementParcelable> songs = new ArrayList<>();
-    if (cursor == null) return songs;
+    ArrayList<LayoutElementParcelable> retval = new ArrayList<>();
+    if (cursor == null) return retval;
     else if (cursor.getCount() > 0 && cursor.moveToFirst()) {
       do {
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
         HybridFileParcelable strings = RootHelper.generateBaseFile(new File(path), showHiddenFiles);
         if (strings != null) {
           LayoutElementParcelable parcelable = createListParcelables(strings);
-          if (parcelable != null) songs.add(parcelable);
+          if (parcelable != null) retval.add(parcelable);
         }
       } while (cursor.moveToNext());
     }
     cursor.close();
-    return songs;
+    return retval;
   }
 
   private ArrayList<LayoutElementParcelable> listDocs() {
     ArrayList<LayoutElementParcelable> docs = new ArrayList<>();
     final String[] projection = {MediaStore.Files.FileColumns.DATA};
     Cursor cursor =
-        context
-            .getContentResolver()
-            .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
-    String[] types =
-        new String[] {
-          ".pdf",
-          ".xml",
-          ".html",
-          ".asm",
-          ".text/x-asm",
-          ".def",
-          ".in",
-          ".rc",
-          ".list",
-          ".log",
-          ".pl",
-          ".prop",
-          ".properties",
-          ".rc",
-          ".doc",
-          ".docx",
-          ".msg",
-          ".odt",
-          ".pages",
-          ".rtf",
-          ".txt",
-          ".wpd",
-          ".wps"
-        };
+            context
+                    .getContentResolver()
+                    .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
+
     if (cursor == null) return docs;
     else if (cursor.getCount() > 0 && cursor.moveToFirst()) {
       do {
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
-        if (path != null && Arrays.asList(types).contains(path)) {
+
+        if (path != null
+                && (path.endsWith(".pdf")
+                || path.endsWith(".doc")
+                || path.endsWith(".docx")
+                || path.endsWith("txt")
+                || path.endsWith(".rtf")
+                || path.endsWith(".odt")
+                || path.endsWith(".html")
+                || path.endsWith(".xml")
+                || path.endsWith(".text/x-asm")
+                || path.endsWith(".def")
+                || path.endsWith(".in")
+                || path.endsWith(".rc")
+                || path.endsWith(".list")
+                || path.endsWith(".log")
+                || path.endsWith(".pl")
+                || path.endsWith(".prop")
+                || path.endsWith(".properties")
+                || path.endsWith(".rc")
+                || path.endsWith(".msg")
+                || path.endsWith(".odt")
+                || path.endsWith(".pages")
+                || path.endsWith(".wpd")
+                || path.endsWith(".wps"))) {
           HybridFileParcelable strings =
-              RootHelper.generateBaseFile(new File(path), showHiddenFiles);
+                  RootHelper.generateBaseFile(new File(path), showHiddenFiles);
           if (strings != null) {
             LayoutElementParcelable parcelable = createListParcelables(strings);
             if (parcelable != null) docs.add(parcelable);
@@ -416,10 +384,6 @@ public class LoadFilesListTask
     }
     cursor.close();
     Collections.sort(docs, (lhs, rhs) -> -1 * Long.valueOf(lhs.date).compareTo(rhs.date));
-    if (docs.size() > 20)
-      for (int i = docs.size() - 1; i > 20; i--) {
-        docs.remove(i);
-      }
     return docs;
   }
 
@@ -428,16 +392,16 @@ public class LoadFilesListTask
     final String[] projection = {MediaStore.Files.FileColumns.DATA};
 
     Cursor cursor =
-        context
-            .getContentResolver()
-            .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
+            context
+                    .getContentResolver()
+                    .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
     if (cursor == null) return apks;
     else if (cursor.getCount() > 0 && cursor.moveToFirst()) {
       do {
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA));
         if (path != null && path.endsWith(".apk")) {
           HybridFileParcelable strings =
-              RootHelper.generateBaseFile(new File(path), showHiddenFiles);
+                  RootHelper.generateBaseFile(new File(path), showHiddenFiles);
           if (strings != null) {
             LayoutElementParcelable parcelable = createListParcelables(strings);
             if (parcelable != null) apks.add(parcelable);
@@ -456,12 +420,12 @@ public class LoadFilesListTask
     for (String f : paths) {
       if (!f.equals("/")) {
         HybridFileParcelable hybridFileParcelable =
-            RootHelper.generateBaseFile(new File(f), showHiddenFiles);
+                RootHelper.generateBaseFile(new File(f), showHiddenFiles);
         if (hybridFileParcelable != null) {
           hybridFileParcelable.generateMode(nullCheckOrInterrupt(mainFragment, this).getActivity());
           if (!hybridFileParcelable.isSmb()
-              && !hybridFileParcelable.isDirectory()
-              && hybridFileParcelable.exists()) {
+                  && !hybridFileParcelable.isDirectory()
+                  && hybridFileParcelable.exists()) {
             LayoutElementParcelable parcelable = createListParcelables(hybridFileParcelable);
             if (parcelable != null) songs.add(parcelable);
           }
@@ -472,17 +436,20 @@ public class LoadFilesListTask
   }
 
   private ArrayList<LayoutElementParcelable> listRecentFiles() {
-    ArrayList<LayoutElementParcelable> recentFiles = new ArrayList<>();
-    final String[] projection = {
-      MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_MODIFIED
-    };
+    ArrayList<LayoutElementParcelable> recentFiles = new ArrayList<>(20);
+    final String[] projection = {MediaStore.Files.FileColumns.DATA};
     Calendar c = Calendar.getInstance();
     c.set(Calendar.DAY_OF_YEAR, c.get(Calendar.DAY_OF_YEAR) - 2);
     Date d = c.getTime();
     Cursor cursor =
-        this.context
-            .getContentResolver()
-            .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
+            this.context
+                    .getContentResolver()
+                    .query(
+                            MediaStore.Files.getContentUri("external"),
+                            projection,
+                            null,
+                            null,
+                            MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC LIMIT 20");
     if (cursor == null) return recentFiles;
     if (cursor.getCount() > 0 && cursor.moveToFirst()) {
       do {
@@ -490,7 +457,7 @@ public class LoadFilesListTask
         File f = new File(path);
         if (d.compareTo(new Date(f.lastModified())) != 1 && !f.isDirectory()) {
           HybridFileParcelable strings =
-              RootHelper.generateBaseFile(new File(path), showHiddenFiles);
+                  RootHelper.generateBaseFile(new File(path), showHiddenFiles);
           if (strings != null) {
             LayoutElementParcelable parcelable = createListParcelables(strings);
             if (parcelable != null) recentFiles.add(parcelable);
@@ -499,11 +466,6 @@ public class LoadFilesListTask
       } while (cursor.moveToNext());
     }
     cursor.close();
-    Collections.sort(recentFiles, (lhs, rhs) -> -1 * Long.valueOf(lhs.date).compareTo(rhs.date));
-    if (recentFiles.size() > 20)
-      for (int i = recentFiles.size() - 1; i > 20; i--) {
-        recentFiles.remove(i);
-      }
     return recentFiles;
   }
 
@@ -519,8 +481,8 @@ public class LoadFilesListTask
   }
 
   private void listCloud(
-      String path, CloudStorage cloudStorage, OpenMode openMode, OnFileFound fileFoundCallback)
-      throws CloudPluginException {
+          String path, CloudStorage cloudStorage, OpenMode openMode, OnFileFound fileFoundCallback)
+          throws CloudPluginException {
     if (!CloudSheetFragment.isCloudProviderAvailable(context)) {
       throw new CloudPluginException();
     }
