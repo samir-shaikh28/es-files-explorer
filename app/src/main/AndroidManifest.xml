@@ -59,7 +59,7 @@
             android:label="@string/appbar_name"
             android:launchMode="singleInstance"
             android:name="com.droidtechlab.filemanager.ui.activities.MainActivity"
-            android:theme="@style/appCompatLight">
+            android:theme="@style/appCompatBlack">
 
             <intent-filter android:label="@string/appbar_name">
                 <action android:name="android.intent.action.MAIN" />
@@ -122,7 +122,7 @@
             android:uiOptions="splitActionBarWhenNarrow"
             android:label="@string/setting"
             android:name="com.droidtechlab.filemanager.ui.activities.PreferencesActivity"
-            android:theme="@style/appCompatLight">
+            android:theme="@style/appCompatDark">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -132,10 +132,10 @@
         <activity
             android:label="@string/textreader"
             android:name="com.droidtechlab.filemanager.ui.activities.TextEditorActivity"
-            android:theme="@style/appCompatLight">
+            android:theme="@style/appCompatDark">
             <intent-filter
                 tools:ignore="AppLinkUrlError"
-                android:label="Amaze Text Editor">
+                android:label="ES Text Editor">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/*" />
@@ -148,7 +148,7 @@
         <activity
             android:label="@string/databasereader"
             android:name="com.droidtechlab.filemanager.ui.activities.DatabaseViewerActivity"
-            android:theme="@style/appCompatLight"
+            android:theme="@style/appCompatDark"
             android:screenOrientation="locked">
             <intent-filter
                 tools:ignore="AppLinkUrlError"
@@ -161,7 +161,7 @@
         </activity>
 
         <activity android:name="com.droidtechlab.filemanager.ui.activities.AboutActivity"
-            android:theme="@style/aboutLight"
+            android:theme="@style/aboutBlack"
             android:label="About"
             />
 

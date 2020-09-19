@@ -20,11 +20,17 @@
 
 package com.droidtechlab.filemanager.database;
 
+import android.util.Log;
+
 import com.droidtechlab.filemanager.application.AppConfig;
 import com.droidtechlab.filemanager.database.models.explorer.Tab;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.List;
+
+import io.reactivex.schedulers.Schedulers;
 
 /** Created by Vishal on 9/17/2014. */
 public class TabHandler {
@@ -37,7 +43,7 @@ public class TabHandler {
 
   private static class TabHandlerHolder {
     private static final TabHandler INSTANCE =
-        new TabHandler(AppConfig.getInstance().getExplorerDatabase());
+            new TabHandler(AppConfig.getInstance().getExplorerDatabase());
   }
 
   public static TabHandler getInstance() {
@@ -45,19 +51,27 @@ public class TabHandler {
   }
 
   public void addTab(@NonNull Tab tab) {
-    database.tabDao().insertTab(tab);
+    database.tabDao().insertTab(tab).subscribeOn(Schedulers.io()).subscribe();
   }
 
   public void clear() {
-    database.tabDao().clear();
+    database.tabDao().clear().subscribeOn(Schedulers.io()).subscribe();
   }
 
   @Nullable
   public Tab findTab(int tabNo) {
-    return database.tabDao().find(tabNo);
+    try {
+      return database.tabDao().find(tabNo).subscribeOn(Schedulers.io()).blockingGet();
+    } catch (Exception e) {
+      // catch error to handle Single#onError for blockingGet
+      Log.e(getClass().getSimpleName(), e.getMessage());
+      return null;
+    }
   }
 
   public Tab[] getAllTabs() {
-    return database.tabDao().list();
+    List<Tab> tabList = database.tabDao().list().subscribeOn(Schedulers.io()).blockingGet();
+    Tab[] tabs = new Tab[tabList.size()];
+    return tabList.toArray(tabs);
   }
 }

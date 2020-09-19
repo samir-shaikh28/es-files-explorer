@@ -61,6 +61,17 @@
         android:visible="false"/>
 
     <!-- orderInCategory=100 to have the element exit always at the end of the list -->
+
+    <item
+        android:id="@+id/rate_us"
+        android:title="@string/rate"
+        android:orderInCategory="98"/>
+
+    <item
+        android:id="@+id/donate"
+        android:title="@string/donate"
+        android:orderInCategory="99"/>
+
     <item
         android:id="@+id/exit"
         android:title="@string/exit"

@@ -37,6 +37,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.StringRes;
@@ -231,7 +232,9 @@ public abstract class AbstractProgressiveService extends Service
 
   protected void addFirstDatapoint(String name, int amountOfFiles, long totalBytes, boolean move) {
     if (!getDataPackages().isEmpty()) {
-      throw new IllegalStateException("This is not the first datapoint!");
+      addDatapoint( new DatapointParcelable(name, amountOfFiles, totalBytes, move));
+      Log.i("AbstractProgService", "This is not the first datapoint!");
+//      throw new IllegalStateException("This is not the first datapoint!");
     }
 
     DatapointParcelable intent1 = new DatapointParcelable(name, amountOfFiles, totalBytes, move);
@@ -240,7 +243,8 @@ public abstract class AbstractProgressiveService extends Service
 
   protected void addDatapoint(DatapointParcelable datapoint) {
     if (getDataPackages().isEmpty()) {
-      throw new IllegalStateException("This is the first datapoint!");
+      Log.i("AbstractProgService", "This is  the first datapoint!");
+//      throw new IllegalStateException("This is the first datapoint!");
     }
 
     putDataPackage(datapoint);

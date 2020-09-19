@@ -92,10 +92,10 @@ public class Operations {
   }
 
   public static void mkdir(
-      @NonNull final HybridFile file,
-      final Context context,
-      final boolean rootMode,
-      @NonNull final ErrorCallBack errorCallBack) {
+          @NonNull final HybridFile file,
+          final Context context,
+          final boolean rootMode,
+          @NonNull final ErrorCallBack errorCallBack) {
 
     new AsyncTask<Void, Void, Void>() {
 
@@ -133,7 +133,8 @@ public class Operations {
           DocumentFile directoryToCreate = OTGUtil.getDocumentFile(file.getPath(), context, false);
           if (directoryToCreate != null) errorCallBack.exists(file);
 
-          DocumentFile parentDirectory = OTGUtil.getDocumentFile(file.getParent(), context, false);
+          DocumentFile parentDirectory =
+                  OTGUtil.getDocumentFile(file.getParent(context), context, false);
           if (parentDirectory.isDirectory()) {
             parentDirectory.createDirectory(file.getName(context));
             errorCallBack.done(file, true);
@@ -161,7 +162,7 @@ public class Operations {
           CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
           try {
             cloudStorageOneDrive.createFolder(
-                CloudUtil.stripPath(OpenMode.ONEDRIVE, file.getPath()));
+                    CloudUtil.stripPath(OpenMode.ONEDRIVE, file.getPath()));
             errorCallBack.done(file, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -178,7 +179,7 @@ public class Operations {
           }
         } else {
           if (file.isLocal() || file.isRoot()) {
-            int mode = checkFolder(new File(file.getParent()), context);
+            int mode = checkFolder(new File(file.getParent(context)), context);
             if (mode == 2) {
               errorCallBack.launchSAF(file);
               return null;
@@ -208,10 +209,10 @@ public class Operations {
   }
 
   public static void mkfile(
-      @NonNull final HybridFile file,
-      final Context context,
-      final boolean rootMode,
-      @NonNull final ErrorCallBack errorCallBack) {
+          @NonNull final HybridFile file,
+          final Context context,
+          final boolean rootMode,
+          @NonNull final ErrorCallBack errorCallBack) {
 
     new AsyncTask<Void, Void, Void>() {
 
@@ -260,10 +261,10 @@ public class Operations {
             byte[] tempBytes = new byte[0];
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(tempBytes);
             cloudStorageDropbox.upload(
-                CloudUtil.stripPath(OpenMode.DROPBOX, file.getPath()),
-                byteArrayInputStream,
-                0l,
-                true);
+                    CloudUtil.stripPath(OpenMode.DROPBOX, file.getPath()),
+                    byteArrayInputStream,
+                    0l,
+                    true);
             errorCallBack.done(file, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -275,7 +276,7 @@ public class Operations {
             byte[] tempBytes = new byte[0];
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(tempBytes);
             cloudStorageBox.upload(
-                CloudUtil.stripPath(OpenMode.BOX, file.getPath()), byteArrayInputStream, 0l, true);
+                    CloudUtil.stripPath(OpenMode.BOX, file.getPath()), byteArrayInputStream, 0l, true);
             errorCallBack.done(file, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -287,10 +288,10 @@ public class Operations {
             byte[] tempBytes = new byte[0];
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(tempBytes);
             cloudStorageOneDrive.upload(
-                CloudUtil.stripPath(OpenMode.ONEDRIVE, file.getPath()),
-                byteArrayInputStream,
-                0l,
-                true);
+                    CloudUtil.stripPath(OpenMode.ONEDRIVE, file.getPath()),
+                    byteArrayInputStream,
+                    0l,
+                    true);
             errorCallBack.done(file, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -302,10 +303,10 @@ public class Operations {
             byte[] tempBytes = new byte[0];
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(tempBytes);
             cloudStorageGdrive.upload(
-                CloudUtil.stripPath(OpenMode.GDRIVE, file.getPath()),
-                byteArrayInputStream,
-                0l,
-                true);
+                    CloudUtil.stripPath(OpenMode.GDRIVE, file.getPath()),
+                    byteArrayInputStream,
+                    0l,
+                    true);
             errorCallBack.done(file, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -317,17 +318,18 @@ public class Operations {
           DocumentFile fileToCreate = OTGUtil.getDocumentFile(file.getPath(), context, false);
           if (fileToCreate != null) errorCallBack.exists(file);
 
-          DocumentFile parentDirectory = OTGUtil.getDocumentFile(file.getParent(), context, false);
+          DocumentFile parentDirectory =
+                  OTGUtil.getDocumentFile(file.getParent(context), context, false);
           if (parentDirectory.isDirectory()) {
             parentDirectory.createFile(
-                file.getName(context).substring(file.getName(context).lastIndexOf(".")),
-                file.getName(context));
+                    file.getName(context).substring(file.getName(context).lastIndexOf(".")),
+                    file.getName(context));
             errorCallBack.done(file, true);
           } else errorCallBack.done(file, false);
           return null;
         } else {
           if (file.isLocal() || file.isRoot()) {
-            int mode = checkFolder(new File(file.getParent()), context);
+            int mode = checkFolder(new File(file.getParent(context)), context);
             if (mode == 2) {
               errorCallBack.launchSAF(file);
               return null;
@@ -356,11 +358,11 @@ public class Operations {
   }
 
   public static void rename(
-      final HybridFile oldFile,
-      final HybridFile newFile,
-      final boolean rootMode,
-      final Context context,
-      final ErrorCallBack errorCallBack) {
+          final HybridFile oldFile,
+          final HybridFile newFile,
+          final boolean rootMode,
+          final Context context,
+          final ErrorCallBack errorCallBack) {
 
     new AsyncTask<Void, Void, Void>() {
 
@@ -397,27 +399,27 @@ public class Operations {
           return null;
         } else if (oldFile.isSftp()) {
           SshClientUtils.execute(
-              new SFtpClientTemplate(oldFile.getPath()) {
-                @Override
-                public <Void> Void execute(@NonNull SFTPClient client) {
-                  try {
-                    client.rename(
-                        SshClientUtils.extractRemotePathFrom(oldFile.getPath()),
-                        SshClientUtils.extractRemotePathFrom(newFile.getPath()));
-                    errorCallBack.done(newFile, true);
-                  } catch (IOException e) {
-                    e.printStackTrace();
-                    errorCallBack.done(newFile, false);
-                  }
-                  return null;
-                }
-              });
+                  new SFtpClientTemplate(oldFile.getPath()) {
+                    @Override
+                    public <Void> Void execute(@NonNull SFTPClient client) {
+                      try {
+                        client.rename(
+                                SshClientUtils.extractRemotePathFrom(oldFile.getPath()),
+                                SshClientUtils.extractRemotePathFrom(newFile.getPath()));
+                        errorCallBack.done(newFile, true);
+                      } catch (IOException e) {
+                        e.printStackTrace();
+                        errorCallBack.done(newFile, false);
+                      }
+                      return null;
+                    }
+                  });
         } else if (oldFile.isDropBoxFile()) {
           CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
           try {
             cloudStorageDropbox.move(
-                CloudUtil.stripPath(OpenMode.DROPBOX, oldFile.getPath()),
-                CloudUtil.stripPath(OpenMode.DROPBOX, newFile.getPath()));
+                    CloudUtil.stripPath(OpenMode.DROPBOX, oldFile.getPath()),
+                    CloudUtil.stripPath(OpenMode.DROPBOX, newFile.getPath()));
             errorCallBack.done(newFile, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -427,8 +429,8 @@ public class Operations {
           CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
           try {
             cloudStorageBox.move(
-                CloudUtil.stripPath(OpenMode.BOX, oldFile.getPath()),
-                CloudUtil.stripPath(OpenMode.BOX, newFile.getPath()));
+                    CloudUtil.stripPath(OpenMode.BOX, oldFile.getPath()),
+                    CloudUtil.stripPath(OpenMode.BOX, newFile.getPath()));
             errorCallBack.done(newFile, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -438,8 +440,8 @@ public class Operations {
           CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
           try {
             cloudStorageOneDrive.move(
-                CloudUtil.stripPath(OpenMode.ONEDRIVE, oldFile.getPath()),
-                CloudUtil.stripPath(OpenMode.ONEDRIVE, newFile.getPath()));
+                    CloudUtil.stripPath(OpenMode.ONEDRIVE, oldFile.getPath()),
+                    CloudUtil.stripPath(OpenMode.ONEDRIVE, newFile.getPath()));
             errorCallBack.done(newFile, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -449,8 +451,8 @@ public class Operations {
           CloudStorage cloudStorageGdrive = dataUtils.getAccount(OpenMode.GDRIVE);
           try {
             cloudStorageGdrive.move(
-                CloudUtil.stripPath(OpenMode.GDRIVE, oldFile.getPath()),
-                CloudUtil.stripPath(OpenMode.GDRIVE, newFile.getPath()));
+                    CloudUtil.stripPath(OpenMode.GDRIVE, oldFile.getPath()),
+                    CloudUtil.stripPath(OpenMode.GDRIVE, newFile.getPath()));
             errorCallBack.done(newFile, true);
           } catch (Exception e) {
             e.printStackTrace();
@@ -576,7 +578,7 @@ public class Operations {
     if (fileName.contains("/")) fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
 
     return !TextUtils.isEmpty(fileName)
-        && !(fileName.contains(ASTERISK)
+            && !(fileName.contains(ASTERISK)
             || fileName.contains(BACKWARD_SLASH)
             || fileName.contains(COLON)
             || fileName.contains(FOREWARD_SLASH)
@@ -588,11 +590,11 @@ public class Operations {
 
   private static boolean isFileSystemFAT(String mountPoint) {
     String[] args =
-        new String[] {
-          "/bin/bash",
-          "-c",
-          "df -DO_NOT_REPLACE | awk '{print $1,$2,$NF}' | grep \"^" + mountPoint + "\""
-        };
+            new String[] {
+                    "/bin/bash",
+                    "-c",
+                    "df -DO_NOT_REPLACE | awk '{print $1,$2,$NF}' | grep \"^" + mountPoint + "\""
+            };
     try {
       Process proc = new ProcessBuilder(args).start();
       OutputStream outputStream = proc.getOutputStream();

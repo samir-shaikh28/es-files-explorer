@@ -33,7 +33,7 @@ import androidx.annotation.ColorInt;
 public class ColorUtils {
 
   public static void colorizeIcons(
-      Context context, int iconType, GradientDrawable background, @ColorInt int defaultColor) {
+          Context context, int iconType, GradientDrawable background, @ColorInt int defaultColor) {
     switch (iconType) {
       case Icons.VIDEO:
       case Icons.IMAGE:
@@ -59,6 +59,7 @@ public class ColorUtils {
         break;
       case Icons.NOT_KNOWN:
         background.setColor(Utils.getColor(context, R.color.generic_item));
+        break;
       default:
         background.setColor(defaultColor);
         break;

@@ -194,7 +194,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
       }
 
       // updating encrypted db entry if any encrypted file was moved
-      AppConfig.runInBackground(
+      AppConfig.getInstance().runInBackground(
           () -> {
             for (int i = 0; i < paths.size(); i++) {
               for (HybridFileParcelable file : files.get(i)) {

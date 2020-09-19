@@ -281,19 +281,21 @@ public class LoadFilesListTask
         nullCheckOrInterrupt(mainFragment, this).file_count++;
       }
 
-      return new LayoutElementParcelable(
-              nullCheckOrInterrupt(context, this),
-              baseFile.getName(nullCheckOrInterrupt(context, this)),
-              baseFile.getPath(),
-              baseFile.getPermission(),
-              baseFile.getLink(),
-              size,
-              longSize,
-              false,
-              baseFile.getDate() + "",
-              baseFile.isDirectory(),
-              showThumbs,
-              baseFile.getMode());
+      LayoutElementParcelable layoutElement =
+              new LayoutElementParcelable(
+                      nullCheckOrInterrupt(context, this),
+                      baseFile.getName(nullCheckOrInterrupt(context, this)),
+                      baseFile.getPath(),
+                      baseFile.getPermission(),
+                      baseFile.getLink(),
+                      size,
+                      longSize,
+                      false,
+                      baseFile.getDate() + "",
+                      baseFile.isDirectory(),
+                      showThumbs,
+                      baseFile.getMode());
+      return layoutElement;
     }
 
     return null;
@@ -315,8 +317,8 @@ public class LoadFilesListTask
     return listMediaCommon(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection);
   }
 
-  private @NonNull
-  ArrayList<LayoutElementParcelable> listMediaCommon(Uri contentUri, @NonNull String[] projection, @Nullable String selection) {
+  private @NonNull ArrayList<LayoutElementParcelable> listMediaCommon(
+          Uri contentUri, @NonNull String[] projection, @Nullable String selection) {
     Cursor cursor =
             context.getContentResolver().query(contentUri, projection, selection, null, null);
 

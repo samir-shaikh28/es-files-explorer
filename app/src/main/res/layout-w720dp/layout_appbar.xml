@@ -25,7 +25,7 @@
         android:visibility="gone"
         android:paddingRight="16dp"
         android:id="@+id/buttonbarframe"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_below="@id/action_bar">
 

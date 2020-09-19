@@ -309,7 +309,7 @@ public class SftpConnectDialog extends DialogFragment {
                 if (i != -1) {
                   DataUtils.getInstance().removeServer(i);
 
-                  AppConfig.runInBackground(
+                  AppConfig.getInstance().runInBackground(
                       () -> {
                         utilsHandler.removeFromDatabase(
                             new OperationData(
@@ -476,7 +476,7 @@ public class SftpConnectDialog extends DialogFragment {
       Collections.sort(DataUtils.getInstance().getServers(), new BookSorter());
       ((MainActivity) getActivity()).getDrawer().refreshDrawer();
 
-      AppConfig.runInBackground(
+      AppConfig.getInstance().runInBackground(
           () -> {
             utilsHandler.updateSsh(
                 connectionName,

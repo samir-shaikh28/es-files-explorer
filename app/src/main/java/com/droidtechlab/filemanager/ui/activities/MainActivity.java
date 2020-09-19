@@ -82,6 +82,7 @@ import com.droidtechlab.filemanager.ui.theme.AppTheme;
 import com.droidtechlab.filemanager.ui.views.appbar.AppBar;
 import com.droidtechlab.filemanager.ui.views.drawer.Drawer;
 import com.droidtechlab.filemanager.utils.AppConstants;
+import com.droidtechlab.filemanager.utils.Billing;
 import com.droidtechlab.filemanager.utils.BookSorter;
 import com.droidtechlab.filemanager.utils.DataUtils;
 import com.droidtechlab.filemanager.utils.DataUtils.DataChangeListener;
@@ -222,6 +223,7 @@ public class MainActivity extends PermissionsActivity
   private View indicator_layout;
 
   private AppBarLayout appBarLayout;
+  private Billing billing;
 
   private SpeedDialOverlayLayout fabBgView;
   private UtilsHandler utilsHandler;
@@ -1063,6 +1065,12 @@ public class MainActivity extends PermissionsActivity
         if (ma != null)
           GeneralDialogCreation.showHistoryDialog(dataUtils, getPrefs(), ma, getAppTheme());
         break;
+      case R.id.rate_us:
+        openURL();
+        break;
+      case R.id.donate:
+        billing = new Billing(this);
+        break;
       case R.id.sethome:
         if (ma == null) return super.onOptionsItemSelected(item);
         final MainFragment main = ma;
@@ -1178,6 +1186,13 @@ public class MainActivity extends PermissionsActivity
     return super.onOptionsItemSelected(item);
   }
 
+  private void openURL() {
+    Intent intent = new Intent(Intent.ACTION_VIEW);
+    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.droidtechlab.filemanager"));
+    startActivity(intent);
+  }
+
+
   /*@Override
   public void onRestoreInstanceState(Bundle savedInstanceState){
       COPY_PATH=savedInstanceState.getStringArrayList("COPY_PATH");
@@ -1262,7 +1277,7 @@ public class MainActivity extends PermissionsActivity
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   private void updateUsbInformation() {
     boolean isInformationUpdated = false;
-    List<UsbOtgRepresentation> connectedDevices = OTGUtil.getMassStorageDevicesConnected(this);
+    List<UsbOtgRepresentation> connectedDevices = OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
 
     if (!connectedDevices.isEmpty()) {
       if (SingletonUsbOtg.getInstance().getUsbOtgRoot() != null
@@ -1304,8 +1319,7 @@ public class MainActivity extends PermissionsActivity
             public void onReceive(Context context, Intent intent) {
               if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                 SingletonUsbOtg.getInstance().resetUsbOtgRoot();
-                List<UsbOtgRepresentation> connectedDevices =
-                        OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
+                List<UsbOtgRepresentation> connectedDevices = OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
                 SingletonUsbOtg.getInstance().setConnectedDevice(connectedDevices.get(0));
                 drawer.refreshDrawer();
               } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {

@@ -36,6 +36,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
+
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Special immutable class for handling cut/copy operations.
@@ -62,8 +69,8 @@ public final class PasteHelper implements Parcelable {
   private PasteHelper(Parcel in) {
     operation = in.readInt();
     paths =
-        (HybridFileParcelable[])
-            in.readParcelableArray(HybridFileParcelable.class.getClassLoader());
+            (HybridFileParcelable[])
+                    in.readParcelableArray(HybridFileParcelable.class.getClassLoader());
   }
 
   @Override
@@ -78,15 +85,15 @@ public final class PasteHelper implements Parcelable {
   }
 
   public static final Parcelable.Creator CREATOR =
-      new Parcelable.Creator() {
-        public PasteHelper createFromParcel(Parcel in) {
-          return new PasteHelper(in);
-        }
+          new Parcelable.Creator() {
+            public PasteHelper createFromParcel(Parcel in) {
+              return new PasteHelper(in);
+            }
 
-        public PasteHelper[] newArray(int size) {
-          return new PasteHelper[size];
-        }
-      };
+            public PasteHelper[] newArray(int size) {
+              return new PasteHelper[size];
+            }
+          };
 
   public int getOperation() {
     return this.operation;
@@ -129,36 +136,57 @@ public final class PasteHelper implements Parcelable {
   }
 
   private void showSnackbar() {
-    snackbar =
-        Utils.showThemedSnackbar(
-            mainActivity,
-            getSnackbarContent(),
-            BaseTransientBottomBar.LENGTH_INDEFINITE,
-            R.string.paste,
-            () -> {
-              String path = mainActivity.getCurrentMainFragment().getCurrentPath();
-              ArrayList<HybridFileParcelable> arrayList = new ArrayList<>(Arrays.asList(paths));
-              boolean move = operation == PasteHelper.OPERATION_CUT;
-              new PrepareCopyTask(
-                      mainActivity.getCurrentMainFragment(),
-                      path,
-                      move,
-                      mainActivity,
-                      mainActivity.isRootExplorer())
-                  .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-              dismissSnackbar(true);
-            });
-    Utils.invalidateFab(mainActivity, () -> dismissSnackbar(true), true);
+    Single.fromCallable(() -> getSnackbarContent())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                    new SingleObserver<Spanned>() {
+                      @Override
+                      public void onSubscribe(Disposable d) {}
+
+                      @Override
+                      public void onSuccess(Spanned spanned) {
+                        snackbar =
+                                Utils.showThemedSnackbar(
+                                        mainActivity,
+                                        spanned,
+                                        BaseTransientBottomBar.LENGTH_INDEFINITE,
+                                        R.string.paste,
+                                        () -> {
+                                          String path = mainActivity.getCurrentMainFragment().getCurrentPath();
+                                          ArrayList<HybridFileParcelable> arrayList =
+                                                  new ArrayList<>(Arrays.asList(paths));
+                                          boolean move = operation == PasteHelper.OPERATION_CUT;
+                                          new PrepareCopyTask(
+                                                  mainActivity.getCurrentMainFragment(),
+                                                  path,
+                                                  move,
+                                                  mainActivity,
+                                                  mainActivity.isRootExplorer())
+                                                  .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
+                                          dismissSnackbar(true);
+                                        });
+                        Utils.invalidateFab(mainActivity, () -> dismissSnackbar(true), true);
+                      }
+
+                      @Override
+                      public void onError(Throwable e) {
+                        Log.e(
+                                getClass().getSimpleName(),
+                                "Failed to show paste snackbar due to " + e.getCause());
+                        e.printStackTrace();
+                      }
+                    });
   }
 
   private Spanned getSnackbarContent() {
     String operationText = "<b>%s</b>";
     operationText =
-        String.format(
-            operationText,
-            operation == OPERATION_COPY
-                ? mainActivity.getString(R.string.copy)
-                : mainActivity.getString(R.string.move));
+            String.format(
+                    operationText,
+                    operation == OPERATION_COPY
+                            ? mainActivity.getString(R.string.copy)
+                            : mainActivity.getString(R.string.move));
     operationText = operationText.concat(": ");
     int foldersCount = 0;
     int filesCount = 0;
@@ -170,8 +198,8 @@ public final class PasteHelper implements Parcelable {
       }
     }
     operationText =
-        operationText.concat(
-            mainActivity.getString(R.string.folderfilecount, foldersCount, filesCount));
+            operationText.concat(
+                    mainActivity.getString(R.string.folderfilecount, foldersCount, filesCount));
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       return Html.fromHtml(operationText, Html.FROM_HTML_MODE_COMPACT);

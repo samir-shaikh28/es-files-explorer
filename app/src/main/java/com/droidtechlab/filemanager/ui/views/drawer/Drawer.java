@@ -71,7 +71,9 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,6 +96,7 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
 
   public static final int image_selector_request_code = 31;
 
+  private Billing billing;
   public static final int STORAGES_GROUP = 0,
           SERVERS_GROUP = 1,
           CLOUDS_GROUP = 2,
@@ -505,10 +508,22 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
             menu,
             LASTGROUP,
             order++,
+            R.string.rate,
+            new MenuMetadata(
+                    () -> {
+                     openURL();
+                    }),
+            R.drawable.ic_rate_review_grey_24dp,
+            null);
+
+    addNewItem(
+            menu,
+            LASTGROUP,
+            order++,
             R.string.donate,
             new MenuMetadata(
                     () -> {
-                      new Billing(mainActivity);
+                      billing = new Billing(mainActivity);
                     }),
             R.drawable.ic_payment_black_24dp,
             null);
@@ -537,6 +552,8 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
             R.drawable.ic_android_white_24dp,
             null);
 
+
+
     addNewItem(
             menu,
             LASTGROUP,
@@ -564,6 +581,12 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
       item.setChecked(true);
       actionViewStateManager.selectActionView(item);
     }
+  }
+
+  private void openURL() {
+    Intent intent = new Intent(Intent.ACTION_VIEW);
+    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.droidtechlab.filemanager"));
+    mainActivity.startActivity(intent);
   }
 
   private void addNewItem(

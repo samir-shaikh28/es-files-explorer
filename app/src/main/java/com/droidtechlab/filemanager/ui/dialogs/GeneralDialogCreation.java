@@ -121,35 +121,35 @@ public class GeneralDialogCreation {
   private static final String TAG = "GeneralDialogCreation";
 
   public static MaterialDialog showBasicDialog(
-      ThemedActivity themedActivity,
-      @StringRes int content,
-      @StringRes int title,
-      @StringRes int postiveText,
-      @StringRes int negativeText) {
+          ThemedActivity themedActivity,
+          @StringRes int content,
+          @StringRes int title,
+          @StringRes int postiveText,
+          @StringRes int negativeText) {
     int accentColor = themedActivity.getAccent();
     MaterialDialog.Builder a =
-        new MaterialDialog.Builder(themedActivity)
-            .content(content)
-            .widgetColor(accentColor)
-            .theme(themedActivity.getAppTheme().getMaterialDialogTheme())
-            .title(title)
-            .positiveText(postiveText)
-            .positiveColor(accentColor)
-            .negativeText(negativeText)
-            .negativeColor(accentColor);
+            new MaterialDialog.Builder(themedActivity)
+                    .content(content)
+                    .widgetColor(accentColor)
+                    .theme(themedActivity.getAppTheme().getMaterialDialogTheme())
+                    .title(title)
+                    .positiveText(postiveText)
+                    .positiveColor(accentColor)
+                    .negativeText(negativeText)
+                    .negativeColor(accentColor);
     return a.build();
   }
 
   public static MaterialDialog showNameDialog(
-      final MainActivity m,
-      String hint,
-      String prefill,
-      String title,
-      String positiveButtonText,
-      String neutralButtonText,
-      String negativeButtonText,
-      MaterialDialog.SingleButtonCallback positiveButtonAction,
-      WarnableTextInputValidator.OnTextValidate validator) {
+          final MainActivity m,
+          String hint,
+          String prefill,
+          String title,
+          String positiveButtonText,
+          String neutralButtonText,
+          String negativeButtonText,
+          MaterialDialog.SingleButtonCallback positiveButtonAction,
+          WarnableTextInputValidator.OnTextValidate validator) {
     int accentColor = m.getAccent();
     MaterialDialog.Builder builder = new MaterialDialog.Builder(m);
 
@@ -159,15 +159,15 @@ public class GeneralDialogCreation {
     textfield.setText(prefill);
 
     WarnableTextInputLayout tilTextfield =
-        dialogView.findViewById(R.id.singleedittext_warnabletextinputlayout);
+            dialogView.findViewById(R.id.singleedittext_warnabletextinputlayout);
 
     builder
-        .customView(dialogView, false)
-        .widgetColor(accentColor)
-        .theme(m.getAppTheme().getMaterialDialogTheme())
-        .title(title)
-        .positiveText(positiveButtonText)
-        .onPositive(positiveButtonAction);
+            .customView(dialogView, false)
+            .widgetColor(accentColor)
+            .theme(m.getAppTheme().getMaterialDialogTheme())
+            .title(title)
+            .positiveText(positiveButtonText)
+            .onPositive(positiveButtonAction);
 
     if (neutralButtonText != null) {
       builder.neutralText(neutralButtonText);
@@ -181,12 +181,12 @@ public class GeneralDialogCreation {
     MaterialDialog dialog = builder.show();
 
     WarnableTextInputValidator textInputValidator =
-        new WarnableTextInputValidator(
-            builder.getContext(),
-            textfield,
-            tilTextfield,
-            dialog.getActionButton(DialogAction.POSITIVE),
-            validator);
+            new WarnableTextInputValidator(
+                    builder.getContext(),
+                    textfield,
+                    tilTextfield,
+                    dialog.getActionButton(DialogAction.POSITIVE),
+                    validator);
 
     if (!TextUtils.isEmpty(prefill)) textInputValidator.afterTextChanged(textfield.getText());
 
@@ -195,35 +195,35 @@ public class GeneralDialogCreation {
 
   @SuppressWarnings("ConstantConditions")
   public static void deleteFilesDialog(
-      final Context c,
-      final ArrayList<LayoutElementParcelable> layoutElements,
-      final MainActivity mainActivity,
-      final List<LayoutElementParcelable> positions,
-      AppTheme appTheme) {
+          final Context c,
+          final ArrayList<LayoutElementParcelable> layoutElements,
+          final MainActivity mainActivity,
+          final List<LayoutElementParcelable> positions,
+          AppTheme appTheme) {
 
     final ArrayList<HybridFileParcelable> itemsToDelete = new ArrayList<>();
     int accentColor = mainActivity.getAccent();
 
     // Build dialog with custom view layout and accent color.
     MaterialDialog dialog =
-        new MaterialDialog.Builder(c)
-            .title(c.getString(R.string.dialog_delete_title))
-            .customView(R.layout.dialog_delete, true)
-            .theme(appTheme.getMaterialDialogTheme())
-            .negativeText(c.getString(R.string.cancel).toUpperCase())
-            .positiveText(c.getString(R.string.delete).toUpperCase())
-            .positiveColor(accentColor)
-            .negativeColor(accentColor)
-            .onPositive(
-                (dialog1, which) -> {
-                  Toast.makeText(c, c.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                  mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
-                })
-            .build();
+            new MaterialDialog.Builder(c)
+                    .title(c.getString(R.string.dialog_delete_title))
+                    .customView(R.layout.dialog_delete, true)
+                    .theme(appTheme.getMaterialDialogTheme())
+                    .negativeText(c.getString(R.string.cancel).toUpperCase())
+                    .positiveText(c.getString(R.string.delete).toUpperCase())
+                    .positiveColor(accentColor)
+                    .negativeColor(accentColor)
+                    .onPositive(
+                            (dialog1, which) -> {
+                              Toast.makeText(c, c.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
+                              mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
+                            })
+                    .build();
 
     // Get views from custom layout to set text values.
     final TextView categoryDirectories =
-        dialog.getCustomView().findViewById(R.id.category_directories);
+            dialog.getCustomView().findViewById(R.id.category_directories);
     final TextView categoryFiles = dialog.getCustomView().findViewById(R.id.category_files);
     final TextView listDirectories = dialog.getCustomView().findViewById(R.id.list_directories);
     final TextView listFiles = dialog.getCustomView().findViewById(R.id.list_files);
@@ -265,12 +265,12 @@ public class GeneralDialogCreation {
             long sizeDirectory = layoutElement.generateBaseFile().folderSize(c);
 
             directories
-                .append(++counterDirectories)
-                .append(". ")
-                .append(layoutElement.title)
-                .append(" (")
-                .append(Formatter.formatFileSize(c, sizeDirectory))
-                .append(")");
+                    .append(++counterDirectories)
+                    .append(". ")
+                    .append(layoutElement.title)
+                    .append(" (")
+                    .append(Formatter.formatFileSize(c, sizeDirectory))
+                    .append(")");
             sizeTotal += sizeDirectory;
             // Build list of files to delete.
           } else {
@@ -280,12 +280,12 @@ public class GeneralDialogCreation {
             }
 
             files
-                .append(++counterFiles)
-                .append(". ")
-                .append(layoutElement.title)
-                .append(" (")
-                .append(layoutElement.size)
-                .append(")");
+                    .append(++counterFiles)
+                    .append(". ")
+                    .append(layoutElement.title)
+                    .append(" (")
+                    .append(layoutElement.size)
+                    .append(")");
             sizeTotal += layoutElement.longSize;
           }
 
@@ -305,11 +305,11 @@ public class GeneralDialogCreation {
         StringBuilder tempDirectoriesStringBuilder = (StringBuilder) result[4];
 
         updateViews(
-            tempSizeTotal,
-            tempFilesStringBuilder,
-            tempDirectoriesStringBuilder,
-            tempCounterFiles,
-            tempCounterDirectories);
+                tempSizeTotal,
+                tempFilesStringBuilder,
+                tempDirectoriesStringBuilder,
+                tempCounterFiles,
+                tempCounterDirectories);
       }
 
       @Override
@@ -319,10 +319,10 @@ public class GeneralDialogCreation {
       }
 
       private void updateViews(
-          long tempSizeTotal,
-          StringBuilder filesStringBuilder,
-          StringBuilder directoriesStringBuilder,
-          int... values) {
+              long tempSizeTotal,
+              StringBuilder filesStringBuilder,
+              StringBuilder directoriesStringBuilder,
+              int... values) {
 
         int tempCounterFiles = values[0];
         int tempCounterDirectories = values[1];
@@ -361,10 +361,10 @@ public class GeneralDialogCreation {
         // Show total size with at least one directory or file and size is not zero.
         if (tempCounterFiles + tempCounterDirectories > 1 && tempSizeTotal > 0) {
           StringBuilder builderTotal =
-              new StringBuilder()
-                  .append(c.getString(R.string.total))
-                  .append(" ")
-                  .append(Formatter.formatFileSize(c, tempSizeTotal));
+                  new StringBuilder()
+                          .append(c.getString(R.string.total))
+                          .append(" ")
+                          .append(Formatter.formatFileSize(c, tempSizeTotal));
           total.setText(builderTotal);
           if (total.getVisibility() != View.VISIBLE) total.setVisibility(View.VISIBLE);
         } else {
@@ -384,43 +384,43 @@ public class GeneralDialogCreation {
   }
 
   public static void showPropertiesDialogWithPermissions(
-      HybridFileParcelable baseFile,
-      final String permissions,
-      ThemedActivity activity,
-      boolean isRoot,
-      AppTheme appTheme) {
+          HybridFileParcelable baseFile,
+          final String permissions,
+          ThemedActivity activity,
+          boolean isRoot,
+          AppTheme appTheme) {
     showPropertiesDialog(baseFile, permissions, activity, isRoot, appTheme, true, false);
   }
 
   public static void showPropertiesDialogWithoutPermissions(
-      final HybridFileParcelable f, ThemedActivity activity, AppTheme appTheme) {
+          final HybridFileParcelable f, ThemedActivity activity, AppTheme appTheme) {
     showPropertiesDialog(f, null, activity, false, appTheme, false, false);
   }
 
   public static void showPropertiesDialogForStorage(
-      final HybridFileParcelable f, ThemedActivity activity, AppTheme appTheme) {
+          final HybridFileParcelable f, ThemedActivity activity, AppTheme appTheme) {
     showPropertiesDialog(f, null, activity, false, appTheme, false, true);
   }
 
   private static void showPropertiesDialog(
-      final HybridFileParcelable baseFile,
-      final String permissions,
-      ThemedActivity base,
-      boolean isRoot,
-      AppTheme appTheme,
-      boolean showPermissions,
-      boolean forStorage) {
+          final HybridFileParcelable baseFile,
+          final String permissions,
+          ThemedActivity base,
+          boolean isRoot,
+          AppTheme appTheme,
+          boolean showPermissions,
+          boolean forStorage) {
     final ExecutorService executor = Executors.newFixedThreadPool(3);
     final Context c = base.getApplicationContext();
     int accentColor = base.getAccent();
     long last = baseFile.getDate();
     final String date = Utils.getDate(base, last),
-        items = c.getString(R.string.calculating),
-        name = baseFile.getName(c),
-        parent = baseFile.getReadablePath(baseFile.getParent(c));
+            items = c.getString(R.string.calculating),
+            name = baseFile.getName(c),
+            parent = baseFile.getReadablePath(baseFile.getParent(c));
 
     File nomediaFile =
-        baseFile.isDirectory() ? new File(baseFile.getPath() + "/" + FileUtils.NOMEDIA_FILE) : null;
+            baseFile.isDirectory() ? new File(baseFile.getPath() + "/" + FileUtils.NOMEDIA_FILE) : null;
 
     MaterialDialog.Builder builder = new MaterialDialog.Builder(base);
     builder.title(c.getString(R.string.properties));
@@ -469,57 +469,57 @@ public class GeneralDialogCreation {
 
       // setting click listeners for long press
       mNameLinearLayout.setOnLongClickListener(
-          v1 -> {
-            FileUtils.copyToClipboard(c, name);
-            Toast.makeText(
-                    c,
-                    c.getString(R.string.name)
-                        + " "
-                        + c.getString(R.string.properties_copied_clipboard),
-                    Toast.LENGTH_SHORT)
-                .show();
-            return false;
-          });
+              v1 -> {
+                FileUtils.copyToClipboard(c, name);
+                Toast.makeText(
+                        c,
+                        c.getString(R.string.name)
+                                + " "
+                                + c.getString(R.string.properties_copied_clipboard),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+              });
       mLocationLinearLayout.setOnLongClickListener(
-          v12 -> {
-            FileUtils.copyToClipboard(c, parent);
-            Toast.makeText(
-                    c,
-                    c.getString(R.string.location)
-                        + " "
-                        + c.getString(R.string.properties_copied_clipboard),
-                    Toast.LENGTH_SHORT)
-                .show();
-            return false;
-          });
+              v12 -> {
+                FileUtils.copyToClipboard(c, parent);
+                Toast.makeText(
+                        c,
+                        c.getString(R.string.location)
+                                + " "
+                                + c.getString(R.string.properties_copied_clipboard),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+              });
       mSizeLinearLayout.setOnLongClickListener(
-          v13 -> {
-            FileUtils.copyToClipboard(c, items);
-            Toast.makeText(
-                    c,
-                    c.getString(R.string.size)
-                        + " "
-                        + c.getString(R.string.properties_copied_clipboard),
-                    Toast.LENGTH_SHORT)
-                .show();
-            return false;
-          });
+              v13 -> {
+                FileUtils.copyToClipboard(c, items);
+                Toast.makeText(
+                        c,
+                        c.getString(R.string.size)
+                                + " "
+                                + c.getString(R.string.properties_copied_clipboard),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+              });
       mDateLinearLayout.setOnLongClickListener(
-          v14 -> {
-            FileUtils.copyToClipboard(c, date);
-            Toast.makeText(
-                    c,
-                    c.getString(R.string.date)
-                        + " "
-                        + c.getString(R.string.properties_copied_clipboard),
-                    Toast.LENGTH_SHORT)
-                .show();
-            return false;
-          });
+              v14 -> {
+                FileUtils.copyToClipboard(c, date);
+                Toast.makeText(
+                        c,
+                        c.getString(R.string.date)
+                                + " "
+                                + c.getString(R.string.properties_copied_clipboard),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+              });
     }
 
     CountItemsOrAndSizeTask countItemsOrAndSizeTask =
-        new CountItemsOrAndSizeTask(c, itemsText, baseFile, forStorage);
+            new CountItemsOrAndSizeTask(c, itemsText, baseFile, forStorage);
     countItemsOrAndSizeTask.executeOnExecutor(executor);
 
     GenerateHashesTask hashGen = new GenerateHashesTask(baseFile, c, v);
@@ -549,14 +549,14 @@ public class GeneralDialogCreation {
 
       if (forStorage) {
         final String[] LEGENDS =
-            new String[] {c.getString(R.string.used), c.getString(R.string.free)};
+                new String[] {c.getString(R.string.used), c.getString(R.string.free)};
         final int[] COLORS = {
-          Utils.getColor(c, R.color.piechart_red), Utils.getColor(c, R.color.piechart_green)
+                Utils.getColor(c, R.color.piechart_red), Utils.getColor(c, R.color.piechart_green)
         };
 
         long totalSpace = baseFile.getTotal(c),
-            freeSpace = baseFile.getUsableSpace(),
-            usedSpace = totalSpace - freeSpace;
+                freeSpace = baseFile.getUsableSpace(),
+                usedSpace = totalSpace - freeSpace;
 
         List<PieEntry> entries = new ArrayList<>();
         entries.add(new PieEntry(usedSpace, LEGENDS[0]));
@@ -578,11 +578,11 @@ public class GeneralDialogCreation {
         String totalSpaceFormatted = Formatter.formatFileSize(c, totalSpace);
 
         chart.setCenterText(
-            new SpannableString(c.getString(R.string.total) + "\n" + totalSpaceFormatted));
+                new SpannableString(c.getString(R.string.total) + "\n" + totalSpaceFormatted));
         chart.setData(pieData);
       } else {
         LoadFolderSpaceDataTask loadFolderSpaceDataTask =
-            new LoadFolderSpaceDataTask(c, appTheme, chart, baseFile);
+                new LoadFolderSpaceDataTask(c, appTheme, chart, baseFile);
         loadFolderSpaceDataTask.executeOnExecutor(executor);
       }
 
@@ -599,16 +599,16 @@ public class GeneralDialogCreation {
       if (isRoot && permissions.length() > 6) {
         appCompatButton.setVisibility(View.VISIBLE);
         appCompatButton.setOnClickListener(
-            v15 -> {
-              if (permissionsTable.getVisibility() == View.GONE) {
-                permissionsTable.setVisibility(View.VISIBLE);
-                button.setVisibility(View.VISIBLE);
-                setPermissionsDialog(permissionsTable, button, baseFile, permissions, c, main);
-              } else {
-                button.setVisibility(View.GONE);
-                permissionsTable.setVisibility(View.GONE);
-              }
-            });
+                v15 -> {
+                  if (permissionsTable.getVisibility() == View.GONE) {
+                    permissionsTable.setVisibility(View.VISIBLE);
+                    button.setVisibility(View.VISIBLE);
+                    setPermissionsDialog(permissionsTable, button, baseFile, permissions, c, main);
+                  } else {
+                    button.setVisibility(View.GONE);
+                    permissionsTable.setVisibility(View.GONE);
+                  }
+                });
       }
     }
 
@@ -617,27 +617,27 @@ public class GeneralDialogCreation {
     builder.positiveColor(accentColor);
     builder.dismissListener(dialog -> executor.shutdown());
     builder.onPositive(
-        (dialog, which) -> {
-          if (baseFile.isDirectory() && nomediaFile != null) {
-            if (nomediaCheckBox.isChecked()) {
-              // checkbox is checked, create .nomedia
-              try {
-                if (!nomediaFile.createNewFile()) {
-                  // failed operation
-                  Log.w(TAG, "'.nomedia' file creation in " + baseFile.getPath() + " failed!");
+            (dialog, which) -> {
+              if (baseFile.isDirectory() && nomediaFile != null) {
+                if (nomediaCheckBox.isChecked()) {
+                  // checkbox is checked, create .nomedia
+                  try {
+                    if (!nomediaFile.createNewFile()) {
+                      // failed operation
+                      Log.w(TAG, "'.nomedia' file creation in " + baseFile.getPath() + " failed!");
+                    }
+                  } catch (IOException e) {
+                    e.printStackTrace();
+                  }
+                } else {
+                  // checkbox is unchecked, delete .nomedia
+                  if (!nomediaFile.delete()) {
+                    // failed operation
+                    Log.w(TAG, "'.nomedia' file deletion in " + baseFile.getPath() + " failed!");
+                  }
                 }
-              } catch (IOException e) {
-                e.printStackTrace();
               }
-            } else {
-              // checkbox is unchecked, delete .nomedia
-              if (!nomediaFile.delete()) {
-                // failed operation
-                Log.w(TAG, "'.nomedia' file deletion in " + baseFile.getPath() + " failed!");
-              }
-            }
-          }
-        });
+            });
 
     MaterialDialog materialDialog = builder.build();
     materialDialog.show();
@@ -661,18 +661,18 @@ public class GeneralDialogCreation {
 
     @Override
     public String getFormattedValue(
-        float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
       String prefix =
-          entry.getData() != null && entry.getData() instanceof String
-              ? (String) entry.getData()
-              : "";
+              entry.getData() != null && entry.getData() instanceof String
+                      ? (String) entry.getData()
+                      : "";
 
       return prefix + Formatter.formatFileSize(context, (long) value);
     }
   }
 
   public static void showCloudDialog(
-      final MainActivity mainActivity, AppTheme appTheme, final OpenMode openMode) {
+          final MainActivity mainActivity, AppTheme appTheme, final OpenMode openMode) {
     int accentColor = mainActivity.getAccent();
     final MaterialDialog.Builder builder = new MaterialDialog.Builder(mainActivity);
 
@@ -707,13 +707,13 @@ public class GeneralDialogCreation {
   }
 
   public static void showEncryptWarningDialog(
-      final Intent intent,
-      final MainFragment main,
-      AppTheme appTheme,
-      final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface) {
+          final Intent intent,
+          final MainFragment main,
+          AppTheme appTheme,
+          final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface) {
     int accentColor = main.getMainActivity().getAccent();
     final SharedPreferences preferences =
-        PreferenceManager.getDefaultSharedPreferences(main.getContext());
+            PreferenceManager.getDefaultSharedPreferences(main.getContext());
     final MaterialDialog.Builder builder = new MaterialDialog.Builder(main.getActivity());
     builder.title(main.getString(R.string.warning));
     builder.content(main.getString(R.string.crypt_warning_key));
@@ -723,96 +723,96 @@ public class GeneralDialogCreation {
     builder.positiveColor(accentColor);
 
     builder.onPositive(
-        (dialog, which) -> {
-          try {
-            encryptButtonCallbackInterface.onButtonPressed(intent);
-          } catch (Exception e) {
-            e.printStackTrace();
+            (dialog, which) -> {
+              try {
+                encryptButtonCallbackInterface.onButtonPressed(intent);
+              } catch (Exception e) {
+                e.printStackTrace();
 
-            Toast.makeText(
-                    main.getActivity(),
-                    main.getString(R.string.crypt_encryption_fail),
-                    Toast.LENGTH_LONG)
-                .show();
-          }
-        });
+                Toast.makeText(
+                        main.getActivity(),
+                        main.getString(R.string.crypt_encryption_fail),
+                        Toast.LENGTH_LONG)
+                        .show();
+              }
+            });
 
     builder.onNegative(
-        (dialog, which) -> {
-          preferences
-              .edit()
-              .putBoolean(PreferencesConstants.PREFERENCE_CRYPT_WARNING_REMEMBER, true)
-              .apply();
-          try {
-            encryptButtonCallbackInterface.onButtonPressed(intent);
-          } catch (Exception e) {
-            e.printStackTrace();
+            (dialog, which) -> {
+              preferences
+                      .edit()
+                      .putBoolean(PreferencesConstants.PREFERENCE_CRYPT_WARNING_REMEMBER, true)
+                      .apply();
+              try {
+                encryptButtonCallbackInterface.onButtonPressed(intent);
+              } catch (Exception e) {
+                e.printStackTrace();
 
-            Toast.makeText(
-                    main.getActivity(),
-                    main.getString(R.string.crypt_encryption_fail),
-                    Toast.LENGTH_LONG)
-                .show();
-          }
-        });
+                Toast.makeText(
+                        main.getActivity(),
+                        main.getString(R.string.crypt_encryption_fail),
+                        Toast.LENGTH_LONG)
+                        .show();
+              }
+            });
 
     builder.show();
   }
 
   public static void showEncryptWithPresetPasswordSaveAsDialog(
-      @NonNull final Context c,
-      @NonNull final MainActivity main,
-      @NonNull String password,
-      @NonNull final Intent intent) {
+          @NonNull final Context c,
+          @NonNull final MainActivity main,
+          @NonNull String password,
+          @NonNull final Intent intent) {
 
     HybridFileParcelable intentParcelable = intent.getParcelableExtra(EncryptService.TAG_SOURCE);
     MaterialDialog saveAsDialog =
-        showNameDialog(
-            main,
-            "",
-            intentParcelable.getName(c).concat(CryptUtil.CRYPT_EXTENSION),
-            c.getString(
-                intentParcelable.isDirectory()
-                    ? R.string.encrypt_folder_save_as
-                    : R.string.encrypt_file_save_as),
-            c.getString(R.string.ok),
-            null,
-            c.getString(R.string.cancel),
-            (dialog, which) -> {
-              EditText textfield = dialog.getCustomView().findViewById(R.id.singleedittext_input);
-              intent.putExtra(EncryptService.TAG_ENCRYPT_TARGET, textfield.getText().toString());
-              try {
-                EncryptDecryptUtils.startEncryption(
-                    c, intentParcelable.getPath(), password, intent);
-              } catch (GeneralSecurityException | IOException e) {
-                e.printStackTrace();
-                Toast.makeText(c, c.getString(R.string.crypt_encryption_fail), Toast.LENGTH_LONG)
-                    .show();
-              } finally {
-                dialog.dismiss();
-              }
-            },
-            (text) -> {
-              if (text.length() < 1) {
-                return new WarnableTextInputValidator.ReturnState(
-                    WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-              }
-              if (!text.endsWith(CryptUtil.CRYPT_EXTENSION)) {
-                return new WarnableTextInputValidator.ReturnState(
-                    WarnableTextInputValidator.ReturnState.STATE_ERROR,
-                    R.string.encrypt_file_must_end_with_aze);
-              }
-              return new WarnableTextInputValidator.ReturnState();
-            });
+            showNameDialog(
+                    main,
+                    "",
+                    intentParcelable.getName(c).concat(CryptUtil.CRYPT_EXTENSION),
+                    c.getString(
+                            intentParcelable.isDirectory()
+                                    ? R.string.encrypt_folder_save_as
+                                    : R.string.encrypt_file_save_as),
+                    c.getString(R.string.ok),
+                    null,
+                    c.getString(R.string.cancel),
+                    (dialog, which) -> {
+                      EditText textfield = dialog.getCustomView().findViewById(R.id.singleedittext_input);
+                      intent.putExtra(EncryptService.TAG_ENCRYPT_TARGET, textfield.getText().toString());
+                      try {
+                        EncryptDecryptUtils.startEncryption(
+                                c, intentParcelable.getPath(), password, intent);
+                      } catch (GeneralSecurityException | IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(c, c.getString(R.string.crypt_encryption_fail), Toast.LENGTH_LONG)
+                                .show();
+                      } finally {
+                        dialog.dismiss();
+                      }
+                    },
+                    (text) -> {
+                      if (text.length() < 1) {
+                        return new WarnableTextInputValidator.ReturnState(
+                                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+                      }
+                      if (!text.endsWith(CryptUtil.CRYPT_EXTENSION)) {
+                        return new WarnableTextInputValidator.ReturnState(
+                                WarnableTextInputValidator.ReturnState.STATE_ERROR,
+                                R.string.encrypt_file_must_end_with_aze);
+                      }
+                      return new WarnableTextInputValidator.ReturnState();
+                    });
     saveAsDialog.getActionButton(DialogAction.POSITIVE).setEnabled(true);
   }
 
   public static void showEncryptAuthenticateDialog(
-      final Context c,
-      final Intent intent,
-      final MainActivity main,
-      AppTheme appTheme,
-      final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface) {
+          final Context c,
+          final Intent intent,
+          final MainActivity main,
+          AppTheme appTheme,
+          final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface) {
 
     int accentColor = main.getAccent();
     MaterialDialog.Builder builder = new MaterialDialog.Builder(c);
@@ -821,131 +821,131 @@ public class GeneralDialogCreation {
     View rootView = View.inflate(c, R.layout.dialog_encrypt_authenticate, null);
 
     final TextInputEditText passwordEditText =
-        rootView.findViewById(R.id.edit_text_dialog_encrypt_password);
+            rootView.findViewById(R.id.edit_text_dialog_encrypt_password);
     final TextInputEditText passwordConfirmEditText =
-        rootView.findViewById(R.id.edit_text_dialog_encrypt_password_confirm);
+            rootView.findViewById(R.id.edit_text_dialog_encrypt_password_confirm);
     final TextInputEditText encryptSaveAsEditText =
-        rootView.findViewById(R.id.edit_text_encrypt_save_as);
+            rootView.findViewById(R.id.edit_text_encrypt_save_as);
 
     WarnableTextInputLayout textInputLayoutPassword =
-        rootView.findViewById(R.id.til_encrypt_password);
+            rootView.findViewById(R.id.til_encrypt_password);
     WarnableTextInputLayout textInputLayoutPasswordConfirm =
-        rootView.findViewById(R.id.til_encrypt_password_confirm);
+            rootView.findViewById(R.id.til_encrypt_password_confirm);
     WarnableTextInputLayout textInputLayoutEncryptSaveAs =
-        rootView.findViewById(R.id.til_encrypt_save_as);
+            rootView.findViewById(R.id.til_encrypt_save_as);
 
     HybridFileParcelable intentParcelable = intent.getParcelableExtra(EncryptService.TAG_SOURCE);
     encryptSaveAsEditText.setText(intentParcelable.getName(c).concat(CryptUtil.CRYPT_EXTENSION));
     textInputLayoutEncryptSaveAs.setHint(
-        intentParcelable.isDirectory()
-            ? c.getString(R.string.encrypt_folder_save_as)
-            : c.getString(R.string.encrypt_file_save_as));
+            intentParcelable.isDirectory()
+                    ? c.getString(R.string.encrypt_folder_save_as)
+                    : c.getString(R.string.encrypt_file_save_as));
 
     passwordEditText.post(
-        () -> {
-          InputMethodManager imm =
-              (InputMethodManager) main.getSystemService(Context.INPUT_METHOD_SERVICE);
-          imm.showSoftInput(passwordEditText, InputMethodManager.SHOW_IMPLICIT);
-        });
+            () -> {
+              InputMethodManager imm =
+                      (InputMethodManager) main.getSystemService(Context.INPUT_METHOD_SERVICE);
+              imm.showSoftInput(passwordEditText, InputMethodManager.SHOW_IMPLICIT);
+            });
 
     builder
-        .customView(rootView, true)
-        .positiveText(c.getString(R.string.ok))
-        .negativeText(c.getString(R.string.cancel))
-        .theme(appTheme.getMaterialDialogTheme())
-        .positiveColor(accentColor)
-        .negativeColor(accentColor)
-        .autoDismiss(false)
-        .onNegative((dialog, which) -> dialog.cancel())
-        .onPositive(
-            (dialog, which) -> {
-              intent.putExtra(
-                  EncryptService.TAG_ENCRYPT_TARGET, encryptSaveAsEditText.getText().toString());
+            .customView(rootView, true)
+            .positiveText(c.getString(R.string.ok))
+            .negativeText(c.getString(R.string.cancel))
+            .theme(appTheme.getMaterialDialogTheme())
+            .positiveColor(accentColor)
+            .negativeColor(accentColor)
+            .autoDismiss(false)
+            .onNegative((dialog, which) -> dialog.cancel())
+            .onPositive(
+                    (dialog, which) -> {
+                      intent.putExtra(
+                              EncryptService.TAG_ENCRYPT_TARGET, encryptSaveAsEditText.getText().toString());
 
-              try {
-                encryptButtonCallbackInterface.onButtonPressed(
-                    intent, passwordEditText.getText().toString());
-              } catch (GeneralSecurityException | IOException e) {
-                e.printStackTrace();
-                Toast.makeText(c, c.getString(R.string.crypt_encryption_fail), Toast.LENGTH_LONG)
-                    .show();
-              } finally {
-                dialog.dismiss();
-              }
-            });
+                      try {
+                        encryptButtonCallbackInterface.onButtonPressed(
+                                intent, passwordEditText.getText().toString());
+                      } catch (GeneralSecurityException | IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(c, c.getString(R.string.crypt_encryption_fail), Toast.LENGTH_LONG)
+                                .show();
+                      } finally {
+                        dialog.dismiss();
+                      }
+                    });
 
     MaterialDialog dialog = builder.show();
     MDButton btnOK = dialog.getActionButton(DialogAction.POSITIVE);
     btnOK.setEnabled(false);
 
     TextWatcher textWatcher =
-        new SimpleTextWatcher() {
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {
-            btnOK.setEnabled(
-                encryptSaveAsEditText.getText().toString().length() > 0
-                    && passwordEditText.getText().toString().length() > 0
-                    && passwordConfirmEditText.getText().toString().length() > 0);
-          }
-        };
+            new SimpleTextWatcher() {
+              @Override
+              public void onTextChanged(CharSequence s, int start, int before, int count) {
+                btnOK.setEnabled(
+                        encryptSaveAsEditText.getText().toString().length() > 0
+                                && passwordEditText.getText().toString().length() > 0
+                                && passwordConfirmEditText.getText().toString().length() > 0);
+              }
+            };
 
     passwordEditText.addTextChangedListener(textWatcher);
     passwordConfirmEditText.addTextChangedListener(textWatcher);
     encryptSaveAsEditText.addTextChangedListener(textWatcher);
 
     new WarnableTextInputValidator(
-        c,
-        passwordEditText,
-        textInputLayoutPassword,
-        btnOK,
-        (text) -> {
-          if (text.length() < 1) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-          }
-          return new WarnableTextInputValidator.ReturnState();
-        });
+            c,
+            passwordEditText,
+            textInputLayoutPassword,
+            btnOK,
+            (text) -> {
+              if (text.length() < 1) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+              }
+              return new WarnableTextInputValidator.ReturnState();
+            });
 
     new WarnableTextInputValidator(
-        c,
-        passwordConfirmEditText,
-        textInputLayoutPasswordConfirm,
-        btnOK,
-        (text) -> {
-          if (!text.equals(passwordEditText.getText().toString())) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.password_no_match);
-          }
-          return new WarnableTextInputValidator.ReturnState();
-        });
+            c,
+            passwordConfirmEditText,
+            textInputLayoutPasswordConfirm,
+            btnOK,
+            (text) -> {
+              if (!text.equals(passwordEditText.getText().toString())) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.password_no_match);
+              }
+              return new WarnableTextInputValidator.ReturnState();
+            });
 
     new WarnableTextInputValidator(
-        c,
-        encryptSaveAsEditText,
-        textInputLayoutEncryptSaveAs,
-        btnOK,
-        (text) -> {
-          if (text.length() < 1) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-          }
-          if (!text.endsWith(CryptUtil.CRYPT_EXTENSION)) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_ERROR,
-                R.string.encrypt_file_must_end_with_aze);
-          }
-          return new WarnableTextInputValidator.ReturnState();
-        });
+            c,
+            encryptSaveAsEditText,
+            textInputLayoutEncryptSaveAs,
+            btnOK,
+            (text) -> {
+              if (text.length() < 1) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+              }
+              if (!text.endsWith(CryptUtil.CRYPT_EXTENSION)) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_ERROR,
+                        R.string.encrypt_file_must_end_with_aze);
+              }
+              return new WarnableTextInputValidator.ReturnState();
+            });
   }
 
   @RequiresApi(api = M)
   public static void showDecryptFingerprintDialog(
-      final Context c,
-      MainActivity main,
-      final Intent intent,
-      AppTheme appTheme,
-      final EncryptDecryptUtils.DecryptButtonCallbackInterface decryptButtonCallbackInterface)
-      throws GeneralSecurityException, IOException {
+          final Context c,
+          MainActivity main,
+          final Intent intent,
+          AppTheme appTheme,
+          final EncryptDecryptUtils.DecryptButtonCallbackInterface decryptButtonCallbackInterface)
+          throws GeneralSecurityException, IOException {
 
     int accentColor = main.getAccent();
     MaterialDialog.Builder builder = new MaterialDialog.Builder(c);
@@ -964,70 +964,70 @@ public class GeneralDialogCreation {
     cancelButton.setOnClickListener(v -> dialog.cancel());
 
     FingerprintManager manager =
-        (FingerprintManager) c.getSystemService(Context.FINGERPRINT_SERVICE);
+            (FingerprintManager) c.getSystemService(Context.FINGERPRINT_SERVICE);
     FingerprintManager.CryptoObject object =
-        new FingerprintManager.CryptoObject(CryptUtil.initCipher(c));
+            new FingerprintManager.CryptoObject(CryptUtil.initCipher(c));
 
     FingerprintHandler handler =
-        new FingerprintHandler(c, intent, dialog, decryptButtonCallbackInterface);
+            new FingerprintHandler(c, intent, dialog, decryptButtonCallbackInterface);
     handler.authenticate(manager, object);
   }
 
   public static void showDecryptDialog(
-      Context c,
-      final MainActivity main,
-      final Intent intent,
-      AppTheme appTheme,
-      final String password,
-      final EncryptDecryptUtils.DecryptButtonCallbackInterface decryptButtonCallbackInterface) {
+          Context c,
+          final MainActivity main,
+          final Intent intent,
+          AppTheme appTheme,
+          final String password,
+          final EncryptDecryptUtils.DecryptButtonCallbackInterface decryptButtonCallbackInterface) {
 
     showPasswordDialog(
-        c,
-        main,
-        appTheme,
-        R.string.crypt_decrypt,
-        R.string.authenticate_password,
-        ((dialog, which) -> {
-          EditText editText = dialog.getView().findViewById(R.id.singleedittext_input);
+            c,
+            main,
+            appTheme,
+            R.string.crypt_decrypt,
+            R.string.authenticate_password,
+            ((dialog, which) -> {
+              EditText editText = dialog.getView().findViewById(R.id.singleedittext_input);
 
-          if (editText.getText().toString().equals(password))
-            decryptButtonCallbackInterface.confirm(intent);
-          else decryptButtonCallbackInterface.failed();
+              if (editText.getText().toString().equals(password))
+                decryptButtonCallbackInterface.confirm(intent);
+              else decryptButtonCallbackInterface.failed();
 
-          dialog.dismiss();
-        }),
-        null);
+              dialog.dismiss();
+            }),
+            null);
   }
 
   public static void showPasswordDialog(
-      @NonNull Context c,
-      @NonNull final MainActivity main,
-      @NonNull AppTheme appTheme,
-      @StringRes int titleText,
-      @StringRes int promptText,
-      @NonNull MaterialDialog.SingleButtonCallback positiveCallback,
-      @Nullable MaterialDialog.SingleButtonCallback negativeCallback) {
+          @NonNull Context c,
+          @NonNull final MainActivity main,
+          @NonNull AppTheme appTheme,
+          @StringRes int titleText,
+          @StringRes int promptText,
+          @NonNull MaterialDialog.SingleButtonCallback positiveCallback,
+          @Nullable MaterialDialog.SingleButtonCallback negativeCallback) {
     int accentColor = main.getAccent();
 
     MaterialDialog.Builder builder = new MaterialDialog.Builder(c);
     View dialogLayout = View.inflate(main, R.layout.dialog_singleedittext, null);
     WarnableTextInputLayout wilTextfield =
-        dialogLayout.findViewById(R.id.singleedittext_warnabletextinputlayout);
+            dialogLayout.findViewById(R.id.singleedittext_warnabletextinputlayout);
     EditText textfield = dialogLayout.findViewById(R.id.singleedittext_input);
     textfield.setHint(promptText);
     textfield.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
     builder
-        .customView(dialogLayout, false)
-        .theme(appTheme.getMaterialDialogTheme())
-        .autoDismiss(false)
-        .canceledOnTouchOutside(false)
-        .title(titleText)
-        .positiveText(R.string.ok)
-        .positiveColor(accentColor)
-        .onPositive(positiveCallback)
-        .negativeText(R.string.cancel)
-        .negativeColor(accentColor);
+            .customView(dialogLayout, false)
+            .theme(appTheme.getMaterialDialogTheme())
+            .autoDismiss(false)
+            .canceledOnTouchOutside(false)
+            .title(titleText)
+            .positiveText(R.string.ok)
+            .positiveColor(accentColor)
+            .onPositive(positiveCallback)
+            .negativeText(R.string.cancel)
+            .negativeColor(accentColor);
 
     if (negativeCallback != null) builder.onNegative(negativeCallback);
     else builder.onNegative((dialog, which) -> dialog.cancel());
@@ -1035,17 +1035,17 @@ public class GeneralDialogCreation {
     MaterialDialog dialog = builder.show();
 
     new WarnableTextInputValidator(
-        AppConfig.getInstance().getMainActivityContext(),
-        textfield,
-        wilTextfield,
-        dialog.getActionButton(DialogAction.POSITIVE),
-        (text) -> {
-          if (text.length() < 1) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-          }
-          return new WarnableTextInputValidator.ReturnState();
-        });
+            AppConfig.getInstance().getMainActivityContext(),
+            textfield,
+            wilTextfield,
+            dialog.getActionButton(DialogAction.POSITIVE),
+            (text) -> {
+              if (text.length() < 1) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+              }
+              return new WarnableTextInputValidator.ReturnState();
+            });
   }
 
   public static void showSMBHelpDialog(Context m, int accentColor) {
@@ -1060,33 +1060,33 @@ public class GeneralDialogCreation {
     int accentColor = m.getAccent();
     MaterialDialog.Builder mat = new MaterialDialog.Builder(m);
     mat.title(R.string.package_installer)
-        .content(R.string.package_installer_text)
-        .positiveText(R.string.install)
-        .negativeText(R.string.view)
-        .neutralText(R.string.cancel)
-        .positiveColor(accentColor)
-        .negativeColor(accentColor)
-        .neutralColor(accentColor)
-        .onPositive((dialog, which) -> FileUtils.installApk(f, m))
-        .onNegative((dialog, which) -> m.openCompressed(f.getPath()))
-        .theme(m.getAppTheme().getMaterialDialogTheme())
-        .build()
-        .show();
+            .content(R.string.package_installer_text)
+            .positiveText(R.string.install)
+            .negativeText(R.string.view)
+            .neutralText(R.string.cancel)
+            .positiveColor(accentColor)
+            .negativeColor(accentColor)
+            .neutralColor(accentColor)
+            .onPositive((dialog, which) -> FileUtils.installApk(f, m))
+            .onNegative((dialog, which) -> m.openCompressed(f.getPath()))
+            .theme(m.getAppTheme().getMaterialDialogTheme())
+            .build()
+            .show();
   }
 
   public static void showArchiveDialog(final File f, final MainActivity m) {
     int accentColor = m.getAccent();
     MaterialDialog.Builder mat = new MaterialDialog.Builder(m);
     mat.title(R.string.archive)
-        .content(R.string.archive_text)
-        .positiveText(R.string.extract)
-        .negativeText(R.string.view)
-        .neutralText(R.string.cancel)
-        .positiveColor(accentColor)
-        .negativeColor(accentColor)
-        .neutralColor(accentColor)
-        .onPositive((dialog, which) -> m.mainActivityHelper.extractFile(f))
-        .onNegative((dialog, which) -> m.openCompressed(Uri.fromFile(f).toString()));
+            .content(R.string.archive_text)
+            .positiveText(R.string.extract)
+            .negativeText(R.string.view)
+            .neutralText(R.string.cancel)
+            .positiveColor(accentColor)
+            .negativeColor(accentColor)
+            .neutralColor(accentColor)
+            .onPositive((dialog, which) -> m.mainActivityHelper.extractFile(f))
+            .onNegative((dialog, which) -> m.openCompressed(Uri.fromFile(f).toString()));
     if (m.getAppTheme().equals(AppTheme.DARK) || m.getAppTheme().equals(AppTheme.BLACK))
       mat.theme(Theme.DARK);
     MaterialDialog b = mat.build();
@@ -1098,7 +1098,7 @@ public class GeneralDialogCreation {
   }
 
   public static void showCompressDialog(
-      final MainActivity m, final ArrayList<HybridFileParcelable> b, final String current) {
+          final MainActivity m, final ArrayList<HybridFileParcelable> b, final String current) {
     int accentColor = m.getAccent();
     MaterialDialog.Builder a = new MaterialDialog.Builder(m);
 
@@ -1108,48 +1108,48 @@ public class GeneralDialogCreation {
     etFilename.setText(".zip");
     etFilename.setInputType(InputType.TYPE_CLASS_TEXT);
     WarnableTextInputLayout tilFilename =
-        dialogView.findViewById(R.id.singleedittext_warnabletextinputlayout);
+            dialogView.findViewById(R.id.singleedittext_warnabletextinputlayout);
 
     a.customView(dialogView, false)
-        .widgetColor(accentColor)
-        .theme(m.getAppTheme().getMaterialDialogTheme())
-        .title(m.getResources().getString(R.string.enterzipname))
-        .positiveText(R.string.create)
-        .positiveColor(accentColor)
-        .onPositive(
-            (materialDialog, dialogAction) -> {
-              String name = current + "/" + etFilename.getText().toString();
-              m.mainActivityHelper.compressFiles(new File(name), b);
-            })
-        .negativeText(m.getResources().getString(R.string.cancel))
-        .negativeColor(accentColor);
+            .widgetColor(accentColor)
+            .theme(m.getAppTheme().getMaterialDialogTheme())
+            .title(m.getResources().getString(R.string.enterzipname))
+            .positiveText(R.string.create)
+            .positiveColor(accentColor)
+            .onPositive(
+                    (materialDialog, dialogAction) -> {
+                      String name = current + "/" + etFilename.getText().toString();
+                      m.mainActivityHelper.compressFiles(new File(name), b);
+                    })
+            .negativeText(m.getResources().getString(R.string.cancel))
+            .negativeColor(accentColor);
 
     final MaterialDialog materialDialog = a.build();
 
     new WarnableTextInputValidator(
-        a.getContext(),
-        etFilename,
-        tilFilename,
-        materialDialog.getActionButton(DialogAction.POSITIVE),
-        (text) -> {
-          boolean isValidFilename = FileUtil.isValidFilename(text);
+            a.getContext(),
+            etFilename,
+            tilFilename,
+            materialDialog.getActionButton(DialogAction.POSITIVE),
+            (text) -> {
+              boolean isValidFilename = FileUtil.isValidFilename(text);
 
-          if (isValidFilename && text.length() > 0 && !text.toLowerCase().endsWith(".zip")) {
-            return new WarnableTextInputValidator.ReturnState(
-                WarnableTextInputValidator.ReturnState.STATE_WARNING,
-                R.string.compress_file_suggest_zip_extension);
-          } else {
-            if (!isValidFilename) {
-              return new WarnableTextInputValidator.ReturnState(
-                  WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.invalid_name);
-            } else if (text.length() < 1) {
-              return new WarnableTextInputValidator.ReturnState(
-                  WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
-            }
-          }
+              if (isValidFilename && text.length() > 0 && !text.toLowerCase().endsWith(".zip")) {
+                return new WarnableTextInputValidator.ReturnState(
+                        WarnableTextInputValidator.ReturnState.STATE_WARNING,
+                        R.string.compress_file_suggest_zip_extension);
+              } else {
+                if (!isValidFilename) {
+                  return new WarnableTextInputValidator.ReturnState(
+                          WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.invalid_name);
+                } else if (text.length() < 1) {
+                  return new WarnableTextInputValidator.ReturnState(
+                          WarnableTextInputValidator.ReturnState.STATE_ERROR, R.string.field_empty);
+                }
+              }
 
-          return new WarnableTextInputValidator.ReturnState();
-        });
+              return new WarnableTextInputValidator.ReturnState();
+            });
 
     materialDialog.show();
 
@@ -1160,7 +1160,7 @@ public class GeneralDialogCreation {
   }
 
   public static void showSortDialog(
-      final MainFragment m, AppTheme appTheme, final SharedPreferences sharedPref) {
+          final MainFragment m, AppTheme appTheme, final SharedPreferences sharedPref) {
     final String path = m.getCurrentPath();
     int accentColor = m.getMainActivity().getAccent();
     String[] sort = m.getResources().getStringArray(R.array.sortby);
@@ -1168,46 +1168,46 @@ public class GeneralDialogCreation {
     MaterialDialog.Builder a = new MaterialDialog.Builder(m.getActivity());
     a.theme(appTheme.getMaterialDialogTheme());
     a.items(sort)
-        .itemsCallbackSingleChoice(
-            current > 3 ? current - 4 : current, (dialog, view, which, text) -> true);
+            .itemsCallbackSingleChoice(
+                    current > 3 ? current - 4 : current, (dialog, view, which, text) -> true);
     final Set<String> sortbyOnlyThis =
-        sharedPref.getStringSet(PREFERENCE_SORTBY_ONLY_THIS, Collections.emptySet());
+            sharedPref.getStringSet(PREFERENCE_SORTBY_ONLY_THIS, Collections.emptySet());
     final Set<String> onlyThisFloders = new HashSet<>(sortbyOnlyThis);
     boolean onlyThis = onlyThisFloders.contains(path);
     a.checkBoxPrompt(
-        m.getResources().getString(R.string.sort_only_this),
-        onlyThis,
-        (buttonView, isChecked) -> {
-          if (isChecked) {
-            if (!onlyThisFloders.contains(path)) {
-              onlyThisFloders.add(path);
-            }
-          } else {
-            if (onlyThisFloders.contains(path)) {
-              onlyThisFloders.remove(path);
-            }
-          }
-        });
+            m.getResources().getString(R.string.sort_only_this),
+            onlyThis,
+            (buttonView, isChecked) -> {
+              if (isChecked) {
+                if (!onlyThisFloders.contains(path)) {
+                  onlyThisFloders.add(path);
+                }
+              } else {
+                if (onlyThisFloders.contains(path)) {
+                  onlyThisFloders.remove(path);
+                }
+              }
+            });
     a.negativeText(R.string.ascending).positiveColor(accentColor);
     a.positiveText(R.string.descending).negativeColor(accentColor);
     a.onNegative(
-        (dialog, which) -> {
-          onSortTypeSelected(m, sharedPref, onlyThisFloders, dialog, false);
-        });
+            (dialog, which) -> {
+              onSortTypeSelected(m, sharedPref, onlyThisFloders, dialog, false);
+            });
     a.onPositive(
-        (dialog, which) -> {
-          onSortTypeSelected(m, sharedPref, onlyThisFloders, dialog, true);
-        });
+            (dialog, which) -> {
+              onSortTypeSelected(m, sharedPref, onlyThisFloders, dialog, true);
+            });
     a.title(R.string.sort_by);
     a.build().show();
   }
 
   private static void onSortTypeSelected(
-      MainFragment m,
-      SharedPreferences sharedPref,
-      Set<String> onlyThisFloders,
-      MaterialDialog dialog,
-      boolean desc) {
+          MainFragment m,
+          SharedPreferences sharedPref,
+          Set<String> onlyThisFloders,
+          MaterialDialog dialog,
+          boolean desc) {
     final int sortType = desc ? dialog.getSelectedIndex() + 4 : dialog.getSelectedIndex();
     SortHandler sortHandler = SortHandler.getInstance();
     if (onlyThisFloders.contains(m.getCurrentPath())) {
@@ -1234,35 +1234,35 @@ public class GeneralDialogCreation {
     MaterialDialog.Builder a = new MaterialDialog.Builder(m.getActivity());
     a.theme(appTheme.getMaterialDialogTheme());
     a.items(sort)
-        .itemsCallbackSingleChoice(
-            current > 2 ? current - 3 : current, (dialog, view, which, text) -> true);
+            .itemsCallbackSingleChoice(
+                    current > 2 ? current - 3 : current, (dialog, view, which, text) -> true);
     a.negativeText(R.string.ascending).positiveColor(accentColor);
     a.positiveText(R.string.descending).negativeColor(accentColor);
     a.onNegative(
-        (dialog, which) -> {
-          m.Sp.edit().putString("sortbyApps", "" + dialog.getSelectedIndex()).commit();
-          m.getSortModes();
-          m.getLoaderManager().restartLoader(AppsListFragment.ID_LOADER_APP_LIST, null, m);
-          dialog.dismiss();
-        });
+            (dialog, which) -> {
+              m.Sp.edit().putString("sortbyApps", "" + dialog.getSelectedIndex()).commit();
+              m.getSortModes();
+              m.getLoaderManager().restartLoader(AppsListFragment.ID_LOADER_APP_LIST, null, m);
+              dialog.dismiss();
+            });
 
     a.onPositive(
-        (dialog, which) -> {
-          m.Sp.edit().putString("sortbyApps", "" + (dialog.getSelectedIndex() + 3)).commit();
-          m.getSortModes();
-          m.getLoaderManager().restartLoader(AppsListFragment.ID_LOADER_APP_LIST, null, m);
-          dialog.dismiss();
-        });
+            (dialog, which) -> {
+              m.Sp.edit().putString("sortbyApps", "" + (dialog.getSelectedIndex() + 3)).commit();
+              m.getSortModes();
+              m.getLoaderManager().restartLoader(AppsListFragment.ID_LOADER_APP_LIST, null, m);
+              dialog.dismiss();
+            });
 
     a.title(R.string.sort_by);
     a.build().show();
   }
 
   public static void showHistoryDialog(
-      final DataUtils dataUtils,
-      SharedPreferences sharedPrefs,
-      final MainFragment m,
-      AppTheme appTheme) {
+          final DataUtils dataUtils,
+          SharedPreferences sharedPrefs,
+          final MainFragment m,
+          AppTheme appTheme) {
     int accentColor = m.getMainActivity().getAccent();
     final MaterialDialog.Builder a = new MaterialDialog.Builder(m.getActivity());
     a.positiveText(R.string.cancel);
@@ -1274,13 +1274,13 @@ public class GeneralDialogCreation {
     a.theme(appTheme.getMaterialDialogTheme());
 
     HiddenAdapter adapter =
-        new HiddenAdapter(
-            m.getActivity(),
-            m,
-            sharedPrefs,
-            toHybridFileArrayList(dataUtils.getHistory()),
-            null,
-            true);
+            new HiddenAdapter(
+                    m.getActivity(),
+                    m,
+                    sharedPrefs,
+                    toHybridFileArrayList(dataUtils.getHistory()),
+                    null,
+                    true);
     a.adapter(adapter, null);
 
     MaterialDialog x = a.build();
@@ -1289,7 +1289,7 @@ public class GeneralDialogCreation {
   }
 
   public static void showHiddenDialog(
-      DataUtils dataUtils, SharedPreferences sharedPrefs, final MainFragment m, AppTheme appTheme) {
+          DataUtils dataUtils, SharedPreferences sharedPrefs, final MainFragment m, AppTheme appTheme) {
     if (m == null || m.getActivity() == null) {
       return;
     }
@@ -1302,13 +1302,13 @@ public class GeneralDialogCreation {
     builder.theme(appTheme.getMaterialDialogTheme());
     builder.autoDismiss(true);
     HiddenAdapter adapter =
-        new HiddenAdapter(
-            m.getActivity(),
-            m,
-            sharedPrefs,
-            FileUtils.toHybridFileConcurrentRadixTree(dataUtils.getHiddenFiles()),
-            null,
-            false);
+            new HiddenAdapter(
+                    m.getActivity(),
+                    m,
+                    sharedPrefs,
+                    FileUtils.toHybridFileConcurrentRadixTree(dataUtils.getHiddenFiles()),
+                    null,
+                    false);
     builder.adapter(adapter, null);
     builder.dividerColor(Color.GRAY);
     MaterialDialog materialDialog = builder.build();
@@ -1322,12 +1322,12 @@ public class GeneralDialogCreation {
   }
 
   public static void setPermissionsDialog(
-      final View v,
-      View but,
-      final HybridFile file,
-      final String f,
-      final Context context,
-      final MainFragment mainFrag) {
+          final View v,
+          View but,
+          final HybridFile file,
+          final String f,
+          final Context context,
+          final MainFragment mainFrag) {
     final CheckBox readown = v.findViewById(R.id.creadown);
     final CheckBox readgroup = v.findViewById(R.id.creadgroup);
     final CheckBox readother = v.findViewById(R.id.creadother);
@@ -1358,55 +1358,55 @@ public class GeneralDialogCreation {
     exegroup.setChecked(exe[1]);
     exeother.setChecked(exe[2]);
     but.setOnClickListener(
-        v1 -> {
-          int perms =
-              RootUtils.permissionsToOctalString(
-                  readown.isChecked(),
-                  writeown.isChecked(),
-                  exeown.isChecked(),
-                  readgroup.isChecked(),
-                  writegroup.isChecked(),
-                  exegroup.isChecked(),
-                  readother.isChecked(),
-                  writeother.isChecked(),
-                  exeother.isChecked());
+            v1 -> {
+              int perms =
+                      RootUtils.permissionsToOctalString(
+                              readown.isChecked(),
+                              writeown.isChecked(),
+                              exeown.isChecked(),
+                              readgroup.isChecked(),
+                              writegroup.isChecked(),
+                              exegroup.isChecked(),
+                              readother.isChecked(),
+                              writeother.isChecked(),
+                              exeother.isChecked());
 
-          try {
-            RootUtils.changePermissions(
-                file.getPath(),
-                perms,
-                file.isDirectory(context),
-                isSuccess -> {
-                  if (isSuccess) {
-                    Toast.makeText(context, mainFrag.getString(R.string.done), Toast.LENGTH_LONG)
+              try {
+                RootUtils.changePermissions(
+                        file.getPath(),
+                        perms,
+                        file.isDirectory(context),
+                        isSuccess -> {
+                          if (isSuccess) {
+                            Toast.makeText(context, mainFrag.getString(R.string.done), Toast.LENGTH_LONG)
+                                    .show();
+                          } else {
+                            Toast.makeText(
+                                    context,
+                                    mainFrag.getString(R.string.operation_unsuccesful),
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                          }
+                        });
+              } catch (ShellNotRunningException e) {
+                Toast.makeText(context, mainFrag.getString(R.string.root_failure), Toast.LENGTH_LONG)
                         .show();
-                  } else {
-                    Toast.makeText(
-                            context,
-                            mainFrag.getString(R.string.operation_unsuccesful),
-                            Toast.LENGTH_LONG)
-                        .show();
-                  }
-                });
-          } catch (ShellNotRunningException e) {
-            Toast.makeText(context, mainFrag.getString(R.string.root_failure), Toast.LENGTH_LONG)
-                .show();
-            e.printStackTrace();
-          }
-        });
+                e.printStackTrace();
+              }
+            });
   }
 
   public static void showChangePathsDialog(
-      final MainActivity mainActivity, final SharedPreferences prefs) {
+          final MainActivity mainActivity, final SharedPreferences prefs) {
     final MaterialDialog.Builder a = new MaterialDialog.Builder(mainActivity);
     a.input(
-        null,
-        mainActivity.getCurrentMainFragment().getCurrentPath(),
-        false,
-        (dialog, charSequence) -> {
-          boolean isAccessible = FileUtils.isPathAccessible(charSequence.toString(), prefs);
-          dialog.getActionButton(DialogAction.POSITIVE).setEnabled(isAccessible);
-        });
+            null,
+            mainActivity.getCurrentMainFragment().getCurrentPath(),
+            false,
+            (dialog, charSequence) -> {
+              boolean isAccessible = FileUtils.isPathAccessible(charSequence.toString(), prefs);
+              dialog.getActionButton(DialogAction.POSITIVE).setEnabled(isAccessible);
+            });
 
     a.alwaysCallInputCallback();
 
@@ -1424,21 +1424,21 @@ public class GeneralDialogCreation {
     a.negativeColor(accentColor);
 
     a.onPositive(
-        (dialog, which) -> {
-          mainActivity
-              .getCurrentMainFragment()
-              .loadlist(dialog.getInputEditText().getText().toString(), false, OpenMode.UNKNOWN);
-        });
+            (dialog, which) -> {
+              mainActivity
+                      .getCurrentMainFragment()
+                      .loadlist(dialog.getInputEditText().getText().toString(), false, OpenMode.UNKNOWN);
+            });
 
     a.show();
   }
 
   public static MaterialDialog showOtgSafExplanationDialog(ThemedActivity themedActivity) {
     return GeneralDialogCreation.showBasicDialog(
-        themedActivity,
-        R.string.saf_otg_explanation,
-        R.string.otg_access,
-        R.string.ok,
-        R.string.cancel);
+            themedActivity,
+            R.string.saf_otg_explanation,
+            R.string.otg_access,
+            R.string.ok,
+            R.string.cancel);
   }
 }

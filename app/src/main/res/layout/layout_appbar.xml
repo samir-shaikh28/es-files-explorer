@@ -26,7 +26,6 @@
         android:id="@+id/buttonbarframe"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:minHeight="72dp"
         android:background="?android:attr/selectableItemBackground">
 
         <HorizontalScrollView

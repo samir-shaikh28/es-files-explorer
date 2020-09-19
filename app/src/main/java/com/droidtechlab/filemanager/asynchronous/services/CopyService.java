@@ -110,11 +110,11 @@ public class CopyService extends AbstractProgressiveService {
     final boolean move = intent.getBooleanExtra(TAG_COPY_MOVE, false);
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
     accentColor =
-        ((AppConfig) getApplication())
-            .getUtilsProvider()
-            .getColorPreference()
-            .getCurrentUserColorPreferences(this, sharedPreferences)
-            .accent;
+            ((AppConfig) getApplication())
+                    .getUtilsProvider()
+                    .getColorPreference()
+                    .getCurrentUserColorPreferences(this, sharedPreferences)
+                    .accent;
 
     mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     b.putInt(TAG_COPY_START_ID, startId);
@@ -126,27 +126,27 @@ public class CopyService extends AbstractProgressiveService {
     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     customSmallContentViews =
-        new RemoteViews(getPackageName(), R.layout.notification_service_small);
+            new RemoteViews(getPackageName(), R.layout.notification_service_small);
     customBigContentViews = new RemoteViews(getPackageName(), R.layout.notification_service_big);
 
     Intent stopIntent = new Intent(TAG_BROADCAST_COPY_CANCEL);
     PendingIntent stopPendingIntent =
-        PendingIntent.getBroadcast(c, 1234, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent.getBroadcast(c, 1234, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     NotificationCompat.Action action =
-        new NotificationCompat.Action(
-            R.drawable.ic_content_copy_white_36dp, getString(R.string.stop_ftp), stopPendingIntent);
+            new NotificationCompat.Action(
+                    R.drawable.ic_content_copy_white_36dp, getString(R.string.stop_ftp), stopPendingIntent);
 
     mBuilder =
-        new NotificationCompat.Builder(c, NotificationConstants.CHANNEL_NORMAL_ID)
-            .setContentIntent(pendingIntent)
-            .setSmallIcon(R.drawable.ic_content_copy_white_36dp)
-            .setCustomContentView(customSmallContentViews)
-            .setCustomBigContentView(customBigContentViews)
-            .setCustomHeadsUpContentView(customSmallContentViews)
-            .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-            .addAction(action)
-            .setOngoing(true)
-            .setColor(accentColor);
+            new NotificationCompat.Builder(c, NotificationConstants.CHANNEL_NORMAL_ID)
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.ic_content_copy_white_36dp)
+                    .setCustomContentView(customSmallContentViews)
+                    .setCustomBigContentView(customBigContentViews)
+                    .setCustomHeadsUpContentView(customSmallContentViews)
+                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                    .addAction(action)
+                    .setOngoing(true)
+                    .setColor(accentColor);
 
     // set default notification views text
 
@@ -307,13 +307,13 @@ public class CopyService extends AbstractProgressiveService {
       // even directories can end with CRYPT_EXTENSION
       if (sourceFile.isDirectory() && !sourceFile.getName(c).endsWith(CryptUtil.CRYPT_EXTENSION)) {
         sourceFile.forEachChildrenFile(
-            getApplicationContext(),
-            isRootExplorer,
-            file -> {
-              // iterating each file inside source files which were copied to find instance of
-              // any copied / moved encrypted file
-              findAndReplaceEncryptedEntry(file);
-            });
+                getApplicationContext(),
+                isRootExplorer,
+                file -> {
+                  // iterating each file inside source files which were copied to find instance of
+                  // any copied / moved encrypted file
+                  findAndReplaceEncryptedEntry(file);
+                });
       } else {
 
         if (sourceFile.getName(c).endsWith(CryptUtil.CRYPT_EXTENSION)) {
@@ -359,10 +359,10 @@ public class CopyService extends AbstractProgressiveService {
        * @param mode target file open mode (current path's open mode)
        */
       public void execute(
-          final ArrayList<HybridFileParcelable> sourceFiles,
-          final String targetPath,
-          final boolean move,
-          OpenMode mode) {
+              final ArrayList<HybridFileParcelable> sourceFiles,
+              final String targetPath,
+              final boolean move,
+              OpenMode mode) {
 
         // initial start of copy, initiate the watcher
         watcherUtil.watch(CopyService.this);
@@ -379,14 +379,14 @@ public class CopyService extends AbstractProgressiveService {
                 // the target open mode is not the one we're currently in!
                 // we're processing the file for cache
                 hFile =
-                    new HybridFile(
-                        OpenMode.FILE, targetPath, sourceFiles.get(i).getName(c), f1.isDirectory());
+                        new HybridFile(
+                                OpenMode.FILE, targetPath, sourceFiles.get(i).getName(c), f1.isDirectory());
               } else {
 
                 // the target open mode is where we're currently at
                 hFile =
-                    new HybridFile(
-                        mode, targetPath, sourceFiles.get(i).getName(c), f1.isDirectory());
+                        new HybridFile(
+                                mode, targetPath, sourceFiles.get(i).getName(c), f1.isDirectory());
               }
 
               if (!progressHandler.getCancelled()) {
@@ -417,11 +417,11 @@ public class CopyService extends AbstractProgressiveService {
           for (int i = 0; i < sourceFiles.size(); i++) {
             if (!progressHandler.getCancelled()) {
               HybridFile hFile =
-                  new HybridFile(
-                      mode,
-                      targetPath,
-                      sourceFiles.get(i).getName(c),
-                      sourceFiles.get(i).isDirectory());
+                      new HybridFile(
+                              mode,
+                              targetPath,
+                              sourceFiles.get(i).getName(c),
+                              sourceFiles.get(i).isDirectory());
               progressHandler.setSourceFilesProcessed(++sourceProgress);
               progressHandler.setFileName(sourceFiles.get(i).getName(c));
               copyRoot(sourceFiles.get(i), hFile, move);
@@ -461,10 +461,10 @@ public class CopyService extends AbstractProgressiveService {
       }
 
       private void copyFiles(
-          final HybridFileParcelable sourceFile,
-          final HybridFile targetFile,
-          final ProgressHandler progressHandler)
-          throws IOException {
+              final HybridFileParcelable sourceFile,
+              final HybridFile targetFile,
+              final ProgressHandler progressHandler)
+              throws IOException {
 
         if (progressHandler.getCancelled()) return;
         if (sourceFile.isDirectory()) {
@@ -475,7 +475,7 @@ public class CopyService extends AbstractProgressiveService {
           // 1. source file and target file doesn't end up in loop
           // 2. source file has a valid name or not
           if (!Operations.isFileNameValid(sourceFile.getName(c))
-              || Operations.isCopyLoopPossible(sourceFile, targetFile)) {
+                  || Operations.isCopyLoopPossible(sourceFile, targetFile)) {
             failedFOps.add(sourceFile);
             return;
           }
@@ -483,21 +483,21 @@ public class CopyService extends AbstractProgressiveService {
 
           if (progressHandler.getCancelled()) return;
           sourceFile.forEachChildrenFile(
-              c,
-              false,
-              file -> {
-                HybridFile destFile =
-                    new HybridFile(
-                        targetFile.getMode(),
-                        targetFile.getPath(),
-                        file.getName(c),
-                        file.isDirectory());
-                try {
-                  copyFiles(file, destFile, progressHandler);
-                } catch (IOException e) {
-                  throw new IllegalStateException(e); // throw unchecked exception, no throws needed
-                }
-              });
+                  c,
+                  false,
+                  file -> {
+                    HybridFile destFile =
+                            new HybridFile(
+                                    targetFile.getMode(),
+                                    targetFile.getPath(),
+                                    file.getName(c),
+                                    file.isDirectory());
+                    try {
+                      copyFiles(file, destFile, progressHandler);
+                    } catch (IOException e) {
+                      throw new IllegalStateException(e); // throw unchecked exception, no throws needed
+                    }
+                  });
         } else {
           if (!Operations.isFileNameValid(sourceFile.getName(c))) {
             failedFOps.add(sourceFile);
@@ -521,13 +521,13 @@ public class CopyService extends AbstractProgressiveService {
     if (RootHelper.isDirectory(hFile1.getPath(), isRootExplorer, 5)) {
       if (RootHelper.fileExists(hFile2.getPath())) return false;
       ArrayList<HybridFileParcelable> baseFiles =
-          RootHelper.getFilesList(hFile1.getPath(), true, true, null);
+              RootHelper.getFilesList(hFile1.getPath(), true, true, null);
       if (baseFiles.size() > 0) {
         boolean b = true;
         for (HybridFileParcelable baseFile : baseFiles) {
           if (!checkFiles(
-              new HybridFile(baseFile.getMode(), baseFile.getPath()),
-              new HybridFile(hFile2.getMode(), hFile2.getPath() + "/" + (baseFile.getName(c)))))
+                  new HybridFile(baseFile.getMode(), baseFile.getPath()),
+                  new HybridFile(hFile2.getMode(), hFile2.getPath() + "/" + (baseFile.getName(c)))))
             b = false;
         }
         return b;
@@ -535,7 +535,7 @@ public class CopyService extends AbstractProgressiveService {
       return RootHelper.fileExists(hFile2.getPath());
     } else {
       ArrayList<HybridFileParcelable> baseFiles =
-          RootHelper.getFilesList(hFile1.getParent(), true, true, null);
+              RootHelper.getFilesList(hFile1.getParent(c), true, true, null);
       int i = -1;
       int index = -1;
       for (HybridFileParcelable b : baseFiles) {
@@ -546,7 +546,7 @@ public class CopyService extends AbstractProgressiveService {
         }
       }
       ArrayList<HybridFileParcelable> baseFiles1 =
-          RootHelper.getFilesList(hFile1.getParent(), true, true, null);
+              RootHelper.getFilesList(hFile1.getParent(c), true, true, null);
       int i1 = -1;
       int index1 = -1;
       for (HybridFileParcelable b : baseFiles1) {
@@ -561,14 +561,14 @@ public class CopyService extends AbstractProgressiveService {
   }
 
   private BroadcastReceiver receiver3 =
-      new BroadcastReceiver() {
+          new BroadcastReceiver() {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-          // cancel operation
-          progressHandler.setCancelled(true);
-        }
-      };
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              // cancel operation
+              progressHandler.setCancelled(true);
+            }
+          };
 
   @Override
   public IBinder onBind(Intent arg0) {

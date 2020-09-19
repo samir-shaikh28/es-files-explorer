@@ -28,17 +28,17 @@ import androidx.annotation.NonNull;
 
 /** Identifies a mounted volume */
 public class StorageDirectoryParcelable implements Parcelable {
-  public final String path;
-  public final String name;
+  @NonNull public final String path;
+  @NonNull public final String name;
   public final @DrawableRes int iconRes;
 
-  public StorageDirectoryParcelable(String path, String name, int iconRes) {
+  public StorageDirectoryParcelable(@NonNull String path, @NonNull String name, int iconRes) {
     this.path = path;
     this.name = name;
     this.iconRes = iconRes;
   }
 
-  public StorageDirectoryParcelable(Parcel im) {
+  public StorageDirectoryParcelable(@NonNull Parcel im) {
     path = im.readString();
     name = im.readString();
     iconRes = im.readInt();
@@ -63,13 +63,13 @@ public class StorageDirectoryParcelable implements Parcelable {
   }
 
   public static final Creator<StorageDirectoryParcelable> CREATOR =
-      new Creator<StorageDirectoryParcelable>() {
-        public StorageDirectoryParcelable createFromParcel(Parcel in) {
-          return new StorageDirectoryParcelable(in);
-        }
+          new Creator<StorageDirectoryParcelable>() {
+            public StorageDirectoryParcelable createFromParcel(Parcel in) {
+              return new StorageDirectoryParcelable(in);
+            }
 
-        public StorageDirectoryParcelable[] newArray(int size) {
-          return new StorageDirectoryParcelable[size];
-        }
-      };
+            public StorageDirectoryParcelable[] newArray(int size) {
+              return new StorageDirectoryParcelable[size];
+            }
+          };
 }

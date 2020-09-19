@@ -20,10 +20,16 @@
 
 package com.droidtechlab.filemanager.database;
 
+import android.util.Log;
+
 import com.droidtechlab.filemanager.application.AppConfig;
 import com.droidtechlab.filemanager.database.models.explorer.EncryptedEntry;
 
 import androidx.annotation.NonNull;
+
+import java.util.List;
+
+import io.reactivex.schedulers.Schedulers;
 
 /** Created by vishal on 15/4/17. */
 public class CryptHandler {
@@ -36,7 +42,7 @@ public class CryptHandler {
 
   private static class CryptHandlerHolder {
     private static final CryptHandler INSTANCE =
-        new CryptHandler(AppConfig.getInstance().getExplorerDatabase());
+            new CryptHandler(AppConfig.getInstance().getExplorerDatabase());
   }
 
   public static CryptHandler getInstance() {
@@ -44,22 +50,31 @@ public class CryptHandler {
   }
 
   public void addEntry(EncryptedEntry encryptedEntry) {
-    AppConfig.runInBackground(() -> database.encryptedEntryDao().insert(encryptedEntry));
+    database.encryptedEntryDao().insert(encryptedEntry).subscribeOn(Schedulers.io()).subscribe();
   }
 
   public void clear(String path) {
-    AppConfig.runInBackground(() -> database.encryptedEntryDao().delete(path));
+    database.encryptedEntryDao().delete(path).subscribeOn(Schedulers.io()).subscribe();
   }
 
   public void updateEntry(EncryptedEntry oldEncryptedEntry, EncryptedEntry newEncryptedEntry) {
-    AppConfig.runInBackground(() -> database.encryptedEntryDao().update(newEncryptedEntry));
+    database.encryptedEntryDao().update(newEncryptedEntry).subscribeOn(Schedulers.io()).subscribe();
   }
 
   public EncryptedEntry findEntry(String path) {
-    return database.encryptedEntryDao().select(path);
+    try {
+      return database.encryptedEntryDao().select(path).subscribeOn(Schedulers.io()).blockingGet();
+    } catch (Exception e) {
+      // catch error to handle Single#onError for blockingGet
+      Log.e(getClass().getSimpleName(), e.getMessage());
+      return null;
+    }
   }
 
   public EncryptedEntry[] getAllEntries() {
-    return database.encryptedEntryDao().list();
+    List<EncryptedEntry> encryptedEntryList =
+            database.encryptedEntryDao().list().subscribeOn(Schedulers.io()).blockingGet();
+    EncryptedEntry[] encryptedEntries = new EncryptedEntry[encryptedEntryList.size()];
+    return encryptedEntryList.toArray(encryptedEntries);
   }
 }

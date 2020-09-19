@@ -46,6 +46,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.droidtechlab.filemanager.R;
+import com.droidtechlab.filemanager.filesystem.HybridFile;
 import com.droidtechlab.filemanager.filesystem.files.FileUtils;
 import com.droidtechlab.filemanager.ui.activities.MainActivity;
 import com.droidtechlab.filemanager.ui.dialogs.GeneralDialogCreation;
@@ -341,10 +342,10 @@ public class BottomBar implements View.OnTouchListener {
 
         switch (openmode) {
             case SFTP:
-                newPath = mainActivityHelper.parseSftpPath(news);
+                newPath = HybridFile.parseSftpPath(news);
                 break;
             case SMB:
-                newPath = mainActivityHelper.parseSmbPath(news);
+                newPath = HybridFile.parseSmbPath(news);
                 break;
             case OTG:
                 newPath = mainActivityHelper.parseOTGPath(news);
