@@ -471,11 +471,11 @@ public class MainActivity extends PermissionsActivity
                   if (tabFragment != null) {
                     tabFragment.refactorDrawerStorages(false);
                     Fragment main = tabFragment.getFragmentAtIndex(0);
-                    if (main != null) ((MainFragment) main).updateTabWithDb(tabHandler.findTab(1));
+                    if (main != null && tabHandler.findTab(1) != null) ((MainFragment) main).updateTabWithDb(tabHandler.findTab(1));
                     Fragment main1 = tabFragment.getFragmentAtIndex(1);
-                    if (main1 != null) ((MainFragment) main1).updateTabWithDb(tabHandler.findTab(2));
+                    if (main1 != null && tabHandler.findTab(2) != null) ((MainFragment) main1).updateTabWithDb(tabHandler.findTab(2));
                   }
-                  getPrefs().edit().putBoolean(PREFERENCE_NEED_TO_SET_HOME, false).commit();
+                  getPrefs().edit().putBoolean(PREFERENCE_NEED_TO_SET_HOME, false).apply();
                 } else {
                   // just refresh list
                   if (tabFragment != null) {
