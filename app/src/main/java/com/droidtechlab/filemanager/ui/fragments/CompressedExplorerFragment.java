@@ -207,8 +207,11 @@ public class CompressedExplorerFragment extends Fragment implements BottomBarBut
     if (savedInstanceState == null && compressedFile != null) {
       files = new ArrayList<>();
       // adding a cache file to delete where any user interaction elements will be cached
-      String fileName =
-          compressedFile.getName().substring(0, compressedFile.getName().lastIndexOf("."));
+      String fileName =  String.valueOf(System.currentTimeMillis());
+
+      if(compressedFile.getName().length() > 0 && compressedFile.getName().lastIndexOf(".") > 0) {
+        fileName = compressedFile.getName().substring(0, compressedFile.getName().lastIndexOf("."));
+      }
       String path = getActivity().getExternalCacheDir().getPath() + SEPARATOR + fileName;
       files.add(new HybridFileParcelable(path));
       decompressor = CompressedHelper.getCompressorInstance(getContext(), compressedFile);
