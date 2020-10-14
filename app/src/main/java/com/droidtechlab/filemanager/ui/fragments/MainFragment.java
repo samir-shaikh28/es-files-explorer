@@ -52,6 +52,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
@@ -114,6 +116,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import hotchemi.android.rate.AppRate;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
@@ -270,6 +273,20 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         //   listView.setPadding(listView.getPaddingLeft(), paddingTop, listView.getPaddingRight(),
         // listView.getPaddingBottom());
         return rootView;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        AppRate.with(getContext())
+                .setInstallDays(0) // default 10, 0 means install day.
+                .setLaunchTimes(3)
+                .setRemindInterval(1) // default 1
+                .monitor();
+
+        // Show a dialog if meets conditions
+        AppRate.showRateDialogIfMeetsConditions(getActivity());
     }
 
     @Override
