@@ -107,6 +107,11 @@ import com.droidtechlab.filemanager.utils.MainActivityHelper;
 import com.droidtechlab.filemanager.utils.OTGUtil;
 import com.droidtechlab.filemanager.utils.OpenMode;
 import com.droidtechlab.filemanager.utils.Utils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.io.File;
@@ -201,6 +206,61 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     private LayoutElementParcelable back = null;
 
+    public static final int NUMBER_OF_ADS = 2;
+
+    // The AdLoader used to load ads.
+    private AdLoader adLoader;
+
+    // List of native ads that have been successfully loaded.
+    private ArrayList<UnifiedNativeAd> mNativeAds = new ArrayList<>();
+
+
+    private void insertAdsInMenuItems() {
+//        if (mNativeAds.size() <= 0) {
+//            return;
+//        }
+//
+//        int offset = (LIST_ELEMENTS.size() / mNativeAds.size()) + 1;
+//        int index = 0;
+//        for (NativeAd ad: mNativeAds) {
+//            mRecyclerViewItems.add(index, ad);
+//            index = index + offset;
+//        }
+    }
+
+    private void loadNativeAds() {
+
+        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id));
+        adLoader = builder.forUnifiedNativeAd(
+                new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
+                    @Override
+                    public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+                        // A native ad loaded successfully, check if the ad loader has finished loading
+                        // and if so, insert the ads into the list.
+                        mNativeAds.add(unifiedNativeAd);
+                        if (!adLoader.isLoading()) {
+                           // insertAdsInMenuItems();
+                        }
+                    }
+                }).withAdListener(
+                new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        // A native ad failed to load, check if the ad loader has finished loading
+                        // and if so, insert the ads into the list.
+
+                        Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
+                                + " load another.");
+                        if (!adLoader.isLoading()) {
+                            //insertAdsInMenuItems();
+                        }
+                    }
+                }).build();
+
+        // Load the Native Express ad.
+        adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -262,6 +322,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     return false;
                 });
 
+
         mSwipeRefreshLayout = rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> loadlist((CURRENT_PATH), false, openMode));
@@ -279,6 +340,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        loadNativeAds();
         AppRate.with(getContext())
                 .setInstallDays(0) // default 10, 0 means install day.
                 .setLaunchTimes(3)
@@ -1145,9 +1207,10 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                                 sharedPref,
                                 listView,
                                 LIST_ELEMENTS,
+                                mNativeAds,
                                 ma.getActivity());
             } else {
-                adapter.setItems(listView, new ArrayList<>(LIST_ELEMENTS));
+                adapter.setItems(listView, new ArrayList<>(LIST_ELEMENTS), mNativeAds);
             }
 
             stopAnims = true;

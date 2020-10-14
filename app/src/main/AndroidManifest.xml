@@ -55,6 +55,10 @@
         android:banner="@drawable/about_header"
         android:requestLegacyExternalStorage="true">
 
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true"/>
+
         <activity
             android:label="@string/appbar_name"
             android:launchMode="singleInstance"

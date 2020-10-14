@@ -132,6 +132,7 @@ import com.droidtechlab.filemanager.utils.OTGUtil;
 import com.droidtechlab.filemanager.utils.OpenMode;
 import com.droidtechlab.filemanager.utils.PreferenceUtils;
 import com.droidtechlab.filemanager.utils.Utils;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -288,6 +289,7 @@ public class MainActivity extends PermissionsActivity
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataUtils = DataUtils.getInstance();
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
 
         initialisePreferences();
         initializeInteractiveShell();
