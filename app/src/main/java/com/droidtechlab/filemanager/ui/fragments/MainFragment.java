@@ -110,7 +110,6 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -215,7 +214,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     private ArrayList<UnifiedNativeAd> mNativeAds = new ArrayList<>();
 
 
-
     private void loadNativeAds() {
 
         AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id));
@@ -228,7 +226,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         mNativeAds.add(unifiedNativeAd);
                         Log.d("###", "Success ");
                         if (!adLoader.isLoading()) {
-                           // insertAdsInMenuItems();
+                            // insertAdsInMenuItems();
                         }
                     }
 
@@ -240,7 +238,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
 
-                        Log.d("###", "Ad Load failed, error code: "+errorCode);
+                        Log.d("###", "Ad Load failed, error code: " + errorCode);
                         Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
                                 + " load another.");
                         if (!adLoader.isLoading()) {
@@ -1561,7 +1559,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     @Override
     public void onPause() {
         super.onPause();
-        (getActivity()).unregisterReceiver(receiver2);
+        if (getActivity() != null) (getActivity()).unregisterReceiver(receiver2);
+
         if (customFileObserver != null) {
             customFileObserver.stopWatching();
         }
@@ -1592,7 +1591,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
                 LayoutElementParcelable layoutElement =
                         new LayoutElementParcelable(
-                                getContext(),
+                                requireContext(),
                                 name,
                                 aMFile.getPath(),
                                 "",
@@ -1612,7 +1611,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                 file_count++;
                 LayoutElementParcelable layoutElement =
                         new LayoutElementParcelable(
-                                getContext(),
+                                requireContext(),
                                 name,
                                 aMFile.getPath(),
                                 "",
@@ -1641,7 +1640,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                 size = "";
                 LayoutElementParcelable layoutElement =
                         new LayoutElementParcelable(
-                                getContext(),
+                                requireContext(),
                                 f.getPath(),
                                 mFile.getPermission(),
                                 mFile.getLink(),
@@ -1672,7 +1671,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                 try {
                     LayoutElementParcelable layoutElement =
                             new LayoutElementParcelable(
-                                    getContext(),
+                                    requireContext(),
                                     f.getPath(),
                                     mFile.getPermission(),
                                     mFile.getLink(),
@@ -1718,7 +1717,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     e.printStackTrace();
                 }
             }
-            FileUtils.scanFile(getActivity(), new HybridFile[]{new HybridFile(OpenMode.FILE, path)});
+            FileUtils.scanFile(requireActivity(), new HybridFile[]{new HybridFile(OpenMode.FILE, path)});
         }
     }
 
