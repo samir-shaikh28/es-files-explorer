@@ -299,7 +299,7 @@
     <string name="domain">Tartomány</string>
     <string name="invalid">%s érvénytelen</string>
     <string name="ftp_notif_starting">FTP-kiszolgáló indítása</string>
-    <string name="ftp_notif_title">Az Amaze FTP-kiszolgáló fut</string>
+    <string name="ftp_notif_title">Az ES File Manager FTP-kiszolgáló fut</string>
     <string name="ftp_notif_text">%s</string>
     <string name="ftp_notif_stop_server">LEÁLLÍTÁS</string>
     <string name="ftp_port_edit_menu_title">Válasszon FTP portot</string>
@@ -569,7 +569,7 @@
     <string name="no_bitcoin_app">Kérjük, telepítse a Bitcoin pénztárcát</string>
     <string name="channel_name_normal">Amaze értesítések</string>
     <string name="channel_description_normal">Amaze File Manager értesítései</string>
-    <string name="channel_name_ftp">Amaze FTP-kiszolgáló</string>
+    <string name="channel_name_ftp">ES File Manager FTP-kiszolgáló</string>
     <string name="channel_description_ftp">Amaze File Manager FTP-kiszolgáló értesítései</string>
 
     <string name="appbar_name" translatable="false">ES File Explorer</string>

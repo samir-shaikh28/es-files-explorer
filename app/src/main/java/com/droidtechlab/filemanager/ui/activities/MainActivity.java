@@ -289,7 +289,7 @@ public class MainActivity extends PermissionsActivity
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataUtils = DataUtils.getInstance();
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        MobileAds.initialize(this);
 
         initialisePreferences();
         initializeInteractiveShell();
@@ -1084,6 +1084,9 @@ public class MainActivity extends PermissionsActivity
                 openURL();
                 break;
             case R.id.donate:
+                if(drawer.isOpen()) {
+                    drawer.close();
+                }
                 billing = new Billing(this);
                 break;
             case R.id.sethome:

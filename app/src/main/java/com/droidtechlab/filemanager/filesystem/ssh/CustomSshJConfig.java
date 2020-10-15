@@ -22,14 +22,9 @@ package com.droidtechlab.filemanager.filesystem.ssh;
 
 import android.util.Log;
 
-import java.security.NoSuchProviderException;
-import java.security.Security;
-
 import net.schmizz.sshj.DefaultConfig;
-import net.schmizz.sshj.signature.SignatureDSA;
-import net.schmizz.sshj.signature.SignatureRSA;
-import net.schmizz.sshj.transport.random.JCERandom;
-import net.schmizz.sshj.transport.random.SingletonRandomFactory;
+
+import java.security.Security;
 
 /**
  * sshj {@link net.schmizz.sshj.Config} for our own use.
@@ -41,14 +36,20 @@ import net.schmizz.sshj.transport.random.SingletonRandomFactory;
  * @see net.schmizz.sshj.AndroidConfig
  */
 public class CustomSshJConfig extends DefaultConfig {
-  // This is where we different from the original AndroidConfig. Found it only work if we remove
-  // BouncyCastle bundled with Android before registering our BouncyCastle provider
-  public static void init() {
-    try {
-      Security.removeProvider("BC");
-    }  finally {
-      Log.d("CustomSshJConfig", "NoSuchProviderExceptionFinally");
+    // This is where we different from the original AndroidConfig. Found it only work if we remove
+    // BouncyCastle bundled with Android before registering our BouncyCastle provider
+    public static void init() {
+        try {
+            Security.removeProvider("BC");
+        } finally {
+            Log.d("CustomSshJConfig", "NoSuchProviderExceptionFinally");
+        }
+        try {
+            Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 0);
+        } finally {
+            Log.d("CustomSshJConfig", "insert finally");
+
+        }
+
     }
-    Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 0);
-  }
 }

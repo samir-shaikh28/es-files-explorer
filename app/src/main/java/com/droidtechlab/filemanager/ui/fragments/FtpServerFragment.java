@@ -57,6 +57,7 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -137,9 +138,9 @@ public class FtpServerFragment extends Fragment {
     ftpBtn.setOnClickListener(
             v -> {
               if (!FtpService.isRunning()) {
-                if (FtpService.isConnectedToWifi(getContext())
-                        || FtpService.isConnectedToLocalNetwork(getContext())
-                        || FtpService.isEnabledWifiHotspot(getContext())) startServer();
+                if (FtpService.isConnectedToWifi(requireContext())
+                        || FtpService.isConnectedToLocalNetwork(requireContext())
+                        || FtpService.isEnabledWifiHotspot(requireContext())) startServer();
                 else {
                   // no Wi-Fi and no eth, we shouldn't be here in the first place, because of broadcast
                   // receiver, but just to be sure
@@ -368,15 +369,15 @@ public class FtpServerFragment extends Fragment {
 
   /** Sends a broadcast to start ftp server */
   private void startServer() {
-    getContext()
+    requireContext()
             .sendBroadcast(
                     new Intent(FtpService.ACTION_START_FTPSERVER)
-                            .setPackage(getContext().getPackageName()));
+                            .setPackage(requireContext().getPackageName()));
   }
 
   /** Sends a broadcast to stop ftp server */
   private void stopServer() {
-    getContext()
+    requireContext()
             .sendBroadcast(
                     new Intent(FtpService.ACTION_STOP_FTPSERVER).setPackage(getContext().getPackageName()));
   }

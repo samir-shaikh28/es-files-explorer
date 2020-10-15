@@ -301,7 +301,7 @@
     <string name="invalid">無効な %s</string>
     <string name="ftp_notif_starting">FTP サーバーは開始しています</string>
     <string name="ftp_notif_starting_title">FTP サーバー</string>
-    <string name="ftp_notif_title">Amaze FTP サーバーは実行中</string>
+    <string name="ftp_notif_title">ES File Manager FTP サーバーは実行中</string>
     <string name="ftp_notif_text">%s に</string>
     <string name="ftp_notif_stop_server">停止</string>
     <string name="ftp_port_edit_menu_title">FTP ポートを選択</string>
@@ -565,7 +565,7 @@ Wi-Fiに接続する必要があります。\n\n
     <string name="no_bitcoin_app">ビットコインウォレットアプリをインストールしてください</string>
     <string name="channel_name_normal">Amaze 通知</string>
     <string name="channel_description_normal">Amaze ファイルマネージャーの通知</string>
-    <string name="channel_name_ftp">Amaze FTP サーバー</string>
+    <string name="channel_name_ftp">ES File Manager FTP サーバー</string>
     <string name="channel_description_ftp">Amaze ファイルマネージャー FTPサーバーの通知</string>
 
     <string name="processing">処理中…</string>

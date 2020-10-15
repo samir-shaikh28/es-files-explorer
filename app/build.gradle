@@ -118,10 +118,11 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.5.1'
-    implementation 'com.google.firebase:firebase-analytics:17.6.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
-    implementation 'com.google.firebase:firebase-ads:19.4.0'
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
 
 
     implementation 'com.google.android.material:material:1.2.1'
@@ -176,11 +177,11 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
     //FTP Server
-    /*
+
     implementation 'org.apache.mina:mina-core:2.0.13'
     implementation 'org.apache.ftpserver:ftpserver-core:1.0.6'
     implementation 'org.apache.ftpserver:ftplet-api:1.0.6'
-    */
+
 
     // https://mvnrepository.com/artifact/org.apache.mina/mina-core
 

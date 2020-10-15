@@ -301,7 +301,7 @@
     <string name="invalid">Invalid %s</string>
     <string name="ftp_notif_starting">FTP Server is starting</string>
     <string name="ftp_notif_starting_title">FTP Server</string>
-    <string name="ftp_notif_title">Amaze FTP Server running</string>
+    <string name="ftp_notif_title">ES File Manager FTP Server running</string>
     <string name="ftp_notif_text">at %s</string>
     <string name="ftp_notif_stop_server">STOP</string>
     <string name="ftp_port_edit_menu_title">FTP port</string>
@@ -571,7 +571,7 @@
     <string name="no_bitcoin_app">Please install a Bitcoin Wallet app</string>
     <string name="channel_name_normal">Amaze Notifications</string>
     <string name="channel_description_normal">Amaze File Manager\'s Notifications</string>
-    <string name="channel_name_ftp">Amaze FTP Server</string>
+    <string name="channel_name_ftp">ES File Manager FTP Server</string>
     <string name="channel_description_ftp">Amaze File Manager FTP Server\'s Notifications</string>
 
     <string name="appbar_name" translatable="false">ES File Explorer</string>

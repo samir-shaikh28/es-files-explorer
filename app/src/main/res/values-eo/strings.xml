@@ -298,7 +298,7 @@
     <string name="domain">Domajno</string>
     <string name="invalid">Malvalida %s</string>
     <string name="ftp_notif_starting">FTP-a servilo estas aktivanta</string>
-    <string name="ftp_notif_title">Amaze FTP-a Servilo estas aktiva</string>
+    <string name="ftp_notif_title">ES File Manager FTP-a Servilo estas aktiva</string>
     <string name="ftp_notif_text">en %s</string>
     <string name="ftp_notif_stop_server">HALTI</string>
     <string name="ftp_port_edit_menu_title">FTP-a porto</string>

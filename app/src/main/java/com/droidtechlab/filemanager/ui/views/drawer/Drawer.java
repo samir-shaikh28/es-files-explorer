@@ -68,6 +68,7 @@ import com.droidtechlab.filemanager.ui.activities.PreferencesActivity;
 import com.droidtechlab.filemanager.ui.dialogs.GeneralDialogCreation;
 import com.droidtechlab.filemanager.ui.fragments.AppsListFragment;
 import com.droidtechlab.filemanager.ui.fragments.CloudSheetFragment;
+import com.droidtechlab.filemanager.ui.fragments.FtpServerFragment;
 import com.droidtechlab.filemanager.ui.fragments.MainFragment;
 import com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants;
 import com.droidtechlab.filemanager.ui.fragments.preference_fragments.QuickAccessPref;
@@ -485,29 +486,29 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
             }
         }
 
-//    addNewItem(
-//            menu,
-//            LASTGROUP,
-//            order++,
-//            R.string.ftp,
-//            new MenuMetadata(
-//                    () -> {
-//                      FragmentTransaction transaction2 =
-//                              mainActivity.getSupportFragmentManager().beginTransaction();
-//                      transaction2.replace(R.id.content_frame, new FtpServerFragment());
-//                      mainActivity
-//                              .getAppbar()
-//                              .getAppbarLayout()
-//                              .animate()
-//                              .translationY(0)
-//                              .setInterpolator(new DecelerateInterpolator(2))
-//                              .start();
-//                      pending_fragmentTransaction = transaction2;
-//                      if (!isDrawerLocked) close();
-//                      else onDrawerClosed();
-//                    }),
-//            R.drawable.ic_ftp_white_24dp,
-//            null);
+    addNewItem(
+            menu,
+            LASTGROUP,
+            order++,
+            R.string.ftp,
+            new MenuMetadata(
+                    () -> {
+                      FragmentTransaction transaction2 =
+                              mainActivity.getSupportFragmentManager().beginTransaction();
+                      transaction2.replace(R.id.content_frame, new FtpServerFragment());
+                      mainActivity
+                              .getAppbar()
+                              .getAppbarLayout()
+                              .animate()
+                              .translationY(0)
+                              .setInterpolator(new DecelerateInterpolator(2))
+                              .start();
+                      pending_fragmentTransaction = transaction2;
+                      if (!isDrawerLocked) close();
+                      else onDrawerClosed();
+                    }),
+            R.drawable.ic_ftp_white_24dp,
+            null);
 
         addNewItem(
                 menu,

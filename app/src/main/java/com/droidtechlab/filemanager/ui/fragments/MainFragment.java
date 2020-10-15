@@ -215,18 +215,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     private ArrayList<UnifiedNativeAd> mNativeAds = new ArrayList<>();
 
 
-    private void insertAdsInMenuItems() {
-//        if (mNativeAds.size() <= 0) {
-//            return;
-//        }
-//
-//        int offset = (LIST_ELEMENTS.size() / mNativeAds.size()) + 1;
-//        int index = 0;
-//        for (NativeAd ad: mNativeAds) {
-//            mRecyclerViewItems.add(index, ad);
-//            index = index + offset;
-//        }
-    }
 
     private void loadNativeAds() {
 
@@ -341,7 +329,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadNativeAds();
-        AppRate.with(getContext())
+        AppRate.with(requireContext())
                 .setInstallDays(0) // default 10, 0 means install day.
                 .setLaunchTimes(3)
                 .setRemindInterval(1) // default 1

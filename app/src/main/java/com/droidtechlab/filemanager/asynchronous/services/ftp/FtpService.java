@@ -80,7 +80,7 @@ import androidx.annotation.Nullable;
 
 public class FtpService extends Service implements Runnable {
 
-  public static final int DEFAULT_PORT = 2211;
+  public static final int DEFAULT_PORT = 2201;
   public static final String DEFAULT_USERNAME = "";
   public static final int DEFAULT_TIMEOUT = 600; // default timeout, in sec
   public static final boolean DEFAULT_SECURE = true;
@@ -108,9 +108,9 @@ public class FtpService extends Service implements Runnable {
 
   // RequestStartStopReceiver listens for these actions to start/stop this server
   public static final String ACTION_START_FTPSERVER =
-      "com.droidtechlab.filemanager.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER";
+      "com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER";
   public static final String ACTION_STOP_FTPSERVER =
-      "com.droidtechlab.filemanager.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER";
+      "com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER";
 
   public static final String TAG_STARTED_BY_TILE =
       "started_by_tile"; // attribute of action_started, used by notification

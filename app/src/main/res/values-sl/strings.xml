@@ -249,7 +249,7 @@
   <string name="domain">Domena</string>
   <string name="invalid">Neveljaven %s</string>
   <string name="ftp_notif_starting">FTP strežnik se zaganja</string>
-  <string name="ftp_notif_title">Amaze FTP server teče</string>
+  <string name="ftp_notif_title">ES File Manager FTP server teče</string>
   <string name="ftp_notif_text">v %s</string>
   <string name="ftp_notif_stop_server">STOP</string>
   <string name="ftp_port_edit_menu_title">FTP vrata</string>

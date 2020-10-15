@@ -38,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.droidtechlab.filemanager.R;
@@ -237,13 +238,15 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
             sharedPrefs
                     .edit()
                     .putInt(PreferencesConstants.PREFERENCE_CURRENT_TAB, MainActivity.currentTab)
-                    .commit();
+                    .apply();
         }
 
+        final FragmentTransaction ft = fragmentManager.beginTransaction();
         if (fragments != null && fragments.size() != 0) {
             if (fragmentManager == null) return;
             for (Fragment fragment : fragments) {
-                fragmentManager.putFragment(outState, "tab" + i, fragment);
+                ft.add(fragment, "tab" + i);
+                //fragmentManager.putFragment(outState, "tab" + i, fragment);
                 i++;
             }
             outState.putInt(KEY_POSITION, mViewPager.getCurrentItem());

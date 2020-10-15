@@ -556,7 +556,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
     <string name="ftp_notif_starting">FTP Server is starting</string>
 
-    <string name="ftp_notif_title">Amaze FTP Server running</string>
+    <string name="ftp_notif_title">ES File Manager FTP Server running</string>
 
     <string name="ftp_notif_text">at %s</string>
 

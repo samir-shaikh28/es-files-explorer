@@ -54,10 +54,14 @@
         android:label="@string/appbar_name"
         android:banner="@drawable/about_header"
         android:requestLegacyExternalStorage="true">
-
+<!--//CONTROL_FTP_SERVER-->
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true"/>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id"/>
 
         <activity
             android:label="@string/appbar_name"
@@ -156,7 +160,8 @@
             android:screenOrientation="locked">
             <intent-filter
                 tools:ignore="AppLinkUrlError"
-                android:label="Amaze Database Reader">
+                android:label="ES
+                 Database Reader">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="db/*" />
@@ -214,8 +219,8 @@
             android:exported="true"
             android:permission="${applicationId}.permission.CONTROL_FTP_SERVER">
             <intent-filter>
-                <action android:name="com.amaze.droidtechlab.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER" />
-                <action android:name="com.amaze.droidtechlab.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER" />
+                <action android:name="com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER" />
+                <action android:name="com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER" />
             </intent-filter>
         </receiver>
 

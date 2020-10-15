@@ -65,8 +65,10 @@ public class Billing extends RecyclerView.Adapter<RecyclerView.ViewHolder>
   public Billing(BasicActivity activity) {
     this.activity = activity;
 
+
     skuList = new ArrayList<>();
 
+    skuList.add("b_donation"); // 20 INR
     skuList.add("c_donation"); // 35 INR
     skuList.add("donation"); // 75 INR
     skuList.add("donation_1"); // 150 INR

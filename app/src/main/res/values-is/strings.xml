@@ -300,7 +300,7 @@
     <string name="invalid">Ógilt %s</string>
     <string name="ftp_notif_starting">FTP-þjónn er að ræsast</string>
     <string name="ftp_notif_starting_title">FTP-þjónn</string>
-    <string name="ftp_notif_title">Amaze FTP-þjónn er í gangi</string>
+    <string name="ftp_notif_title">ES File Manager FTP-þjónn er í gangi</string>
     <string name="ftp_notif_text">á %s</string>
     <string name="ftp_notif_stop_server">STÖÐVA</string>
     <string name="ftp_port_edit_menu_title">FTP-gátt</string>
@@ -569,7 +569,7 @@
     <string name="no_bitcoin_app">Endilega settu upp rafmyntaveski</string>
     <string name="channel_name_normal">Amaze tilkynningar</string>
     <string name="channel_description_normal">Tilkynningar frá Amaze skráastjóranum</string>
-    <string name="channel_name_ftp">Amaze FTP-þjónn</string>
+    <string name="channel_name_ftp">ES File Manager FTP-þjónn</string>
     <string name="channel_description_ftp">Tilkynningar frá FTP-þjóni Amaze skráastjórans</string>
 
     <string name="processing">Í vinnslu&#8230;</string>
