@@ -24,7 +24,7 @@ public class UnifiedNativeAdViewHolder extends RecyclerView.ViewHolder {
         // The MediaView will display a video asset if one is present in the ad, and the
         // first image asset otherwise.
 //        adView.setMediaView((MediaView) adView.findViewById(R.id.ad_media));
-//        adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
+        adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
 //        adView.setPriceView(adView.findViewById(R.id.ad_price));
 //        adView.setStoreView(adView.findViewById(R.id.ad_store));
 

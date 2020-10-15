@@ -206,7 +206,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     private LayoutElementParcelable back = null;
 
-    public static final int NUMBER_OF_ADS = 2;
+    public static final int NUMBER_OF_ADS = 4;
 
     // The AdLoader used to load ads.
     private AdLoader adLoader;
@@ -226,10 +226,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
+                        Log.d("###", "Success ");
                         if (!adLoader.isLoading()) {
                            // insertAdsInMenuItems();
                         }
                     }
+
+
                 }).withAdListener(
                 new AdListener() {
                     @Override
@@ -237,11 +240,18 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
 
+                        Log.d("###", "Ad Load failed, error code: "+errorCode);
                         Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
                                 + " load another.");
                         if (!adLoader.isLoading()) {
                             //insertAdsInMenuItems();
                         }
+                    }
+
+                    @Override
+                    public void onAdClicked() {
+                        super.onAdClicked();
+                        Log.d("###", "Ad clicked");
                     }
                 }).build();
 
@@ -1196,7 +1206,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                                 listView,
                                 LIST_ELEMENTS,
                                 mNativeAds,
-                                ma.getActivity());
+                                requireActivity());
             } else {
                 adapter.setItems(listView, new ArrayList<>(LIST_ELEMENTS), mNativeAds);
             }

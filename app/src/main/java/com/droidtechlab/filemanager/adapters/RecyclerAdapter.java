@@ -438,8 +438,31 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             createHeaders(invalidate, uris);
         }
 
+
         if (ads.size() > 0 && itemsDigested.size() > 0) {
-            itemsDigested.add(3, ads.get(0));
+            if (itemsDigested.size() <= 3 && ads.get(0) != null) {
+                itemsDigested.add(itemsDigested.size(), ads.get(0));
+            } else if (itemsDigested.size() >= 30) {
+                if (ads.get(0) != null) {
+                    itemsDigested.add(3, ads.get(0));
+                }
+                if (ads.get(1) != null) {
+                    itemsDigested.add(15, ads.get(1));
+                }
+                if (ads.size() > 2 && ads.get(2) != null) {
+                    itemsDigested.add(25, ads.get(2));
+                }
+            } else if (itemsDigested.size() >= 18) {
+                if (ads.get(0) != null) {
+                    itemsDigested.add(4, ads.get(0));
+                }
+                if (ads.size() > 1 && ads.get(1) != null) {
+                    itemsDigested.add(12, ads.get(1));
+                }
+            } else if (itemsDigested.size() > 4 && ads.get(0) != null) {
+                    itemsDigested.add(3, ads.get(0));
+
+            }
         }
 
 
@@ -522,7 +545,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         NativeAd.Image icon = nativeAd.getIcon();
 
         if (icon == null) {
-            adView.getIconView().setVisibility(View.INVISIBLE);
+            adView.getIconView().setVisibility(View.GONE);
         } else {
             ((ImageView) adView.getIconView()).setImageDrawable(icon.getDrawable());
             adView.getIconView().setVisibility(View.VISIBLE);
@@ -551,10 +574,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         if (nativeAd.getAdvertiser() == null) {
-            adView.getAdvertiserView().setVisibility(View.INVISIBLE);
+            adView.getAdvertiserView().setVisibility(View.GONE);
         } else {
             ((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
             adView.getAdvertiserView().setVisibility(View.VISIBLE);
+            adView.getStarRatingView().setVisibility(View.INVISIBLE);
         }
 
         // Assign native ad object to the native view.
