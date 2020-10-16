@@ -110,6 +110,7 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -224,6 +225,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
+                        Log.d("AdLoadingTest", "ad loaded");
                         if (!adLoader.isLoading()) {
                             // insertAdsInMenuItems();
                         }
@@ -232,10 +234,24 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
                 }).withAdListener(
                 new AdListener() {
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        super.onAdFailedToLoad(loadAdError);
+                        Log.d("AdLoadingTest", "ad loading failed: " + loadAdError.getMessage());
+
+                        Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
+                                + " load another.");
+                        if (!adLoader.isLoading()) {
+
+                        }
+                    }
+
                     @Override
                     public void onAdFailedToLoad(int errorCode) {
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
+                        Log.d("AdLoadingTest", "ad loading failed: "+errorCode);
 
                         Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
                                 + " load another.");
