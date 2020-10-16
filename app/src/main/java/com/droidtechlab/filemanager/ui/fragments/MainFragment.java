@@ -224,7 +224,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
-                        Log.d("###", "Success ");
                         if (!adLoader.isLoading()) {
                             // insertAdsInMenuItems();
                         }
@@ -238,7 +237,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
 
-                        Log.d("###", "Ad Load failed, error code: " + errorCode);
                         Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
                                 + " load another.");
                         if (!adLoader.isLoading()) {
@@ -249,7 +247,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     @Override
                     public void onAdClicked() {
                         super.onAdClicked();
-                        Log.d("###", "Ad clicked");
                     }
                 }).build();
 
