@@ -109,7 +109,7 @@ public class CloudSheetFragment extends BottomSheetDialogFragment implements Vie
   }
 
   /** Determines whether cloud provider is installed or not */
-  public static final boolean isCloudProviderAvailable(Context context) {
+  public static boolean isCloudProviderAvailable(Context context) {
 
     PackageManager pm = context.getPackageManager();
     try {

@@ -166,7 +166,7 @@ public abstract class CompressedHelper {
     }
   }
 
-  public static final boolean isEntryPathValid(String entryPath) {
+  public static boolean isEntryPathValid(String entryPath) {
     return !entryPath.startsWith("..\\") && !entryPath.startsWith("../") && !entryPath.equals("..");
   }
 

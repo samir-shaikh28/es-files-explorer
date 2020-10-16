@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/md_dialog_frame_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:paddingRight="@dimen/md_dialog_frame_margin">
         <EditText
             android:id="@+id/singleedittext_input"

@@ -99,7 +99,7 @@ public class RootHelper {
   }
 
   private static final String UNIX_ESCAPE_EXPRESSION =
-      "(\\(|\\)|\\[|\\]|\\s|\'|\"|`|\\{|\\}|&|\\\\|\\?)";
+      "(\\(|\\)|\\[|]|\\s|\'|\"|`|\\{|}|&|\\\\|\\?)";
 
   /**
    * Loads files in a path using basic filesystem callbacks
