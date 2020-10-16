@@ -439,29 +439,31 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
 
-        if (ads.size() > 0 && itemsDigested.size() > 0) {
-            if (itemsDigested.size() <= 3 && ads.get(0) != null) {
-                itemsDigested.add(itemsDigested.size(), ads.get(0));
-            } else if (itemsDigested.size() >= 30) {
-                if (ads.get(0) != null) {
-                    itemsDigested.add(3, ads.get(0));
-                }
-                if (ads.get(1) != null) {
-                    itemsDigested.add(15, ads.get(1));
-                }
-                if (ads.size() > 2 && ads.get(2) != null) {
-                    itemsDigested.add(25, ads.get(2));
-                }
-            } else if (itemsDigested.size() >= 18) {
-                if (ads.get(0) != null) {
-                    itemsDigested.add(4, ads.get(0));
-                }
-                if (ads.size() > 1 && ads.get(1) != null) {
-                    itemsDigested.add(12, ads.get(1));
-                }
-            } else if (itemsDigested.size() > 4 && ads.get(0) != null) {
+        if(ads != null && itemsDigested != null) {
+            if (ads.size() > 0 && itemsDigested.size() > 0) {
+                if (itemsDigested.size() <= 3 && ads.get(0) != null) {
+                    itemsDigested.add(itemsDigested.size(), ads.get(0));
+                } else if (itemsDigested.size() >= 30) {
+                    if (ads.get(0) != null) {
+                        itemsDigested.add(3, ads.get(0));
+                    }
+                    if (ads.get(1) != null) {
+                        itemsDigested.add(15, ads.get(1));
+                    }
+                    if (ads.size() > 2 && ads.get(2) != null) {
+                        itemsDigested.add(25, ads.get(2));
+                    }
+                } else if (itemsDigested.size() >= 18) {
+                    if (ads.get(0) != null) {
+                        itemsDigested.add(4, ads.get(0));
+                    }
+                    if (ads.size() > 1 && ads.get(1) != null) {
+                        itemsDigested.add(12, ads.get(1));
+                    }
+                } else if (itemsDigested.size() > 4 && ads.get(0) != null) {
                     itemsDigested.add(3, ads.get(0));
 
+                }
             }
         }
 
@@ -535,7 +537,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void populateNativeAdView(UnifiedNativeAd nativeAd,
                                       UnifiedNativeAdView adView) {
+
+
         // Some assets are guaranteed to be in every UnifiedNativeAd.
+        if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
+            adView.setBackgroundResource(R.drawable.safr_ripple_white);
+            ((TextView) adView.getHeadlineView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_light));
+            ((TextView) adView.getAdvertiserView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_light));
+            ((TextView) adView.getBodyView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_light));
+        } else {
+            adView.setBackgroundResource(R.drawable.safr_ripple_black);
+            ((TextView) adView.getHeadlineView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_dark));
+            ((TextView) adView.getAdvertiserView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_dark));
+            ((TextView) adView.getBodyView()).setTextColor(Utils.getColor(adView.getContext(), R.color.text_dark));
+        }
         ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
         ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
 //        ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());

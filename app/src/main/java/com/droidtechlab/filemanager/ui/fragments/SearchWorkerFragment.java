@@ -26,6 +26,7 @@ import com.droidtechlab.filemanager.utils.OpenMode;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

@@ -2,7 +2,6 @@
 <com.google.android.gms.ads.formats.UnifiedNativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ad_view"
     android:layout_width="match_parent"
-    android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:layout_height="wrap_content"
@@ -15,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="#FFFFFF"
         android:minHeight="50dp"
         android:orientation="vertical">
 
@@ -28,7 +26,6 @@
             android:height="15dp"
             android:background="#FFCC66"
             android:text="Ad"
-            android:textColor="#FFFFFF"
             android:textSize="12sp" />
 
         <LinearLayout
@@ -65,7 +62,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="12dp"
-                        android:textColor="#0000FF"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 

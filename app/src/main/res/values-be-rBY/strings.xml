@@ -149,7 +149,7 @@
   <string name="miscellaneous">Іншае</string>
   <string name="root_pref_summary">Паказваць дазволы файлаў і тэчак</string>
   <string name="root_pref">Паказаць дазволы</string>
-  <string name="about_amaze_file_manager_label">Аб Amaze File Manager</string>
+  <string name="about_amaze_file_manager_label">Аб ES File Manager</string>
   <string name="version">Версія</string>
   <string name="rate">Ацаніць праграму</string>
   <string name="feedback">Даслаць водгук</string>
@@ -299,7 +299,7 @@
   <string name="report_bugs_title">Справаздача пра памылку</string>
   <string name="report_bugs_summary">Паведамляць пра памылкі ці спытаць новую функцыю</string>
   <string name="translate_title">Перакласці</string>
-  <string name="translate_summary">Перавесці Amaze вашай мовай</string>
+  <string name="translate_summary">Перавесці ES File Manager вашай мовай</string>
   <string name="easter_egg_title">Рэжым Студыі</string>
   <string name="paypal_copy_message">PayPal id скапіявана ў буфер абмену</string>
   <string name="searching_devices">Пошук прылад</string>
@@ -501,9 +501,9 @@
   <string name="edit_shortcut">Змяніць цэтлік</string>
   <string name="directory">Каталог</string>
   <string name="question_delete_shortcut">Выдаліць цэтлік?</string>
-    <string name="cloud_error_plugin">Плагіна Amaze Воблака не знойдзена. Вы можаце спампаваць яго з Play Store.</string>
+    <string name="cloud_error_plugin">Плагіна ES File manager Воблака не знойдзена. Вы можаце спампаваць яго з Play Store.</string>
   <string name="cloud_error_failed_restart">Памылка загрузкі злучэння.
-        Amaze Воблака зноў адкрываецца.</string>
+        ES File Manager Воблака зноў адкрываецца.</string>
   <string name="cloud_remove">Вы хочаце выдаліць падлучэння да Воблака?</string>
   <string name="cloud_fail_authenticate">Нельга праверыць ідэнтычнасць</string>
   <string name="cloud_share_copied">Гэта спасылкі скапіявана ў буфер абмену</string>

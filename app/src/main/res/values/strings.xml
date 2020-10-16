@@ -158,7 +158,7 @@
     <string name="miscellaneous">Miscellaneous</string>
     <string name="root_pref_summary">Show Permissions of Files and Folders</string>
     <string name="root_pref">Show Permissions</string>
-    <string name="about_amaze_file_manager_label">About Amaze File Manager</string>
+    <string name="about_amaze_file_manager_label">About ES File Manager</string>
     <string name="version">Version</string>
     <string name="rate">Rate the app</string>
     <string name="feedback">Send Feedback</string>
@@ -313,7 +313,7 @@
     <string name="report_bugs_title">Report Bugs</string>
     <string name="report_bugs_summary">Report bugs or request new feature</string>
     <string name="translate_title">Translate</string>
-    <string name="translate_summary">Translate Amaze in your language</string>
+    <string name="translate_summary">Translate ES File Manager in your language</string>
     <string name="easter_egg_title">Studio Mode</string>
     <string name="paypal_copy_message">PayPal ID copied to clipboard</string>
     <string name="searching_devices">Searching for devices</string>

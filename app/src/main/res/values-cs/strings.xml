@@ -287,7 +287,7 @@
   <string name="domain">Doména</string>
   <string name="invalid">Neplatné %s</string>
   <string name="ftp_notif_starting">Spouštění serveru FTP</string>
-  <string name="ftp_notif_title">FTP Server Amaze je spuštěn</string>
+  <string name="ftp_notif_title">FTP Server ES File Manager je spuštěn</string>
   <string name="ftp_notif_text">na %s</string>
   <string name="ftp_notif_stop_server">STOP</string>
   <string name="ftp_port_edit_menu_title">FTP Port</string>

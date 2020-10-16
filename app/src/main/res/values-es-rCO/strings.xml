@@ -145,7 +145,7 @@
   <string name="miscellaneous">Otros</string>
   <string name="root_pref_summary">Mostrar permisos de archivos y carpetas</string>
   <string name="root_pref">Mostrar permisos</string>
-  <string name="about_amaze_file_manager_label">Acerca de Amaze File Manager</string>
+  <string name="about_amaze_file_manager_label">Acerca de ES File Manager</string>
   <string name="version">Versión</string>
   <string name="rate">Calificar la aplicacion</string>
   <string name="feedback">Enviar Comentarios</string>
@@ -281,7 +281,7 @@
   <string name="domain">Dominio</string>
   <string name="invalid">%s inválido</string>
   <string name="ftp_notif_starting">Se está iniciando el servidor FTP</string>
-  <string name="ftp_notif_title">Servidor FTP de Amaze funcionando</string>
+  <string name="ftp_notif_title">Servidor FTP de ES File Manager funcionando</string>
   <string name="ftp_notif_text">en %s</string>
   <string name="ftp_notif_stop_server">PARAR</string>
   <string name="ftp_port_edit_menu_title">Elija el puerto FTP</string>

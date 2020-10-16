@@ -363,7 +363,7 @@ public class MainActivity extends PermissionsActivity
         if (SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityManager.TaskDescription taskDescription =
                     new ActivityManager.TaskDescription(
-                            "Amaze",
+                            "ES File Manager",
                             ((BitmapDrawable) getResources().getDrawable(R.mipmap.ic_launcher)).getBitmap(),
                             ColorPreferenceHelper.getPrimary(
                                     getCurrentColorPreference(), MainActivity.currentTab));

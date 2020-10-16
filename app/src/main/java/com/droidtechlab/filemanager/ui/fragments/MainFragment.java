@@ -1793,7 +1793,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     public void onSearchCompleted(final String query) {
         if (!results) {
-            // no results were found
             LIST_ELEMENTS.clear();
         }
         new AsyncTask<Void, Void, Void>() {
@@ -1806,7 +1805,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             @Override
             public void onPostExecute(Void c) {
                 reloadListElements(
-                        true, true, !IS_LIST); // TODO: 7/7/2017 this is really inneffient, use RecycleAdapter's
+                        true, results, !IS_LIST); // TODO: 7/7/2017 this is really inneffient, use RecycleAdapter's
                 // createHeaders()
                 getMainActivity().getAppbar().getBottomBar().setPathText("");
                 getMainActivity()
