@@ -19,10 +19,8 @@ class FirebasePushNotification : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         if (remoteMessage.data.isEmpty()) {
-            Log.d("###", "data is empty")
             showNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
         } else {
-            Log.d("###", "data is not empty")
             showNotification(remoteMessage.data)
         }
     }
