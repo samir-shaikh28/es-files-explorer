@@ -74,27 +74,30 @@ public class BottomBar implements View.OnTouchListener {
     private static final int PATH_ANIM_START_DELAY = 0;
     private static final int PATH_ANIM_END_DELAY = 0;
 
-    private MainActivity mainActivity;
-    private AppBar appbar;
+    private final MainActivity mainActivity;
+    private final AppBar appbar;
     private String newPath;
 
-    private FrameLayout frame;
-    private LinearLayout pathLayout;
-    private LinearLayout buttons;
-    private HorizontalScrollView scroll, pathScroll;
-    private TextView pathText, fullPathText, fullPathAnim;
+    private final FrameLayout frame;
+    private final LinearLayout pathLayout;
+    private final LinearLayout buttons;
+    private final HorizontalScrollView scroll;
+    private final HorizontalScrollView pathScroll;
+    private final TextView pathText;
+    private final TextView fullPathText;
+    private final TextView fullPathAnim;
 
-    private LinearLayout.LayoutParams buttonParams;
-    private ImageButton buttonRoot;
-    private ImageButton buttonStorage;
-    private ArrayList<ImageView> arrowButtons = new ArrayList<>();
+    private final LinearLayout.LayoutParams buttonParams;
+    private final ImageButton buttonRoot;
+    private final ImageButton buttonStorage;
+    private final ArrayList<ImageView> arrowButtons = new ArrayList<>();
     private int lastUsedArrowButton = 0;
-    private ArrayList<Button> folderButtons = new ArrayList<>();
+    private final ArrayList<Button> folderButtons = new ArrayList<>();
     private int lastUsedFolderButton = 0;
-    private Drawable arrow;
+    private final Drawable arrow;
 
-    private CountDownTimer timer;
-    private GestureDetector gestureDetector;
+    private final CountDownTimer timer;
+    private final GestureDetector gestureDetector;
 
     public BottomBar(AppBar appbar, MainActivity a) {
         mainActivity = a;
@@ -184,8 +187,7 @@ public class BottomBar implements View.OnTouchListener {
                         });
     }
 
-    public void
-    setClickListener() { // TODO: 15/8/2017 this is a horrible hack, if you see this, correct it
+    public void setClickListener() { // TODO: 15/8/2017 this is a horrible hack, if you see this, correct it
         frame.setOnTouchListener(this);
         scroll.setOnTouchListener(this);
         buttons.setOnTouchListener(this);
@@ -207,6 +209,10 @@ public class BottomBar implements View.OnTouchListener {
 
     public void setFullPathText(String text) {
         fullPathText.setText(text);
+    }
+
+    public String getFullPathText() {
+        return fullPathText.getText().toString();
     }
 
     public boolean areButtonsShowing() {
