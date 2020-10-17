@@ -32,6 +32,7 @@ import com.droidtechlab.filemanager.utils.ScreenUtils;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import android.app.Activity;
 import android.app.Application;
@@ -70,6 +71,8 @@ public class AppConfig extends GlideApplication {
 
   private ExplorerDatabase explorerDatabase;
 
+  private FirebaseAnalytics mFirebaseAnalytics;
+
   public UtilitiesProvider getUtilsProvider() {
     return utilsProvider;
   }
@@ -80,6 +83,8 @@ public class AppConfig extends GlideApplication {
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(
             true); // selector in srcCompat isn't supported without this
     instance = this;
+
+    mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
     CustomSshJConfig.init();
     explorerDatabase = ExplorerDatabase.initialize(this);

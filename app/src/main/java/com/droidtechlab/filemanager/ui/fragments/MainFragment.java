@@ -106,6 +106,7 @@ import com.droidtechlab.filemanager.utils.DataUtils;
 import com.droidtechlab.filemanager.utils.MainActivityHelper;
 import com.droidtechlab.filemanager.utils.OTGUtil;
 import com.droidtechlab.filemanager.utils.OpenMode;
+import com.droidtechlab.filemanager.utils.RatingHelper;
 import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
@@ -121,7 +122,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import hotchemi.android.rate.AppRate;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
@@ -350,14 +350,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loadNativeAds();
-        AppRate.with(requireContext())
-                .setInstallDays(0) // default 10, 0 means install day.
-                .setLaunchTimes(3)
-                .setRemindInterval(1) // default 1
-                .monitor();
-
-        // Show a dialog if meets conditions
-        AppRate.showRateDialogIfMeetsConditions(getActivity());
+        RatingHelper.showRatingDialog(getMainActivity());
     }
 
     @Override
@@ -1808,6 +1801,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void onSearchCompleted(final String query) {
+
+        Log.d("###", "query: "+query+" res:: "+results);
         if (!results) {
             LIST_ELEMENTS.clear();
         }

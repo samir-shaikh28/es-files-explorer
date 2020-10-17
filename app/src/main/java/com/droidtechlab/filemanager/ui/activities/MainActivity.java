@@ -410,6 +410,7 @@ public class MainActivity extends PermissionsActivity
                         });
     }
 
+
     private void invalidateFragmentAndBundle(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             if (openProcesses) {
