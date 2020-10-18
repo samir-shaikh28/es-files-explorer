@@ -433,6 +433,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         switch (adapter.getItemViewType(position)) {
                             case RecyclerAdapter.TYPE_HEADER_FILES:
                             case RecyclerAdapter.TYPE_HEADER_FOLDERS:
+                            case RecyclerAdapter.TYPE_ADS:
                                 return columns;
                             default:
                                 return 1;

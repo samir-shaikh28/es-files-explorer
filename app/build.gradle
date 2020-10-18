@@ -27,7 +27,7 @@ android {
         applicationId "com.droidtechlab.filemanager"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 10
+        versionCode 11
         versionName "0.9"
         multiDexEnabled true
 

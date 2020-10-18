@@ -245,13 +245,13 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
         if (fragments != null && fragments.size() != 0) {
             if (fragmentManager == null) return;
             for (Fragment fragment : fragments) {
-                ft.add(fragment, "tab" + i);
-                //fragmentManager.putFragment(outState, "tab" + i, fragment);
+                fragmentManager.putFragment(outState, "tab" + i, fragment);
                 i++;
             }
             outState.putInt(KEY_POSITION, mViewPager.getCurrentItem());
         }
     }
+
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

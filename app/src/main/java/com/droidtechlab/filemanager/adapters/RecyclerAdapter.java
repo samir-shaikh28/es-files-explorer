@@ -29,13 +29,11 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RatingBar;
@@ -439,7 +437,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
 
-        if(ads != null && itemsDigested != null) {
+        if (ads != null && itemsDigested != null) {
             if (ads.size() > 0 && itemsDigested.size() > 0) {
                 if (itemsDigested.size() <= 3 && ads.get(0) != null) {
                     itemsDigested.add(itemsDigested.size(), ads.get(0));
@@ -447,7 +445,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (ads.get(0) != null) {
                         itemsDigested.add(3, ads.get(0));
                     }
-                    if (ads.get(1) != null) {
+                    if (ads.size() > 1 && ads.get(1) != null) {
                         itemsDigested.add(15, ads.get(1));
                     }
                     if (ads.size() > 2 && ads.get(2) != null) {
@@ -610,6 +608,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         parent.getContext()).inflate(R.layout.ad_unified,
                         parent, false);
                 return new UnifiedNativeAdViewHolder(unifiedNativeLayoutView);
+
             case TYPE_HEADER_FOLDERS:
             case TYPE_HEADER_FILES:
                 if (mainFrag.IS_LIST) {

@@ -739,7 +739,6 @@ public class MainActivity extends PermissionsActivity
     public synchronized ArrayList<StorageDirectoryParcelable> getStorageDirectoriesLegacy() {
         List<String> rv = new ArrayList<>();
 
-        // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"
         final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
@@ -2151,6 +2150,8 @@ public class MainActivity extends PermissionsActivity
 
         @Override
         public boolean onActionSelected(SpeedDialActionItem actionItem) {
+            if(mainActivity.getSupportFragmentManager().getBackStackEntryCount() == 0) return true;
+
             final MainFragment ma =
                     (MainFragment)
                             ((TabFragment)
