@@ -1616,7 +1616,7 @@ public class MainActivity extends PermissionsActivity
                         getAppbar().getSearchView().hideSearchView();
                 });
 
-        drawer.setDrawerHeaderBackground();
+        //drawer.setDrawerHeaderBackground();
         // getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor((currentTab==1
         // ? skinTwo : skin))));
 

@@ -52,8 +52,8 @@
         android:largeHeap="true"
         android:hardwareAccelerated="false"
         android:label="@string/appbar_name"
-        android:banner="@drawable/about_header"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:banner="@drawable/es_file_manager_banner">
 <!--//CONTROL_FTP_SERVER-->
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"

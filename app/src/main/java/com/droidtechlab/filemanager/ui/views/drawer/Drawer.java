@@ -657,7 +657,7 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
                     .putString(
                             PreferencesConstants.PREFERENCE_DRAWER_HEADER_PATH, intent.getData().toString())
                     .commit();
-            setDrawerHeaderBackground();
+          //  setDrawerHeaderBackground();
         }
     }
 
@@ -810,33 +810,6 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
 
     public int getPhoneStorageCount() {
         return phoneStorageCount;
-    }
-
-    public void setDrawerHeaderBackground() {
-        String path1 =
-                mainActivity.getPrefs().getString(PreferencesConstants.PREFERENCE_DRAWER_HEADER_PATH, null);
-        if (path1 == null) {
-            return;
-        }
-        try {
-            final ImageView headerImageView = new ImageView(mainActivity);
-            headerImageView.setImageDrawable(drawerHeaderParent.getBackground());
-            mImageLoader.get(
-                    path1,
-                    new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                            headerImageView.setImageBitmap(response.getBitmap());
-                            drawerHeaderView.setBackgroundResource(R.drawable.amaze_header_2);
-                        }
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void selectCorrectDrawerItemForPath(final String path) {
