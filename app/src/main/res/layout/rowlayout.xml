@@ -17,151 +17,140 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/second"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/minimal_row_size"
-    android:clickable="true"
-    android:paddingLeft="@dimen/minimal_material_padding"
     android:paddingStart="@dimen/minimal_material_padding"
-    android:paddingRight="@dimen/minimal_material_padding"
+    android:paddingLeft="@dimen/minimal_material_padding"
     android:paddingEnd="@dimen/minimal_material_padding"
-    >
-    <RelativeLayout
-        android:id="@+id/icon_frame_parent"
-        android:layout_width="@dimen/minimal_icon_parent_width"
-        android:layout_height="@dimen/minimal_row_size"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true">
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_margin_top"
-            >
-            <ImageView
-                android:layout_width="@dimen/minimal_icon_size"
-                android:layout_height="@dimen/minimal_icon_size"
-                android:visibility="gone"
-                android:scaleType="centerCrop"
-                android:layout_gravity="center"
-                android:id="@+id/apk_icon"/>
-            <com.droidtechlab.filemanager.ui.views.RoundedImageView
-                android:id="@+id/picture_icon"
-                android:layout_width="@dimen/minimal_icon_size"
-                android:layout_height="@dimen/minimal_icon_size"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/icon" />
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                android:background="@drawable/circle_shape"
-                android:layout_gravity="center_vertical"
-                android:id="@+id/generic_icon"/>
+    android:paddingRight="@dimen/minimal_material_padding">
 
-            <TextView
-                android:layout_width="@dimen/minimal_icon_size"
-                android:layout_height="@dimen/minimal_icon_size"
-                android:textSize="12dp"
-                android:singleLine="true"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:id="@+id/generictext"
-                android:textColor="@android:color/white"
-                />
-        </FrameLayout>
-
-        <ImageView
-            android:id="@+id/check_icon"
-            android:layout_width="@dimen/tick_icon_size"
-            android:layout_height="@dimen/tick_icon_size"
-            android:padding="@dimen/check_icon_padding"
-            android:src="@drawable/ic_checkmark_selected"
-            android:layout_marginBottom="@dimen/check_icon_margin_bottom_right"
-            android:layout_marginRight="@dimen/check_icon_margin_bottom_right"
-            android:layout_marginEnd="@dimen/check_icon_margin_bottom_right"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:visibility="invisible" />
-    </RelativeLayout>
-
-    <ImageButton
+    <FrameLayout
+        android:id="@+id/img_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/properties"
-        android:background="@drawable/ripple"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:padding="8dp"
-        android:clickable="true"
-        android:src="@drawable/ic_more_vert_black_48dp"/>
+        android:layout_marginTop="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <RelativeLayout
-        android:layout_toRightOf="@id/icon_frame_parent"
-        android:layout_toEndOf="@id/icon_frame_parent"
-        android:layout_toLeftOf="@id/properties"
-        android:layout_toStartOf="@id/properties"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true">
+        <com.droidtechlab.filemanager.ui.views.RoundedImageView
+            android:id="@+id/picture_icon"
+            android:layout_width="@dimen/minimal_icon_size"
+            android:layout_height="@dimen/minimal_icon_size"
+            android:contentDescription="@string/icon"
+            android:scaleType="centerCrop" />
 
-        <com.droidtechlab.filemanager.ui.views.ThemedTextView
-            android:id="@+id/firstline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+        <ImageView
+            android:id="@+id/apk_icon"
+            android:layout_width="@dimen/minimal_icon_size"
+            android:layout_height="@dimen/minimal_icon_size"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+
+        <ImageView
+            android:id="@+id/generic_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/circle_shape"
+            android:padding="8dp" />
+
+
+        <TextView
+            android:id="@+id/generictext"
+            android:layout_width="@dimen/minimal_icon_size"
+            android:layout_height="@dimen/minimal_icon_size"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:singleLine="true"
-            android:ellipsize="middle"
-            android:fadingEdge="horizontal"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:longClickable="false"
-            android:clickable="false"
-            android:textSize="17sp" />
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/firstline"
-            android:layout_marginTop="5dp">
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginRight="10dip"
-                android:layout_marginEnd="10dip"
-                android:textColor="?android:attr/textColorTertiary"
-                />
-            <TextView
-                android:id="@+id/secondLine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/date"
-                android:layout_toEndOf="@id/date"
-                android:textSize="13sp"
-                android:textColor="?android:attr/textColorTertiary"
-                />
+    <ImageView
+        android:id="@+id/check_icon"
+        android:layout_width="@dimen/tick_icon_size"
+        android:layout_height="@dimen/tick_icon_size"
+        android:padding="@dimen/check_icon_padding"
+        android:src="@drawable/ic_checkmark_selected"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/img_wrapper"
+        app:layout_constraintRight_toRightOf="@id/img_wrapper" />
 
-            <TextView
-                android:id="@+id/permis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:textColor="?android:attr/textColorTertiary"
-                android:textSize="13sp"
-                />
-        </RelativeLayout>
-    </RelativeLayout>
 
-</RelativeLayout>
+    <com.droidtechlab.filemanager.ui.views.ThemedTextView
+        android:id="@+id/firstline"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:ellipsize="middle"
+        android:fadingEdge="horizontal"
+        android:longClickable="false"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textSize="17sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintLeft_toRightOf="@id/img_wrapper"
+        app:layout_constraintRight_toLeftOf="@id/properties"
+        app:layout_constraintTop_toTopOf="@id/img_wrapper"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dip"
+        android:layout_marginRight="10dip"
+        android:textColor="?android:attr/textColorTertiary"
+        android:textSize="13sp"
+        app:layout_constraintLeft_toLeftOf="@id/firstline"
+        app:layout_constraintTop_toBottomOf="@id/firstline" />
+
+    <TextView
+        android:id="@+id/secondLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorTertiary"
+        android:textSize="13sp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toRightOf="@id/date"
+        app:layout_constraintTop_toTopOf="@id/date" />
+
+    <TextView
+        android:id="@+id/permis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?android:attr/textColorTertiary"
+        android:textSize="13sp"
+        app:layout_constraintRight_toLeftOf="@id/properties"
+        app:layout_constraintTop_toTopOf="@id/secondLine" />
+
+    <ImageButton
+        android:id="@+id/properties"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/ripple"
+        android:padding="8dp"
+        android:src="@drawable/ic_more_vert_black_48dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

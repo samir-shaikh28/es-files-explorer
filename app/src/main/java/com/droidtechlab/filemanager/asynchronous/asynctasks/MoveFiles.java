@@ -72,10 +72,10 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
   private boolean invalidOperation = false;
 
   public MoveFiles(
-      ArrayList<ArrayList<HybridFileParcelable>> files,
-      MainFragment ma,
-      Context context,
-      OpenMode mode) {
+          ArrayList<ArrayList<HybridFileParcelable>> files,
+          MainFragment ma,
+          Context context,
+          OpenMode mode) {
     mainFrag = ma;
     this.context = context;
     this.files = files;
@@ -100,7 +100,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
         if (!isMoveOperationValid(baseFile, new HybridFile(mode, paths.get(i)))) {
           // TODO: 30/06/20 Replace runtime exception with generic exception
           Log.w(
-              getClass().getSimpleName(), "Some files failed to be moved", new RuntimeException());
+                  getClass().getSimpleName(), "Some files failed to be moved", new RuntimeException());
           invalidOperation = true;
           continue;
         }
@@ -124,7 +124,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
             if (!source.renameTo(dest)) {
 
               // check if we have root
-              if (mainFrag.getMainActivity().isRootExplorer()) {
+              if (mainFrag != null && mainFrag.getMainActivity().isRootExplorer()) {
                 try {
                   if (!RootUtils.rename(baseFile.getPath(), destPath)) return false;
                 } catch (ShellNotRunningException e) {
@@ -146,8 +146,8 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
               try {
 
                 cloudStorage.move(
-                    CloudUtil.stripPath(mode, baseFile.getPath()),
-                    CloudUtil.stripPath(mode, destPath));
+                        CloudUtil.stripPath(mode, baseFile.getPath()),
+                        CloudUtil.stripPath(mode, destPath));
               } catch (Exception e) {
                 return false;
               }
@@ -176,7 +176,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
 
       if (invalidOperation) {
         Toast.makeText(context, R.string.some_files_failed_invalid_operation, Toast.LENGTH_LONG)
-            .show();
+                .show();
       }
 
       for (int i = 0; i < paths.size(); i++) {
@@ -189,32 +189,33 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
           sourcesFiles.addAll(hybridFileParcelables);
         }
         FileUtils.scanFile(
-            context, sourcesFiles.toArray(new HybridFileParcelable[sourcesFiles.size()]));
+                context, sourcesFiles.toArray(new HybridFileParcelable[sourcesFiles.size()]));
         FileUtils.scanFile(context, targetFiles.toArray(new HybridFile[targetFiles.size()]));
       }
 
       // updating encrypted db entry if any encrypted file was moved
-      AppConfig.getInstance().runInBackground(
-          () -> {
-            for (int i = 0; i < paths.size(); i++) {
-              for (HybridFileParcelable file : files.get(i)) {
-                if (file.getName(context).endsWith(CryptUtil.CRYPT_EXTENSION)) {
-                  try {
-                    CryptHandler cryptHandler = CryptHandler.getInstance();
-                    EncryptedEntry oldEntry = cryptHandler.findEntry(file.getPath());
-                    EncryptedEntry newEntry = new EncryptedEntry();
-                    newEntry.setId(oldEntry.getId());
-                    newEntry.setPassword(oldEntry.getPassword());
-                    newEntry.setPath(paths.get(i) + "/" + file.getName(context));
-                    cryptHandler.updateEntry(oldEntry, newEntry);
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                    // couldn't change the entry, leave it alone
-                  }
-                }
-              }
-            }
-          });
+      AppConfig.getInstance()
+              .runInBackground(
+                      () -> {
+                        for (int i = 0; i < paths.size(); i++) {
+                          for (HybridFileParcelable file : files.get(i)) {
+                            if (file.getName(context).endsWith(CryptUtil.CRYPT_EXTENSION)) {
+                              try {
+                                CryptHandler cryptHandler = CryptHandler.getInstance();
+                                EncryptedEntry oldEntry = cryptHandler.findEntry(file.getPath());
+                                EncryptedEntry newEntry = new EncryptedEntry();
+                                newEntry.setId(oldEntry.getId());
+                                newEntry.setPassword(oldEntry.getPassword());
+                                newEntry.setPath(paths.get(i) + "/" + file.getName(context));
+                                cryptHandler.updateEntry(oldEntry, newEntry);
+                              } catch (Exception e) {
+                                e.printStackTrace();
+                                // couldn't change the entry, leave it alone
+                              }
+                            }
+                          }
+                        }
+                      });
 
     } else {
 
@@ -222,7 +223,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
         // destination don't have enough space; return
         Toast.makeText(
                 context, context.getResources().getString(R.string.in_safe), Toast.LENGTH_LONG)
-            .show();
+                .show();
         return;
       }
 
@@ -233,7 +234,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, String, Boolean> {
         intent.putExtra(CopyService.TAG_COPY_MOVE, true);
         intent.putExtra(CopyService.TAG_COPY_OPEN_MODE, mode.ordinal());
         intent.putExtra(
-            CopyService.TAG_IS_ROOT_EXPLORER, mainFrag.getMainActivity().isRootExplorer());
+                CopyService.TAG_IS_ROOT_EXPLORER, mainFrag.getMainActivity().isRootExplorer());
 
         ServiceWatcherUtil.runService(context, intent);
       }

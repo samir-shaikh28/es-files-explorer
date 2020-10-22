@@ -65,7 +65,6 @@ import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 
 public class CopyService extends AbstractProgressiveService {
-
   public static final String TAG_IS_ROOT_EXPLORER = "is_root";
   public static final String TAG_COPY_TARGET = "COPY_DIRECTORY";
   public static final String TAG_COPY_SOURCES = "FILE_PATHS";
@@ -81,7 +80,7 @@ public class CopyService extends AbstractProgressiveService {
 
   private final IBinder mBinder = new ObtainableServiceBinder<>(this);
   private ServiceWatcherUtil watcherUtil;
-  private ProgressHandler progressHandler = new ProgressHandler();
+  private final ProgressHandler progressHandler = new ProgressHandler();
   private ProgressListener progressListener;
   // list of data packages, to initiate chart in process viewer fragment
   private ArrayList<DatapointParcelable> dataPackages = new ArrayList<>();
@@ -229,11 +228,9 @@ public class CopyService extends AbstractProgressiveService {
   }
 
   private class DoInBackground extends AsyncTask<Bundle, Void, Void> {
-    ArrayList<HybridFileParcelable> sourceFiles;
     boolean move;
-    Copy copy;
+    private Copy copy;
     private String targetPath;
-    private OpenMode openMode;
     private boolean isRootExplorer;
     private int sourceProgress = 0;
 
@@ -243,7 +240,7 @@ public class CopyService extends AbstractProgressiveService {
 
     protected Void doInBackground(Bundle... p1) {
 
-      sourceFiles = p1[0].getParcelableArrayList(TAG_COPY_SOURCES);
+      ArrayList<HybridFileParcelable> sourceFiles = p1[0].getParcelableArrayList(TAG_COPY_SOURCES);
 
       // setting up service watchers and initial data packages
       // finding total size on background thread (this is necessary condition for SMB!)
@@ -261,7 +258,7 @@ public class CopyService extends AbstractProgressiveService {
 
       targetPath = p1[0].getString(TAG_COPY_TARGET);
       move = p1[0].getBoolean(TAG_COPY_MOVE);
-      openMode = OpenMode.getOpenMode(p1[0].getInt(TAG_COPY_OPEN_MODE));
+      OpenMode openMode = OpenMode.getOpenMode(p1[0].getInt(TAG_COPY_OPEN_MODE));
       copy = new Copy();
       copy.execute(sourceFiles, targetPath, move, openMode);
 
@@ -560,7 +557,7 @@ public class CopyService extends AbstractProgressiveService {
     }
   }
 
-  private BroadcastReceiver receiver3 =
+  private final BroadcastReceiver receiver3 =
           new BroadcastReceiver() {
 
             @Override

@@ -46,7 +46,6 @@ import androidx.legacy.app.ActionBarDrawerToggle;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.cloudrail.si.interfaces.CloudStorage;
 import com.cloudrail.si.services.Box;
@@ -486,29 +485,29 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
             }
         }
 
-    addNewItem(
-            menu,
-            LASTGROUP,
-            order++,
-            R.string.ftp,
-            new MenuMetadata(
-                    () -> {
-                      FragmentTransaction transaction2 =
-                              mainActivity.getSupportFragmentManager().beginTransaction();
-                      transaction2.replace(R.id.content_frame, new FtpServerFragment());
-                      mainActivity
-                              .getAppbar()
-                              .getAppbarLayout()
-                              .animate()
-                              .translationY(0)
-                              .setInterpolator(new DecelerateInterpolator(2))
-                              .start();
-                      pending_fragmentTransaction = transaction2;
-                      if (!isDrawerLocked) close();
-                      else onDrawerClosed();
-                    }),
-            R.drawable.ic_ftp_white_24dp,
-            null);
+        addNewItem(
+                menu,
+                LASTGROUP,
+                order++,
+                R.string.ftp,
+                new MenuMetadata(
+                        () -> {
+                            FragmentTransaction transaction2 =
+                                    mainActivity.getSupportFragmentManager().beginTransaction();
+                            transaction2.replace(R.id.content_frame, new FtpServerFragment());
+                            mainActivity
+                                    .getAppbar()
+                                    .getAppbarLayout()
+                                    .animate()
+                                    .translationY(0)
+                                    .setInterpolator(new DecelerateInterpolator(2))
+                                    .start();
+                            pending_fragmentTransaction = transaction2;
+                            if (!isDrawerLocked) close();
+                            else onDrawerClosed();
+                        }),
+                R.drawable.ic_ftp_white_24dp,
+                null);
 
         addNewItem(
                 menu,
@@ -657,7 +656,7 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
                     .putString(
                             PreferencesConstants.PREFERENCE_DRAWER_HEADER_PATH, intent.getData().toString())
                     .commit();
-          //  setDrawerHeaderBackground();
+            //  setDrawerHeaderBackground();
         }
     }
 
@@ -842,11 +841,8 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
      * @return item id from menu
      */
     public int getDrawerSelectedItem() {
-        if (navView.getSelected() != null) {
-            return navView.getSelected().getItemId();
-        } else {
-            return 0;
-        }
+        if (navView.getSelected() == null) return -1;
+        return navView.getSelected().getItemId();
     }
 
     public void setBackgroundColor(@ColorInt int color) {

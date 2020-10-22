@@ -73,6 +73,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -123,6 +124,7 @@ public class FtpServerFragment extends Fragment {
       case LIGHT:
         startDividerView.setBackgroundColor(Utils.getColor(getContext(), R.color.divider));
         statusDividerView.setBackgroundColor(Utils.getColor(getContext(), R.color.divider));
+        ftpBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.accent_black));
         break;
       case DARK:
       case BLACK:
@@ -130,6 +132,8 @@ public class FtpServerFragment extends Fragment {
                 Utils.getColor(getContext(), R.color.divider_dark_card));
         statusDividerView.setBackgroundColor(
                 Utils.getColor(getContext(), R.color.divider_dark_card));
+        ftpBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.vectors_white));
+
         break;
       default:
         break;
@@ -455,16 +459,15 @@ public class FtpServerFragment extends Fragment {
                         getResources().getDrawable(R.drawable.ic_eye_off_grey600_24dp));
               } else {
                 // password was visible, let's hide it
-                password.setText(getResources().getString(R.string.password) + ": " + passwordBulleted);
-                ftpPasswordVisibleButton.setImageDrawable(
-                        getResources().getDrawable(R.drawable.ic_eye_grey600_24dp));
+                password.setText(String.format("%s: %s", getResources().getString(R.string.password), passwordBulleted));
+                ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey600_24dp));
               }
             });
 
     port.setText(
-            getResources().getString(R.string.ftp_port) + ": " + getDefaultPortFromPreferences());
+            String.format("%s: %d", getResources().getString(R.string.ftp_port), getDefaultPortFromPreferences()));
     sharedPath.setText(
-            getResources().getString(R.string.ftp_path) + ": " + getDefaultPathFromPreferences());
+            String.format("%s: %s", getResources().getString(R.string.ftp_path), getDefaultPathFromPreferences()));
   }
 
   /** Updates the status spans */

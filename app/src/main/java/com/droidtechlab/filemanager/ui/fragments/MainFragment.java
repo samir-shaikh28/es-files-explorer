@@ -125,6 +125,7 @@ import java.util.List;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
+import static android.os.Build.VERSION_CODES.JELLY_BEAN;
 import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_DIRECTORY_SORT_MODE;
 import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_GRID_COLUMNS;
 import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_SHOW_DIVIDERS;
@@ -408,7 +409,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                                 }
                                 if (savedInstanceState != null && !IS_LIST)
                                     onSavedInstanceState(savedInstanceState);
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                                if (android.os.Build.VERSION.SDK_INT >= JELLY_BEAN) {
                                     mToolbarContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                                 } else {
                                     mToolbarContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
@@ -637,7 +638,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     }
 
                     if (getMainActivity().mReturnIntent)
-                        if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                        if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
                     // tv.setText(positions.size());
                     if (!results) {
                         hideOption(R.id.openparent, menu);
@@ -655,13 +656,13 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                             }
 
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
 
                         } else {
                             try {
                                 showOption(R.id.share, menu);
                                 if (getMainActivity().mReturnIntent)
-                                    if (Build.VERSION.SDK_INT >= 16)
+                                    if (Build.VERSION.SDK_INT >= JELLY_BEAN)
                                         showOption(R.id.openmulti, menu);
                                 for (LayoutElementParcelable e : adapter.getCheckedItems()) {
                                     File x = new File(e.desc);
@@ -691,14 +692,14 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                                 hideOption(R.id.openmulti, menu);
                             }
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
 
                         } else {
                             hideOption(R.id.openparent, menu);
                             hideOption(R.id.addshortcut, menu);
 
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= 16) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
                             try {
                                 for (LayoutElementParcelable e : adapter.getCheckedItems()) {
                                     File x = new File(e.desc);

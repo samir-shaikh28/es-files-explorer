@@ -32,7 +32,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class SearchAsyncTask extends AsyncTask<String, HybridFileParcelable, Void> {
+public class SearchAsyncTask extends AsyncTask<String, HybridFileParcelable, Void>
+        implements StatefulAsyncTask<SearchWorkerFragment.HelperCallbacks> {
 
   private static final String TAG = "SearchAsyncTask";
 
@@ -43,15 +44,8 @@ public class SearchAsyncTask extends AsyncTask<String, HybridFileParcelable, Voi
   private boolean rootMode, isRegexEnabled, isMatchesEnabled;
 
   public SearchAsyncTask(
-      Activity a,
-      SearchWorkerFragment.HelperCallbacks l,
-      String input,
-      OpenMode openMode,
-      boolean root,
-      boolean regex,
-      boolean matches) {
+          Activity a, String input, OpenMode openMode, boolean root, boolean regex, boolean matches) {
     activity = new WeakReference<>(a);
-    callbacks = l;
     this.input = input;
     this.openMode = openMode;
     rootMode = root;
@@ -113,6 +107,11 @@ public class SearchAsyncTask extends AsyncTask<String, HybridFileParcelable, Voi
     }
   }
 
+  @Override
+  public void setCallback(SearchWorkerFragment.HelperCallbacks helperCallbacks) {
+    this.callbacks = helperCallbacks;
+  }
+
   /**
    * Recursively search for occurrences of a given text in file names and publish the result
    *
@@ -121,18 +120,18 @@ public class SearchAsyncTask extends AsyncTask<String, HybridFileParcelable, Voi
   private void search(HybridFile directory, final SearchFilter filter) {
     if (directory.isDirectory(activity.get())) { // do you have permission to read this directory?
       directory.forEachChildrenFile(
-          activity.get(),
-          rootMode,
-          file -> {
-            if (!isCancelled()) {
-              if (filter.searchFilter(file.getName(activity.get()))) {
-                publishProgress(file);
-              }
-              if (file.isDirectory() && !isCancelled()) {
-                search(file, filter);
-              }
-            }
-          });
+              activity.get(),
+              rootMode,
+              file -> {
+                if (!isCancelled()) {
+                  if (filter.searchFilter(file.getName(activity.get()))) {
+                    publishProgress(file);
+                  }
+                  if (file.isDirectory() && !isCancelled()) {
+                    search(file, filter);
+                  }
+                }
+              });
     } else {
       Log.d(TAG, "Cannot search " + directory.getPath() + ": Permission Denied");
     }

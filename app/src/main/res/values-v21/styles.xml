@@ -19,12 +19,12 @@
 <resources>
     <!-- appCompat -->
     <!-- light -->
-    <style name="appCompatLight" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="appCompatLight" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="popup">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="popup">@style/ThemeOverlay.MaterialComponents.Light</item>
         <item name="toolbar_theme">@style/overflow_light</item>
 
         <item name="android:windowContentTransitions">true</item>
@@ -33,7 +33,7 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
-    <style name="overflow_light" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="overflow_light" parent="Theme.MaterialComponents.Light.DarkActionBar">
 
         <item name="android:textColorSecondary">#ffffff</item>
         <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
@@ -42,19 +42,19 @@
         <item name="android:actionModeStyle">@style/custom_action_mode_light</item>
     </style>
     <style name="custom_action_mode_light" parent="Widget.AppCompat.ActionMode">
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
         <item name="background">@color/holo_dark_action_mode</item>
         <item name="android:background">@color/holo_dark_action_mode</item>
     </style>
 
     <!-- dark -->
-    <style name="appCompatDark" parent="Theme.AppCompat.NoActionBar">
+    <style name="appCompatDark" parent="Theme.MaterialComponents.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_arrow_back_white_36dp</item>
-        <item name="popup">@style/Theme.AppCompat</item>
+        <item name="popup">@style/Theme.MaterialComponents</item>
         <item name="toolbar_theme">@style/overflow_dark</item>
 
         <item name="android:windowContentTransitions">true</item>
@@ -63,7 +63,7 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
-    <style name="overflow_dark" parent="Theme.AppCompat">
+    <style name="overflow_dark" parent="Theme.MaterialComponents">
 
         <item name="android:textColorSecondary">#ffffff</item>
         <item name="android:textColorPrimary">#ffffff</item>

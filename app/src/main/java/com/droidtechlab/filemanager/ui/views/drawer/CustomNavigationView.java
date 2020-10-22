@@ -34,7 +34,7 @@ import androidx.annotation.Nullable;
 
 /** This class if for intercepting item selections so that they can be saved and restored. */
 public class CustomNavigationView extends NavigationView
-    implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
   private OnNavigationItemSelectedListener subclassListener;
   private int checkedId = -1;
@@ -47,7 +47,7 @@ public class CustomNavigationView extends NavigationView
 
   @Override
   public void setNavigationItemSelectedListener(
-      @Nullable OnNavigationItemSelectedListener listener) {
+          @Nullable OnNavigationItemSelectedListener listener) {
     subclassListener = listener;
   }
 
@@ -157,14 +157,14 @@ public class CustomNavigationView extends NavigationView
 
     // required field that makes Parcelables from a Parcel
     public static final Parcelable.Creator<SavedState> CREATOR =
-        new Parcelable.Creator<SavedState>() {
-          public SavedState createFromParcel(Parcel in) {
-            return new SavedState(in);
-          }
+            new Parcelable.Creator<SavedState>() {
+              public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+              }
 
-          public SavedState[] newArray(int size) {
-            return new SavedState[size];
-          }
-        };
+              public SavedState[] newArray(int size) {
+                return new SavedState[size];
+              }
+            };
   }
 }

@@ -219,11 +219,10 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
                     mainActivity.getDrawer().selectCorrectDrawerItemForPath(m.getCurrentPath());
                 }
                 if (m.openMode == OpenMode.FILE) {
-                    tabHandler.addTab(new Tab(i, m.getCurrentPath(), m.home));
+                    tabHandler.update(new Tab(i, m.getCurrentPath(), m.home));
                 } else {
-                    tabHandler.addTab(new Tab(i, m.home, m.home));
+                    tabHandler.update(new Tab(i, m.home, m.home));
                 }
-
                 i++;
             }
         }
@@ -241,7 +240,6 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
                     .apply();
         }
 
-        final FragmentTransaction ft = fragmentManager.beginTransaction();
         if (fragments != null && fragments.size() != 0) {
             if (fragmentManager == null) return;
             for (Fragment fragment : fragments) {
