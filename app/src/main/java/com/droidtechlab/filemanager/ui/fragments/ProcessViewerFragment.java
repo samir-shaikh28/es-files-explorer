@@ -42,6 +42,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.material.card.MaterialCardView;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -63,7 +64,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 public class ProcessViewerFragment extends Fragment {
@@ -83,7 +83,7 @@ public class ProcessViewerFragment extends Fragment {
   private ImageButton mCancelButton;
   private ImageView mProgressImage;
   private View rootView;
-  private CardView mCardView;
+  private MaterialCardView mCardView;
   private LineChart mLineChart;
   private LineData mLineData = new LineData();
   /** Time in seconds just for showing to the user. No guarantees. */

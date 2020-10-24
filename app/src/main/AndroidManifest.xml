@@ -169,11 +169,6 @@
 
         </activity>
 
-        <activity android:name="com.droidtechlab.filemanager.ui.activities.AboutActivity"
-            android:theme="@style/aboutBlack"
-            android:label="About"
-            />
-
         <service
             android:name = "com.droidtechlab.filemanager.asynchronous.services.ExtractService"
             android:label = "Extracting"

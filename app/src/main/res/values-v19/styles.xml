@@ -18,7 +18,7 @@
 
     <!-- appCompat -->
     <!-- light -->
-    <style name="appCompatLight" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="appCompatLight" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
@@ -41,7 +41,7 @@
     </style>
 
     <!-- dark -->
-    <style name="appCompatDark" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="appCompatDark" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">true</item>

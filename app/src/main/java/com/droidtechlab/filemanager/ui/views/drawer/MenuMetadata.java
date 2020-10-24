@@ -20,6 +20,8 @@
 
 package com.droidtechlab.filemanager.ui.views.drawer;
 
+import android.util.Log;
+
 /** @author Emmanuel Messulam <emmanuelbendavid@gmail.com> on 28/12/2017, at 18:01. */
 public final class MenuMetadata {
 

@@ -1084,7 +1084,7 @@ public class MainActivity extends PermissionsActivity
                 openURL();
                 break;
             case R.id.donate:
-                if(drawer.isOpen()) {
+                if (drawer.isOpen()) {
                     drawer.close();
                 }
                 billing = new Billing(this);
@@ -1734,7 +1734,8 @@ public class MainActivity extends PermissionsActivity
     public void renameBookmark(final String title, final String path) {
         if (dataUtils.containsBooks(new String[]{title, path}) != -1) {
             RenameBookmark renameBookmark = RenameBookmark.getInstance(title, path, getAccent());
-            if (renameBookmark != null) renameBookmark.show(getFragmentManager(), "renamedialog");
+            if (renameBookmark != null)
+                renameBookmark.show(getSupportFragmentManager(), "renamedialog");
         }
     }
 
@@ -1816,7 +1817,7 @@ public class MainActivity extends PermissionsActivity
         bundle.putString("path", path);
         bundle.putBoolean("edit", edit);
         smbConnectDialog.setArguments(bundle);
-        smbConnectDialog.show(getFragmentManager(), "smbdailog");
+        smbConnectDialog.show(getSupportFragmentManager(), "smbdailog");
     }
 
     public void showSftpDialog(String name, String path, boolean edit) {
@@ -1845,7 +1846,7 @@ public class MainActivity extends PermissionsActivity
         }
         bundle.putBoolean("edit", edit);
         sftpConnectDialog.setArguments(bundle);
-        sftpConnectDialog.show(getFragmentManager(), "sftpdialog");
+        sftpConnectDialog.show(getSupportFragmentManager(), "sftpdialog");
     }
 
     /**
@@ -1966,25 +1967,27 @@ public class MainActivity extends PermissionsActivity
 
     @Override
     public void onPreExecute(String query) {
-        mainFragment.mSwipeRefreshLayout.setRefreshing(true);
-        mainFragment.onSearchPreExecute(query);
+        if (getCurrentMainFragment() == null) return;
+        getCurrentMainFragment().mSwipeRefreshLayout.setRefreshing(true);
+        getCurrentMainFragment().onSearchPreExecute(query);
     }
 
     @Override
     public void onPostExecute(String query) {
-        mainFragment.onSearchCompleted(query);
-        mainFragment.mSwipeRefreshLayout.setRefreshing(false);
+        if (getCurrentMainFragment() == null) return;
+        getCurrentMainFragment().onSearchCompleted(query);
+        getCurrentMainFragment().mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onProgressUpdate(HybridFileParcelable val, String query) {
-        mainFragment.addSearchResult(val, query);
+        getCurrentMainFragment().addSearchResult(val, query);
     }
 
     @Override
     public void onCancelled() {
-        mainFragment.reloadListElements(false, false, !mainFragment.IS_LIST);
-        mainFragment.mSwipeRefreshLayout.setRefreshing(false);
+        getCurrentMainFragment().reloadListElements(false, false, !getCurrentMainFragment().IS_LIST);
+        getCurrentMainFragment().mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -2005,14 +2008,14 @@ public class MainActivity extends PermissionsActivity
                 args.putInt(ARGS_KEY_LOADER, service.ordinal());
 
                 // check if we already had done some work on the loader
-                Loader loader = getSupportLoaderManager().getLoader(REQUEST_CODE_CLOUD_LIST_KEY);
+                Loader loader = LoaderManager.getInstance(this).getLoader(REQUEST_CODE_CLOUD_LIST_KEY);
                 if (loader != null && loader.isStarted()) {
 
                     // making sure that loader is not started
-                    getSupportLoaderManager().destroyLoader(REQUEST_CODE_CLOUD_LIST_KEY);
+                    LoaderManager.getInstance(this).destroyLoader(REQUEST_CODE_CLOUD_LIST_KEY);
                 }
 
-                getSupportLoaderManager().initLoader(REQUEST_CODE_CLOUD_LIST_KEY, args, this);
+                LoaderManager.getInstance(this).initLoader(REQUEST_CODE_CLOUD_LIST_KEY, args, this);
             }
         } catch (CloudPluginException e) {
             e.printStackTrace();
@@ -2150,7 +2153,7 @@ public class MainActivity extends PermissionsActivity
 
         @Override
         public boolean onActionSelected(SpeedDialActionItem actionItem) {
-            if(mainActivity.getSupportFragmentManager().getBackStackEntryCount() == 0) return true;
+            if (mainActivity.getSupportFragmentManager().getBackStackEntryCount() == 0) return true;
 
             final MainFragment ma =
                     (MainFragment)

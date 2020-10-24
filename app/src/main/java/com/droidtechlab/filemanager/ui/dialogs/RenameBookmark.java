@@ -33,7 +33,6 @@ import com.droidtechlab.filemanager.utils.SimpleTextWatcher;
 import com.google.android.material.textfield.TextInputLayout;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -42,6 +41,7 @@ import android.text.Editable;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.fragment.app.DialogFragment;
 
 /** Created by arpitkh996 on 21-01-2016. */
 public class RenameBookmark extends DialogFragment {

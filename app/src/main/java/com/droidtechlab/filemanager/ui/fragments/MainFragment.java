@@ -226,6 +226,10 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
+                        Log.d("AdLoadingTest", "title "+unifiedNativeAd.getHeadline());
+                        Log.d("AdLoadingTest", "advertics "+unifiedNativeAd.getAdvertiser());
+                        Log.d("AdLoadingTest", "body "+unifiedNativeAd.getBody());
+                        Log.d("AdLoadingTest", "rating "+unifiedNativeAd.getStarRating());
                         Log.d("AdLoadingTest", "ad loaded");
                         if (!adLoader.isLoading()) {
                             // insertAdsInMenuItems();
@@ -248,18 +252,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         }
                     }
 
-                    @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                        // A native ad failed to load, check if the ad loader has finished loading
-                        // and if so, insert the ads into the list.
-                        Log.d("AdLoadingTest", "ad loading failed: "+errorCode);
-
-                        Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
-                                + " load another.");
-                        if (!adLoader.isLoading()) {
-                            //insertAdsInMenuItems();
-                        }
-                    }
 
                     @Override
                     public void onAdClicked() {
@@ -1159,6 +1151,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         if (bitmap != null) {
             LIST_ELEMENTS = bitmap;
             CURRENT_PATH = path;
+            Log.d("###", "set list elem path:: "+path);
+
             this.openMode = openMode;
             reloadListElements(back, results, grid);
         } else {
@@ -1447,6 +1441,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     // don't fuckin' remove this line, we need to change
                     // the path back to parent on back press
                     CURRENT_PATH = parentPath;
+
 
                     MainActivityHelper.addSearchFragment(
                             fm,
@@ -1804,7 +1799,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     public void onSearchCompleted(final String query) {
 
-        Log.d("###", "query: "+query+" res:: "+results);
         if (!results) {
             LIST_ELEMENTS.clear();
         }

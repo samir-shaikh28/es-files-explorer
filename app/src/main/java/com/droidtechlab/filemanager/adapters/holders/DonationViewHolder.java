@@ -26,11 +26,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DonationViewHolder extends RecyclerView.ViewHolder {
 
-  public final LinearLayout ROOT_VIEW;
+  public final ConstraintLayout ROOT_VIEW;
   public final TextView TITLE, SUMMARY, PRICE;
 
   public DonationViewHolder(View itemView) {

@@ -24,8 +24,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -43,9 +45,11 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.droidtechlab.filemanager.R;
+import com.droidtechlab.filemanager.filesystem.FileUtil;
 import com.droidtechlab.filemanager.filesystem.HybridFile;
 import com.droidtechlab.filemanager.filesystem.files.FileUtils;
 import com.droidtechlab.filemanager.ui.activities.MainActivity;
@@ -160,6 +164,7 @@ public class BottomBar implements View.OnTouchListener {
                                 Fragment fragmentAtFrame = mainActivity.getFragmentAtFrame();
                                 if (fragmentAtFrame instanceof TabFragment) {
                                     MainFragment m = mainActivity.getCurrentMainFragment();
+                                    if(m == null) return false;
                                     if (m.openMode == OpenMode.FILE) {
                                         FileUtils.crossfade(buttons, pathLayout);
                                         timer.cancel();
@@ -381,7 +386,10 @@ public class BottomBar implements View.OnTouchListener {
 
         if (oldPath.equals(newPath)) return;
 
-        if (!areButtonsShowing()) {
+
+        if (areButtonsShowing()) {
+            FileUtils.crossfadeInverse(buttons, pathLayout);
+        }
             final Animation slideIn = AnimationUtils.loadAnimation(mainActivity, R.anim.slide_in);
             Animation slideOut = AnimationUtils.loadAnimation(mainActivity, R.anim.slide_out);
 
@@ -552,10 +560,11 @@ public class BottomBar implements View.OnTouchListener {
                         .setStartDelay(PATH_ANIM_START_DELAY)
                         .start();
             }
-        } else {
-            showButtons(buttonPathInterface);
-            fullPathText.setText(newPath);
-        }
+//        }
+//        else {
+//            showButtons(buttonPathInterface);
+//            fullPathText.setText(newPath);
+//        }
     }
 
     private void sendScroll(final HorizontalScrollView scrollView) {

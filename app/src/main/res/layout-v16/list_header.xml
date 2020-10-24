@@ -14,7 +14,6 @@
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingLeft="@dimen/icon_width"
         android:paddingRight="@dimen/icon_width"
-        android:textSize="@dimen/list_header_textsize">
-    </TextView>
+        android:textSize="@dimen/list_header_textsize" />
 
 </RelativeLayout>

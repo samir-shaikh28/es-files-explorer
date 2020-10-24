@@ -417,7 +417,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ArrayList<IconDataParcelable> uris = new ArrayList<>(itemsDigested.size());
 
         for (LayoutElementParcelable e : arrayList) {
-            itemsDigested.add(new ListItem(e.isBack, e));
+            boolean isBack = (e != null) && e.isBack;
+            itemsDigested.add(new ListItem(isBack, e));
             uris.add(e != null ? e.iconData : null);
         }
 

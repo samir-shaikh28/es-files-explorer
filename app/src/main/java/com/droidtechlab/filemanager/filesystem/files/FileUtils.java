@@ -282,7 +282,7 @@ public class FileUtils {
                     new AnimatorListenerAdapter() {
                       @Override
                       public void onAnimationEnd(Animator animation) {
-                        pathbar.setVisibility(View.GONE);
+                        pathbar.setVisibility(View.INVISIBLE);
                       }
                     });
     // Animate the loading view to 0% opacity. After the animation ends,
@@ -314,6 +314,12 @@ public class FileUtils {
     // Animate the loading view to 0% opacity. After the animation ends,
     // set its visibility to GONE as an optimization step (it won't
     // participate in layout passes, etc.)
+  }
+
+   public static void hideButtonShowPathBar(final View buttons, final View pathbar) {
+    buttons.setVisibility(View.GONE);
+    pathbar.setAlpha(0f);
+    pathbar.setVisibility(View.VISIBLE);
   }
 
   public static void shareCloudFile(String path, final OpenMode openMode, final Context context) {
@@ -565,6 +571,7 @@ public class FileUtils {
   }
 
   public static String[] getPathsInPath(String path) {
+    Log.d("###", "path in path:: "+path);
     if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
     ArrayList<String> paths = new ArrayList<>();

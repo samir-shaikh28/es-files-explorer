@@ -40,7 +40,6 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.material.textfield.TextInputLayout;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -56,6 +55,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.fragment.app.DialogFragment;
 
 import jcifs.smb.SmbFile;
 

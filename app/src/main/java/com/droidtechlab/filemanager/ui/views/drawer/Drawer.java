@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -721,6 +722,7 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
         String title = item.getTitle().toString();
         MenuMetadata meta = dataUtils.getDrawerMetadata(item);
 
+        Log.d("###", "meta: "+meta);
         switch (meta.type) {
             case MenuMetadata.ITEM_ENTRY:
                 if (dataUtils.containsBooks(new String[]{title, meta.path}) != -1) {

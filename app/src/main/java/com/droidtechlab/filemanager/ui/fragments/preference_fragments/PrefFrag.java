@@ -239,9 +239,7 @@ public class PrefFrag extends PreferenceFragment implements Preference.OnPrefere
 //                  Toast.LENGTH_LONG)
 //                  .show();
 //        return false;
-//      case PreferencesConstants.FRAGMENT_ABOUT:
-//        startActivity(new Intent(getActivity(), AboutActivity.class));
-//        return false;
+
       /*FROM HERE BE FRAGMENTS*/
       case PreferencesConstants.FRAGMENT_COLORS:
         ((PreferencesActivity) getActivity()).selectItem(PreferencesActivity.COLORS_PREFERENCE);
