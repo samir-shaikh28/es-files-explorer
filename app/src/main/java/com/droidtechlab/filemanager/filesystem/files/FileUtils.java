@@ -571,7 +571,6 @@ public class FileUtils {
   }
 
   public static String[] getPathsInPath(String path) {
-    Log.d("###", "path in path:: "+path);
     if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
     ArrayList<String> paths = new ArrayList<>();

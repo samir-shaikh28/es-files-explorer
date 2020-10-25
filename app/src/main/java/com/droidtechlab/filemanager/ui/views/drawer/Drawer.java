@@ -722,7 +722,6 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
         String title = item.getTitle().toString();
         MenuMetadata meta = dataUtils.getDrawerMetadata(item);
 
-        Log.d("###", "meta: "+meta);
         switch (meta.type) {
             case MenuMetadata.ITEM_ENTRY:
                 if (dataUtils.containsBooks(new String[]{title, meta.path}) != -1) {

@@ -37,13 +37,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /** Created by Arpit on 23-01-2015 edited by Emmanuel Messulam<emmanuelbendavid@gmail.com> */
-public class RoundedImageView extends ImageView {
+public class RoundedImageView extends AppCompatImageView {
 
   private static final float BACKGROUND_CIRCLE_MARGIN_PERCENTUAL = 0.015f;
 
   private float[] relativeSize = null;
-  private Paint background = new Paint();
+  private final Paint background = new Paint();
 
   public RoundedImageView(Context ctx, AttributeSet attrs) {
     super(ctx, attrs);
@@ -71,9 +73,9 @@ public class RoundedImageView extends ImageView {
       float radius = min / 2f - backgroundCircleMargin * 2;
       Bitmap bitmap = drawableToBitmapRelative(drawable, radius);
 
-      canvas.drawCircle(w / 2, h / 2, radius, background);
+      canvas.drawCircle(w / 2f, h / 2f, radius, background);
       canvas.drawBitmap(
-          bitmap, w / 2 - bitmap.getWidth() / 2, h / 2 - bitmap.getHeight() / 2, null);
+          bitmap, (w / 2f) - bitmap.getWidth() / 2f, (h / 2f) - (bitmap.getHeight() / 2f), null);
     }
   }
 
@@ -108,7 +110,7 @@ public class RoundedImageView extends ImageView {
     }
 
     Bitmap output =
-        Bitmap.createBitmap(finalBitmap.getWidth(), finalBitmap.getHeight(), Config.ARGB_8888);
+        Bitmap.createBitmap(finalBitmap.getWidth(), finalBitmap.getHeight(), Config.RGB_565);
     Canvas canvas = new Canvas(output);
 
     final Paint paint = new Paint();
@@ -119,9 +121,9 @@ public class RoundedImageView extends ImageView {
     paint.setDither(true);
     paint.setColor(Utils.getColor(getContext(), R.color.roundedimagepaint));
     canvas.drawCircle(
-        finalBitmap.getWidth() / 2 + 0.7f,
-        finalBitmap.getHeight() / 2 + 0.7f,
-        finalBitmap.getWidth() / 2 + 0.1f,
+            (finalBitmap.getWidth() / 2f) + 0.7f,
+            (finalBitmap.getHeight() / 2f)+ 0.7f,
+            (finalBitmap.getWidth() / 2f) + 0.1f,
         paint);
     paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
     canvas.drawBitmap(finalBitmap, rect, rect, paint);
@@ -146,11 +148,11 @@ public class RoundedImageView extends ImageView {
     if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
       bitmap =
           Bitmap.createBitmap(
-              1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+              1, 1, Bitmap.Config.RGB_565); // Single color bitmap will be created of 1x1 pixel
     } else {
       bitmap =
           Bitmap.createBitmap(
-              drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+              drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.RGB_565);
     }
     Canvas canvas = new Canvas(bitmap);
     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -179,7 +181,7 @@ public class RoundedImageView extends ImageView {
       throw new IllegalStateException(
           "Solid colors cannot be represented as images! Use RoundedImageView.setBackgroundColor()");
     } else {
-      bitmap = Bitmap.createBitmap(sizeW, sizeH, Bitmap.Config.ARGB_8888);
+      bitmap = Bitmap.createBitmap(sizeW, sizeH, Config.RGB_565);
     }
 
     Canvas canvas = new Canvas(bitmap);

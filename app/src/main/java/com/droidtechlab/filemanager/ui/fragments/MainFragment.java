@@ -1151,7 +1151,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         if (bitmap != null) {
             LIST_ELEMENTS = bitmap;
             CURRENT_PATH = path;
-            Log.d("###", "set list elem path:: "+path);
 
             this.openMode = openMode;
             reloadListElements(back, results, grid);

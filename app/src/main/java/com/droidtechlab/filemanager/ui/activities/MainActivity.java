@@ -1084,7 +1084,7 @@ public class MainActivity extends PermissionsActivity
                 openURL();
                 break;
             case R.id.donate:
-                if (drawer.isOpen()) {
+                if (drawer.isOpen() && !drawer.isOnTablet()) {
                     drawer.close();
                 }
                 billing = new Billing(this);

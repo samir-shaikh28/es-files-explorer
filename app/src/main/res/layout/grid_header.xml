@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/second"
     android:layout_height="@dimen/list_header_height"
-    android:layout_width="match_parent" >
+    android:layout_width="match_parent">
 
     <TextView
         android:id="@+id/text"
         android:gravity="center_vertical"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingLeft="@dimen/material_generic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:paddingRight="@dimen/material_generic"
         android:textSize="@dimen/list_header_textsize">
     </TextView>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

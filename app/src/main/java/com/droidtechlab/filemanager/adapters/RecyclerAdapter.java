@@ -559,7 +559,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         NativeAd.Image icon = nativeAd.getIcon();
 
         if (icon == null) {
-            adView.getIconView().setVisibility(View.GONE);
+            adView.getIconView().setVisibility(View.INVISIBLE);
         } else {
             ((ImageView) adView.getIconView()).setImageDrawable(icon.getDrawable());
             adView.getIconView().setVisibility(View.VISIBLE);
