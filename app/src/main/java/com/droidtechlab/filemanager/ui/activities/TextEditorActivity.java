@@ -21,36 +21,6 @@
 package com.droidtechlab.filemanager.ui.activities;
 
 
-import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.CONTENT;
-import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.FILE;
-import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_COLORED_NAVIGATION;
-import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_TEXTEDITOR_NEWSTACK;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.droidtechlab.filemanager.R;
-import com.droidtechlab.filemanager.asynchronous.asynctasks.ReadFileTask;
-import com.droidtechlab.filemanager.asynchronous.asynctasks.SearchTextTask;
-import com.droidtechlab.filemanager.asynchronous.asynctasks.WriteFileAbstraction;
-import com.droidtechlab.filemanager.filesystem.EditableFileAbstraction;
-import com.droidtechlab.filemanager.filesystem.HybridFileParcelable;
-import com.droidtechlab.filemanager.filesystem.files.FileUtils;
-import com.droidtechlab.filemanager.ui.activities.superclasses.ThemedActivity;
-import com.droidtechlab.filemanager.ui.colors.ColorPreferenceHelper;
-import com.droidtechlab.filemanager.ui.dialogs.GeneralDialogCreation;
-import com.droidtechlab.filemanager.ui.theme.AppTheme;
-import com.droidtechlab.filemanager.utils.MapEntry;
-import com.droidtechlab.filemanager.utils.OpenMode;
-import com.droidtechlab.filemanager.utils.PreferenceUtils;
-import com.droidtechlab.filemanager.utils.Utils;
-import com.google.android.material.snackbar.Snackbar;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -68,6 +38,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.BackgroundColorSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,6 +57,51 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
+import androidx.documentfile.provider.DocumentFile;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.droidtechlab.filemanager.R;
+import com.droidtechlab.filemanager.application.AppConfig;
+import com.droidtechlab.filemanager.asynchronous.asynctasks.SearchTextTask;
+import com.droidtechlab.filemanager.asynchronous.asynctasks.WriteFileAbstraction;
+import com.droidtechlab.filemanager.exceptions.ShellNotRunningException;
+import com.droidtechlab.filemanager.exceptions.StreamNotFoundException;
+import com.droidtechlab.filemanager.filesystem.EditableFileAbstraction;
+import com.droidtechlab.filemanager.filesystem.HybridFileParcelable;
+import com.droidtechlab.filemanager.filesystem.files.FileUtils;
+import com.droidtechlab.filemanager.ui.activities.superclasses.ThemedActivity;
+import com.droidtechlab.filemanager.ui.colors.ColorPreferenceHelper;
+import com.droidtechlab.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.droidtechlab.filemanager.ui.theme.AppTheme;
+import com.droidtechlab.filemanager.utils.MapEntry;
+import com.droidtechlab.filemanager.utils.OpenMode;
+import com.droidtechlab.filemanager.utils.PreferenceUtils;
+import com.droidtechlab.filemanager.utils.RootUtils;
+import com.droidtechlab.filemanager.utils.Utils;
+import com.google.android.material.snackbar.Snackbar;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.CONTENT;
+import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.FILE;
+import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_COLORED_NAVIGATION;
+import static com.droidtechlab.filemanager.ui.fragments.preference_fragments.PreferencesConstants.PREFERENCE_TEXTEDITOR_NEWSTACK;
 
 public class TextEditorActivity extends ThemedActivity
         implements TextWatcher, View.OnClickListener {
@@ -98,6 +114,9 @@ public class TextEditorActivity extends ThemedActivity
   private Typeface mInputTypefaceDefault, mInputTypefaceMono;
   private androidx.appcompat.widget.Toolbar toolbar;
   ScrollView scrollView;
+  private File cachedFile = null;
+  private Disposable disposable;
+
 
   /*
    * List maintaining the searched text's start/end index as key/value pair
@@ -121,6 +140,11 @@ public class TextEditorActivity extends ThemedActivity
   private static final String KEY_INDEX = "index";
   private static final String KEY_ORIGINAL_TEXT = "original";
   private static final String KEY_MONOFONT = "monofont";
+
+  public static final int NORMAL = 0;
+  public static final int EXCEPTION_STREAM_NOT_FOUND = -1;
+  public static final int EXCEPTION_IO = -2;
+
 
   private RelativeLayout searchViewLayout;
   public ImageButton upButton, downButton, closeButton;
@@ -307,20 +331,103 @@ public class TextEditorActivity extends ThemedActivity
             .execute();
   }
 
+
+  private InputStream loadFile(File file) {
+    InputStream inputStream = null;
+    if (!file.canWrite() && isRootExplorer()) {
+      // try loading stream associated using root
+      try {
+        cachedFile = new File(getExternalCacheDir(), file.getName());
+        // creating a cache file
+        RootUtils.copy(file.getAbsolutePath(), cachedFile.getPath());
+
+        inputStream = new FileInputStream(cachedFile);
+      } catch (ShellNotRunningException e) {
+        e.printStackTrace();
+        inputStream = null;
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        inputStream = null;
+      }
+    } else if (file.canRead()) {
+      // readable file in filesystem
+      try {
+        inputStream = new FileInputStream(file.getAbsolutePath());
+      } catch (FileNotFoundException e) {
+        Log.e("TEXT_EDITOR_ACT", "Unable to open file [" + file.getAbsolutePath() + "] for reading", e);
+        inputStream = null;
+      }
+    }
+
+    return inputStream;
+  }
+
   /**
    * Initiates loading of file/uri by getting an input stream associated with it on a worker thread
    */
   private void load() {
     Snackbar.make(scrollView, R.string.loading, Snackbar.LENGTH_SHORT).show();
 
-    new ReadFileTask(
-            getContentResolver(),
-            mFile,
-            getExternalCacheDir(),
-            isRootExplorer(),
-            (data) -> {
+
+    disposable = Observable.fromCallable(() -> {
+      StringBuilder stringBuilder = new StringBuilder();
+      try {
+        InputStream inputStream = null;
+
+        switch (mFile.scheme) {
+          case CONTENT:
+            if (mFile.uri == null)
+              throw new NullPointerException("Something went really wrong!");
+
+            if (mFile.uri.getAuthority().equals(AppConfig.getInstance().getPackageName())) {
+              DocumentFile documentFile =
+                      DocumentFile.fromSingleUri(AppConfig.getInstance(), mFile.uri);
+              if (documentFile != null && documentFile.exists() && documentFile.canWrite())
+                inputStream = getContentResolver().openInputStream(documentFile.getUri());
+              else inputStream = loadFile(FileUtils.fromContentUri(mFile.uri));
+            } else {
+              inputStream = getContentResolver().openInputStream(mFile.uri);
+            }
+            break;
+          case FILE:
+            final HybridFileParcelable hybridFileParcelable = mFile.hybridFileParcelable;
+            if (hybridFileParcelable == null)
+              throw new NullPointerException("Something went really wrong!");
+
+            File file = hybridFileParcelable.getFile();
+            inputStream = loadFile(file);
+
+            break;
+          default:
+            throw new IllegalArgumentException(
+                    "The scheme for '" + mFile.scheme + "' cannot be processed!");
+        }
+
+        if (inputStream == null) throw new StreamNotFoundException();
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String buffer = null;
+        while ((buffer = bufferedReader.readLine()) != null) {
+          stringBuilder.append(buffer).append("\n");
+        }
+
+        inputStream.close();
+        bufferedReader.close();
+      } catch (StreamNotFoundException e) {
+        e.printStackTrace();
+        return new ReturnedValues(EXCEPTION_STREAM_NOT_FOUND);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return new ReturnedValues(EXCEPTION_IO);
+      }
+
+      return new ReturnedValues(stringBuilder.toString(), cachedFile);
+    }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(data -> {
               switch (data.error) {
-                case ReadFileTask.NORMAL:
+                case NORMAL:
                   cacheFile = data.cachedFile;
                   mOriginal = data.fileContents;
 
@@ -361,7 +468,7 @@ public class TextEditorActivity extends ThemedActivity
                     finish();
                   }
                   break;
-                case ReadFileTask.EXCEPTION_STREAM_NOT_FOUND:
+                case EXCEPTION_STREAM_NOT_FOUND:
                   Toast.makeText(
                           getApplicationContext(),
                           R.string.error_file_not_found,
@@ -369,14 +476,13 @@ public class TextEditorActivity extends ThemedActivity
                           .show();
                   finish();
                   break;
-                case ReadFileTask.EXCEPTION_IO:
+                case EXCEPTION_IO:
                   Toast.makeText(getApplicationContext(), R.string.error_io, Toast.LENGTH_SHORT)
                           .show();
                   finish();
                   break;
               }
-            })
-            .execute();
+            });
   }
 
   @Override
@@ -453,6 +559,10 @@ public class TextEditorActivity extends ThemedActivity
   protected void onDestroy() {
     super.onDestroy();
 
+    if(disposable != null && !disposable.isDisposed()) {
+      disposable.dispose();
+    }
+
     if (cacheFile != null && cacheFile.exists()) cacheFile.delete();
   }
 
@@ -503,7 +613,9 @@ public class TextEditorActivity extends ThemedActivity
     }
   }
 
-  /** show search view with a circular reveal animation */
+  /**
+   * show search view with a circular reveal animation
+   */
   void revealSearchView() {
     int startRadius = 4;
     int endRadius = Math.max(searchViewLayout.getWidth(), searchViewLayout.getHeight());
@@ -539,7 +651,9 @@ public class TextEditorActivity extends ThemedActivity
             });
   }
 
-  /** hide search view with a circular reveal animation */
+  /**
+   * hide search view with a circular reveal animation
+   */
   void hideSearchView() {
     int endRadius = 4;
     int startRadius = Math.max(searchViewLayout.getWidth(), searchViewLayout.getHeight());
@@ -687,4 +801,27 @@ public class TextEditorActivity extends ThemedActivity
       mInput.getText().removeSpan(colorSpan);
     }
   }
+
+
+
+  private static class ReturnedValues {
+    public final String fileContents;
+    public final int error;
+    public final File cachedFile;
+
+    private ReturnedValues(String fileContents, File cachedFile) {
+      this.fileContents = fileContents;
+      this.cachedFile = cachedFile;
+
+      this.error = NORMAL;
+    }
+
+    private ReturnedValues(int error) {
+      this.error = error;
+
+      this.fileContents = null;
+      this.cachedFile = null;
+    }
+  }
+
 }

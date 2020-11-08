@@ -32,6 +32,7 @@
         tools:replace="android:label"
         android:largeHeap="true"
         android:hardwareAccelerated="false"
+        android:theme="@style/Theme.MaterialComponents.Bridge"
         android:label="@string/appbar_name"
         android:requestLegacyExternalStorage="true"
         android:banner="@drawable/es_tv_banner">

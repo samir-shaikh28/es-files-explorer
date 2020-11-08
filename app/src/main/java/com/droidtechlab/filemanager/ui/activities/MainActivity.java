@@ -47,6 +47,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.service.quicksettings.TileService;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -140,6 +141,8 @@ import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1238,8 +1241,9 @@ public class MainActivity extends PermissionsActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.clear();
         outState.putInt(KEY_DRAWER_SELECTED, getDrawer().getDrawerSelectedItem());
         if (pasteHelper != null) {
             outState.putParcelable(PASTEHELPER_BUNDLE, pasteHelper);
@@ -1271,6 +1275,9 @@ public class MainActivity extends PermissionsActivity
     @Override
     public void onResume() {
         super.onResume();
+
+        if(consumeCallback())  return;
+
         if (materialDialog != null && !materialDialog.isShowing()) {
             materialDialog.show();
             materialDialog = null;
@@ -1342,6 +1349,7 @@ public class MainActivity extends PermissionsActivity
                     if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                         SingletonUsbOtg.getInstance().resetUsbOtgRoot();
                         List<UsbOtgRepresentation> connectedDevices = OTGUtil.getMassStorageDevicesConnected(MainActivity.this);
+                        if (connectedDevices.size() == 0) return;
                         SingletonUsbOtg.getInstance().setConnectedDevice(connectedDevices.get(0));
                         drawer.refreshDrawer();
                     } else if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
@@ -1757,6 +1765,7 @@ public class MainActivity extends PermissionsActivity
             if (new File(path).isDirectory()) {
                 MainFragment ma = getCurrentMainFragment();
                 if (ma != null) {
+                    Log.d("###", "new intent");
                     ma.loadlist(path, false, OpenMode.FILE);
                 } else goToMain(path);
             } else FileUtils.openFile(new File(path), mainActivity, getPrefs());
@@ -2216,6 +2225,11 @@ public class MainActivity extends PermissionsActivity
                 dialog.dismiss();
                 break;
         }
+    }
+
+
+    private boolean consumeCallback() {
+        return isFinishing();
     }
 
     /**

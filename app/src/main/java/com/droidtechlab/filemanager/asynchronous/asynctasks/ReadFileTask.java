@@ -173,14 +173,14 @@ public class ReadFileTask extends AsyncTask<Void, Void, ReadFileTask.ReturnedVal
     public final int error;
     public final File cachedFile;
 
-    private ReturnedValues(String fileContents, File cachedFile) {
+    public ReturnedValues(String fileContents, File cachedFile) {
       this.fileContents = fileContents;
       this.cachedFile = cachedFile;
 
       this.error = NORMAL;
     }
 
-    private ReturnedValues(int error) {
+    public ReturnedValues(int error) {
       this.error = error;
 
       this.fileContents = null;

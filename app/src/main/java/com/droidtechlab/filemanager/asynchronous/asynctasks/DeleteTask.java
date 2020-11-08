@@ -176,15 +176,17 @@ public class DeleteTask extends AsyncTask<ArrayList<HybridFileParcelable>, Strin
   @Override
   public void onPostExecute(Boolean wasDeleted) {
 
-    Intent intent = new Intent(MainActivity.KEY_INTENT_LOAD_LIST);
-    String path = files.get(0).getParent(cd);
-    intent.putExtra(MainActivity.KEY_INTENT_LOAD_LIST_FILE, path);
-    cd.sendBroadcast(intent);
-
     if (!wasDeleted) {
       Toast.makeText(cd, cd.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
     } else if (compressedExplorerFragment == null) {
       Toast.makeText(cd, cd.getResources().getString(R.string.done), Toast.LENGTH_SHORT).show();
+    }
+
+    if(files.size() > 0) {
+      Intent intent = new Intent(MainActivity.KEY_INTENT_LOAD_LIST);
+      String path = files.get(0).getParent(cd);
+      intent.putExtra(MainActivity.KEY_INTENT_LOAD_LIST_FILE, path);
+      cd.sendBroadcast(intent);
     }
 
     if (compressedExplorerFragment != null) {

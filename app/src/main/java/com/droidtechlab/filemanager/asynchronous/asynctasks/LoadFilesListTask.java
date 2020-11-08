@@ -55,6 +55,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,6 +64,7 @@ import androidx.core.util.Pair;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
+import timber.log.Timber;
 
 public class LoadFilesListTask
         extends AsyncTask<Void, Void, Pair<OpenMode, ArrayList<LayoutElementParcelable>>>
@@ -152,6 +154,8 @@ public class LoadFilesListTask
                 });
         break;
       case CUSTOM:
+        Log.d("###", "custom");
+        Log.d("###", "integer:: "+Integer.parseInt(path));
         switch (Integer.parseInt(path)) {
           case 0:
             list = listImages();

@@ -724,7 +724,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             return true;
                         });
-                holder.txtTitle.setText(rowItem.title);
+                if (rowItem != null) {
+                    holder.txtTitle.setText(rowItem.title);
+                }
                 holder.genericText.setText("");
 
                 if (holder.about != null) {

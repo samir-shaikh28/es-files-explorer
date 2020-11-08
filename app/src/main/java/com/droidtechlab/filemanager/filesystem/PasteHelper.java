@@ -36,6 +36,8 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -44,6 +46,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Special immutable class for handling cut/copy operations.
@@ -54,14 +57,16 @@ public final class PasteHelper implements Parcelable {
 
     public static final int OPERATION_COPY = 0, OPERATION_CUT = 1;
 
-    private final int operation;
-    private final HybridFileParcelable[] paths;
+    private int operation;
+    private HybridFileParcelable[] paths;
     private Snackbar snackbar;
     private MainActivity mainActivity;
 
     public PasteHelper(MainActivity mainActivity, int op, HybridFileParcelable[] paths) {
-        if (paths == null || paths.length == 0)
+        if (paths == null || paths.length == 0) {
             Toast.makeText(mainActivity, "Something went wrong, please try again!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         operation = op;
         this.paths = paths;
         this.mainActivity = mainActivity;
@@ -173,10 +178,8 @@ public final class PasteHelper implements Parcelable {
                             }
 
                             @Override
-                            public void onError(Throwable e) {
-                                Log.e(
-                                        getClass().getSimpleName(),
-                                        "Failed to show paste snackbar due to " + e.getCause());
+                            public void onError(@NotNull Throwable e) {
+                                Timber.tag(PasteHelper.class.getSimpleName()).e("Failed to show paste snackbar due to "+ e.getCause());
                                 e.printStackTrace();
                             }
                         });

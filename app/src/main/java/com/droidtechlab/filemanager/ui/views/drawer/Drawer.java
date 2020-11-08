@@ -138,10 +138,13 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
         resources = mainActivity.getResources();
         dataUtils = DataUtils.getInstance();
 
+        Log.d("###","drawer constructor");
 //    drawerHeaderLayout = mainActivity.getLayoutInflater().inflate(R.layout.drawerheader, null);
 //    drawerHeaderParent = drawerHeaderLayout.findViewById(R.id.drawer_header_parent);
 //    drawerHeaderView = drawerHeaderLayout.findViewById(R.id.drawer_header);
-//    drawerHeaderView.setOnLongClickListener(
+//    drawerHeaderView.set
+//
+//    OnLongClickListener(
 //        v -> {
 //          Intent intent1;
 //          if (SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -704,6 +707,7 @@ public class Drawer implements NavigationView.OnNavigationItemSelectedListener {
 
             MainFragment mainFrag = mainActivity.getCurrentMainFragment();
             if (mainFrag != null) {
+                Log.d("###", "drawer close");
                 mainFrag.loadlist(pendingPath, false, OpenMode.UNKNOWN);
             } else {
                 mainActivity.goToMain(pendingPath);

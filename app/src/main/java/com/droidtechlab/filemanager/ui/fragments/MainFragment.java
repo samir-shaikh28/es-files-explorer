@@ -226,14 +226,11 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
-                        Log.d("AdLoadingTest", "title "+unifiedNativeAd.getHeadline());
-                        Log.d("AdLoadingTest", "advertics "+unifiedNativeAd.getAdvertiser());
-                        Log.d("AdLoadingTest", "body "+unifiedNativeAd.getBody());
-                        Log.d("AdLoadingTest", "rating "+unifiedNativeAd.getStarRating());
-                        Log.d("AdLoadingTest", "ad loaded");
-                        if (!adLoader.isLoading()) {
-                            // insertAdsInMenuItems();
-                        }
+                        Log.i("AdLoadingTest", "title " + unifiedNativeAd.getHeadline());
+                        Log.i("AdLoadingTest", "advertics " + unifiedNativeAd.getAdvertiser());
+                        Log.i("AdLoadingTest", "body " + unifiedNativeAd.getBody());
+                        Log.i("AdLoadingTest", "rating " + unifiedNativeAd.getStarRating());
+                        Log.i("AdLoadingTest", "ad loaded");
                     }
 
 
@@ -243,13 +240,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     @Override
                     public void onAdFailedToLoad(LoadAdError loadAdError) {
                         super.onAdFailedToLoad(loadAdError);
-                        Log.d("AdLoadingTest", "ad loading failed: " + loadAdError.getMessage());
-
-                        Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
-                                + " load another.");
-                        if (!adLoader.isLoading()) {
-
-                        }
+                        Log.e("AdLoadingTest", "ad loading failed: " + loadAdError.getMessage());
                     }
 
 
@@ -648,7 +639,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                             }
 
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN)
+                                    showOption(R.id.openmulti, menu);
 
                         } else {
                             try {
@@ -684,14 +676,16 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                                 hideOption(R.id.openmulti, menu);
                             }
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN)
+                                    showOption(R.id.openmulti, menu);
 
                         } else {
                             hideOption(R.id.openparent, menu);
                             hideOption(R.id.addshortcut, menu);
 
                             if (getMainActivity().mReturnIntent)
-                                if (Build.VERSION.SDK_INT >= JELLY_BEAN) showOption(R.id.openmulti, menu);
+                                if (Build.VERSION.SDK_INT >= JELLY_BEAN)
+                                    showOption(R.id.openmulti, menu);
                             try {
                                 for (LayoutElementParcelable e : adapter.getCheckedItems()) {
                                     File x = new File(e.desc);
@@ -903,6 +897,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             };
 
     public void home() {
+        Log.d("###", "home");
         ma.loadlist((ma.home), false, OpenMode.FILE);
     }
 
@@ -916,6 +911,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     public void onListItemClicked(
             boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
+        Log.d("###", "item clicked");
         if (results) {
             // check to initialize search results
             // if search task is been running, cancel it
@@ -1028,6 +1024,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateTabWithDb(Tab tab) {
+        Log.d("###", "update tab wid db");
         CURRENT_PATH = tab.path;
         home = tab.home;
         loadlist(CURRENT_PATH, false, OpenMode.UNKNOWN);
@@ -1058,7 +1055,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         } else {
 
             Log.d("pickup", "file");
-
             Intent intentresult = new Intent();
 
             Uri resultUri = Utils.getUriForBaseFile(getActivity(), baseFile);
@@ -1084,6 +1080,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      * @param openMode the mode in which the directory should be opened
      */
     public void loadlist(final String path, final boolean back, final OpenMode openMode) {
+        Log.d("###","loadList path "+path);
         if (mActionMode != null) mActionMode.finish();
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -1157,6 +1154,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         } else {
             // list loading cancelled
             // TODO: Add support for cancelling list loading
+            Log.d("###", "set  list element");
+
             loadlist(home, true, OpenMode.FILE);
         }
     }
@@ -1386,6 +1385,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     public void goBack() {
         if (openMode == OpenMode.CUSTOM) {
+            Log.d("###", "go back");
             loadlist(home, false, OpenMode.FILE);
             return;
         }
@@ -1524,6 +1524,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateList() {
+        Log.d("###", "update");
+
         computeScroll();
         loadlist((CURRENT_PATH), true, openMode);
     }
@@ -1885,6 +1887,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     @Override
     public void changePath(String path) {
+        Log.d("###", "change path");
         loadlist(path, false, openMode);
     }
 

@@ -39,7 +39,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
@@ -85,7 +85,7 @@ public class ZipHelperTask extends CompressedHelperTask {
         wholelist.add(
             new CompressedObjectParcelable(
                 entry.getFileName(),
-                entry.getLastModFileTime(),
+                entry.getLastModifiedTime(),
                 entry.getUncompressedSize(),
                 entry.isDirectory()));
       }
