@@ -1385,7 +1385,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     public void goBack() {
         if (openMode == OpenMode.CUSTOM) {
-            Log.d("###", "go back");
             loadlist(home, false, OpenMode.FILE);
             return;
         }
@@ -1440,7 +1439,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     // don't fuckin' remove this line, we need to change
                     // the path back to parent on back press
                     CURRENT_PATH = parentPath;
-
 
                     MainActivityHelper.addSearchFragment(
                             fm,
@@ -1524,8 +1522,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateList() {
-        Log.d("###", "update");
-
         computeScroll();
         loadlist((CURRENT_PATH), true, openMode);
     }
@@ -1887,7 +1883,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     @Override
     public void changePath(String path) {
-        Log.d("###", "change path");
         loadlist(path, false, openMode);
     }
 
