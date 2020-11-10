@@ -17,8 +17,8 @@ object RatingHelper {
         trackEvent(activity = activity, event = FirebaseAnalytics.Event.SCREEN_VIEW, propertyName = FirebaseAnalytics.Param.SCREEN_NAME, propertyValue = "rating_dialog")
         AppRate.with(activity)
                 .setInstallDays(0.toByte()) // default is 10, 0 means install day, 10 means app is launched 10 or more days later than installation
-                .setLaunchTimes(5.toByte()) // default is 10, 3 means app is launched 3 or more times
-                .setRemindInterval(2.toByte()) // default is 1, 1 means app is launched 1 or more days after neutral button clicked
+                .setLaunchTimes(4.toByte()) // default is 10, 3 means app is launched 3 or more times
+                .setRemindInterval(1.toByte()) // default is 1, 1 means app is launched 1 or more days after neutral button clicked
                 .setOnClickButtonListener { which ->
                     when (which) {
                         RATE_IT_NOW.toByte() -> {
@@ -40,12 +40,13 @@ object RatingHelper {
 
     }
 
-    private fun trackEvent(activity: MainActivity, event: String, propertyName: String, propertyValue: String) {
+    fun trackEvent(activity: MainActivity, event: String, propertyName: String, propertyValue: String) {
         val firebaseAnalytics = FirebaseAnalytics.getInstance(activity);
         val bundle = Bundle()
         bundle.putString(propertyName, propertyValue)
         firebaseAnalytics.logEvent(event, bundle)
     }
+
 
 //    @JvmStatic
 //    fun showGoogleInAppReview(activity: MainActivity) {

@@ -48,6 +48,7 @@ import com.droidtechlab.filemanager.utils.OnAsyncTaskFinished;
 import com.droidtechlab.filemanager.utils.OnFileFound;
 import com.droidtechlab.filemanager.utils.OpenMode;
 import com.cloudrail.si.interfaces.CloudStorage;
+import com.droidtechlab.filemanager.utils.RatingHelper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -156,24 +157,31 @@ public class LoadFilesListTask
       case CUSTOM:
         switch (Integer.parseInt(path)) {
           case 0:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_IMAGE",   "list of image");
             list = listImages();
             break;
           case 1:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_VIDEOS",   "list of videos");
             list = listVideos();
             break;
           case 2:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_AUDIOS",   "list of audios");
             list = listaudio();
             break;
           case 3:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_DOCS",   "list of docs");
             list = listDocs();
             break;
           case 4:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_APKS",   "list of apks");
             list = listApks();
             break;
           case 5:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_QUICK_ACCESS",   "quick access files");
             list = listRecent();
             break;
           case 6:
+            RatingHelper.INSTANCE.trackEvent(mainFragment.getMainActivity(),  "ES_NAV_CLICK",   "LIST_OF_RECENT_FILES",   "list of recent files");
             list = listRecentFiles();
             break;
           default:
