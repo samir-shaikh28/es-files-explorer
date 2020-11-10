@@ -442,6 +442,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (ads.size() > 0 && itemsDigested.size() > 0) {
                 if (itemsDigested.size() <= 3 && ads.get(0) != null) {
                     itemsDigested.add(itemsDigested.size(), ads.get(0));
+                } else if (itemsDigested.size() >= 50) {
+                    if (ads.get(0) != null) {
+                        itemsDigested.add(3, ads.get(0));
+                    }
+                    if (ads.size() > 1 && ads.get(1) != null) {
+                        itemsDigested.add(15, ads.get(1));
+                    }
+                    if (ads.size() > 2 && ads.get(2) != null) {
+                        itemsDigested.add(25, ads.get(2));
+                    }
+                    if (ads.size() > 3 && ads.get(3) != null) {
+                        itemsDigested.add(34, ads.get(3));
+                    }
+
                 } else if (itemsDigested.size() >= 30) {
                     if (ads.get(0) != null) {
                         itemsDigested.add(3, ads.get(0));
