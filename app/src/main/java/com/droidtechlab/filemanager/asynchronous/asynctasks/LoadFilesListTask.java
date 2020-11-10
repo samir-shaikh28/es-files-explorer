@@ -154,8 +154,6 @@ public class LoadFilesListTask
                 });
         break;
       case CUSTOM:
-        Log.d("###", "custom");
-        Log.d("###", "integer:: "+Integer.parseInt(path));
         switch (Integer.parseInt(path)) {
           case 0:
             list = listImages();

@@ -897,7 +897,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             };
 
     public void home() {
-        Log.d("###", "home");
         ma.loadlist((ma.home), false, OpenMode.FILE);
     }
 
@@ -911,7 +910,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     public void onListItemClicked(
             boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
-        Log.d("###", "item clicked");
         if (results) {
             // check to initialize search results
             // if search task is been running, cancel it
@@ -954,6 +952,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
                 if (e.isDirectory) {
                     computeScroll();
+
                     loadlist(path, false, openMode);
                 } else if (e.desc.endsWith(CryptUtil.CRYPT_EXTENSION)) {
                     // decrypt the file
@@ -1024,7 +1023,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateTabWithDb(Tab tab) {
-        Log.d("###", "update tab wid db");
         CURRENT_PATH = tab.path;
         home = tab.home;
         loadlist(CURRENT_PATH, false, OpenMode.UNKNOWN);
@@ -1080,7 +1078,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      * @param openMode the mode in which the directory should be opened
      */
     public void loadlist(final String path, final boolean back, final OpenMode openMode) {
-        Log.d("###","loadList path "+path);
         if (mActionMode != null) mActionMode.finish();
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -1154,7 +1151,6 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
         } else {
             // list loading cancelled
             // TODO: Add support for cancelling list loading
-            Log.d("###", "set  list element");
 
             loadlist(home, true, OpenMode.FILE);
         }
