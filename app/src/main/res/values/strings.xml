@@ -664,6 +664,8 @@
     <string name="select_save_location">Select location to save</string>
 
     <string name="admob_app_id" translatable="false">ca-app-pub-9371521457039747~3639768089</string>
-    <string name="admob_unit_id" translatable="false">ca-app-pub-9371521457039747/9693206398</string>
+    <string name="admob_unit_id" translatable="false">ca-app-pub-9371521457039747/7545352911</string>
+    <string name="admob_app_id_1" translatable="false">ca-app-pub-9371521457039747~3639768089</string>
+    <string name="admob_unit_id_1" translatable="false">ca-app-pub-9371521457039747/9693206398</string>
 </resources>
 

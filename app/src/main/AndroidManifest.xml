@@ -37,9 +37,9 @@
         android:requestLegacyExternalStorage="true"
         android:banner="@drawable/es_tv_banner">
 <!--//CONTROL_FTP_SERVER-->
-        <meta-data
-            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true"/>
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.AD_MANAGER_APP"-->
+<!--            android:value="true"/>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

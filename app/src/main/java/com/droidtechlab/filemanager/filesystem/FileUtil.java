@@ -439,7 +439,11 @@ public abstract class FileUtil {
                 && FileUtil.isOnExtSdCard(file, context)) {
 
             DocumentFile document = getDocumentFile(file, false, context);
-            return document.delete();
+            if (document != null) {
+                return document.delete();
+            } else {
+                return false;
+            }
         }
 
         // Try the Kitkat workaround.

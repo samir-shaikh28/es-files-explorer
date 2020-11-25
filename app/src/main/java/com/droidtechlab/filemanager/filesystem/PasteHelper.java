@@ -88,7 +88,7 @@ public final class PasteHelper implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(operation);
-        dest.writeParcelableArray(paths, 0);
+        dest.writeTypedArray(paths, 0);
     }
 
     public static final Parcelable.Creator CREATOR =

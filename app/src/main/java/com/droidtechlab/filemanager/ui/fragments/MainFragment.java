@@ -226,7 +226,9 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         // A native ad loaded successfully, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         mNativeAds.add(unifiedNativeAd);
+
                         Log.i("AdLoadingTest", "title " + unifiedNativeAd.getHeadline());
+                        Log.i("AdLoadingTest", "button " + unifiedNativeAd.getCallToAction());
                         Log.i("AdLoadingTest", "advertics " + unifiedNativeAd.getAdvertiser());
                         Log.i("AdLoadingTest", "body " + unifiedNativeAd.getBody());
                         Log.i("AdLoadingTest", "rating " + unifiedNativeAd.getStarRating());

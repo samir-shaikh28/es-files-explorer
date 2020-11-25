@@ -28,8 +28,8 @@ android {
         applicationId "com.droidtechlab.filemanager"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 16
-        versionName "0.9.3"
+        versionCode 18
+        versionName "0.9.4"
         multiDexEnabled true
 
         vectorDrawables.useSupportLibrary = true
@@ -128,6 +128,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf'
 
     implementation 'com.google.android.gms:play-services-ads:19.5.0'
+
 
 
     implementation 'com.google.android.material:material:1.2.1'
