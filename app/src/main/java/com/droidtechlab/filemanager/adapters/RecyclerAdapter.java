@@ -444,36 +444,42 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     itemsDigested.add(itemsDigested.size(), ads.get(0));
                 } else if (itemsDigested.size() >= 50) {
                     if (ads.get(0) != null) {
-                        itemsDigested.add(3, ads.get(0));
+                        itemsDigested.add(6, ads.get(0));
                     }
                     if (ads.size() > 1 && ads.get(1) != null) {
-                        itemsDigested.add(15, ads.get(1));
+                        itemsDigested.add(18, ads.get(1));
                     }
                     if (ads.size() > 2 && ads.get(2) != null) {
-                        itemsDigested.add(25, ads.get(2));
+                        itemsDigested.add(30, ads.get(2));
                     }
                     if (ads.size() > 3 && ads.get(3) != null) {
-                        itemsDigested.add(34, ads.get(3));
+                        itemsDigested.add(48, ads.get(3));
                     }
 
                 } else if (itemsDigested.size() >= 30) {
                     if (ads.get(0) != null) {
-                        itemsDigested.add(3, ads.get(0));
+                        itemsDigested.add(6, ads.get(0));
                     }
                     if (ads.size() > 1 && ads.get(1) != null) {
-                        itemsDigested.add(15, ads.get(1));
+                        itemsDigested.add(17, ads.get(1));
                     }
                     if (ads.size() > 2 && ads.get(2) != null) {
-                        itemsDigested.add(25, ads.get(2));
+                        itemsDigested.add(26, ads.get(2));
                     }
                 } else if (itemsDigested.size() >= 18) {
                     if (ads.get(0) != null) {
-                        itemsDigested.add(4, ads.get(0));
+                        itemsDigested.add(6, ads.get(0));
                     }
                     if (ads.size() > 1 && ads.get(1) != null) {
-                        itemsDigested.add(12, ads.get(1));
+                        itemsDigested.add(17, ads.get(1));
                     }
-                } else if (itemsDigested.size() > 4 && ads.get(0) != null) {
+                }
+                else if (itemsDigested.size() >= 8) {
+                    if (ads.get(0) != null) {
+                        itemsDigested.add(6, ads.get(0));
+                    }
+                }
+                else if (itemsDigested.size() > 4 && ads.get(0) != null) {
                     itemsDigested.add(3, ads.get(0));
 
                 }
@@ -782,50 +788,52 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // setting icons for various cases
                 // apkIcon holder refers to square/non-circular drawable
                 // pictureIcon is circular drawable
-                switch (rowItem.filetype) {
-                    case Icons.IMAGE:
-                    case Icons.VIDEO:
-                        if (getBoolean(PREFERENCE_SHOW_THUMB)) {
-                            if (getBoolean(PREFERENCE_USE_CIRCULAR_IMAGES)) {
-                                showThumbnailWithBackground(
-                                        holder, rowItem.iconData, holder.pictureIcon, rowItem.iconData::setImageBroken);
+                if(rowItem != null ) {
+                    switch (rowItem.filetype) {
+                        case Icons.IMAGE:
+                        case Icons.VIDEO:
+                            if (getBoolean(PREFERENCE_SHOW_THUMB)) {
+                                if (getBoolean(PREFERENCE_USE_CIRCULAR_IMAGES)) {
+                                    showThumbnailWithBackground(
+                                            holder, rowItem.iconData, holder.pictureIcon, rowItem.iconData::setImageBroken);
+                                } else {
+                                    showThumbnailWithBackground(
+                                            holder, rowItem.iconData, holder.apkIcon, rowItem.iconData::setImageBroken);
+                                }
                             } else {
+                                holder.genericIcon.setImageResource(
+                                        rowItem.filetype == Icons.IMAGE
+                                                ? R.drawable.ic_doc_image
+                                                : R.drawable.ic_doc_video_am);
+                            }
+                            break;
+                        case Icons.APK:
+                            if (getBoolean(PREFERENCE_SHOW_THUMB)) {
                                 showThumbnailWithBackground(
                                         holder, rowItem.iconData, holder.apkIcon, rowItem.iconData::setImageBroken);
+                            } else {
+                                holder.genericIcon.setImageResource(R.drawable.ic_doc_apk_white);
                             }
-                        } else {
-                            holder.genericIcon.setImageResource(
-                                    rowItem.filetype == Icons.IMAGE
-                                            ? R.drawable.ic_doc_image
-                                            : R.drawable.ic_doc_video_am);
-                        }
-                        break;
-                    case Icons.APK:
-                        if (getBoolean(PREFERENCE_SHOW_THUMB)) {
-                            showThumbnailWithBackground(
-                                    holder, rowItem.iconData, holder.apkIcon, rowItem.iconData::setImageBroken);
-                        } else {
-                            holder.genericIcon.setImageResource(R.drawable.ic_doc_apk_white);
-                        }
-                        break;
-                    case Icons.NOT_KNOWN:
-                        holder.genericIcon.setVisibility(View.VISIBLE);
-                        // if the file type is any unknown variable
-                        String ext = !rowItem.isDirectory ? MimeTypes.getExtension(rowItem.title) : null;
-                        if (ext != null && ext.trim().length() != 0) {
-                            holder.genericText.setText(ext);
-                            holder.genericIcon.setImageDrawable(null);
-                            holder.genericIcon.setVisibility(View.INVISIBLE);
-                        } else {
-                            // we could not find the extension, set a generic file type icon probably a directory
+                            break;
+                        case Icons.NOT_KNOWN:
+                            holder.genericIcon.setVisibility(View.VISIBLE);
+                            // if the file type is any unknown variable
+                            String ext = !rowItem.isDirectory ? MimeTypes.getExtension(rowItem.title) : null;
+                            if (ext != null && ext.trim().length() != 0) {
+                                holder.genericText.setText(ext);
+                                holder.genericIcon.setImageDrawable(null);
+                                holder.genericIcon.setVisibility(View.INVISIBLE);
+                            } else {
+                                // we could not find the extension, set a generic file type icon probably a directory
+                                modelProvider.getPreloadRequestBuilder(rowItem.iconData).into(holder.genericIcon);
+                            }
+                            break;
+                        case Icons.ENCRYPTED:
+                        default:
+                            holder.genericIcon.setVisibility(View.VISIBLE);
                             modelProvider.getPreloadRequestBuilder(rowItem.iconData).into(holder.genericIcon);
-                        }
-                        break;
-                    case Icons.ENCRYPTED:
-                    default:
-                        holder.genericIcon.setVisibility(View.VISIBLE);
-                        modelProvider.getPreloadRequestBuilder(rowItem.iconData).into(holder.genericIcon);
-                        break;
+                            break;
+                    }
                 }
 
                 if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {

@@ -102,6 +102,9 @@ public class CopyService extends AbstractProgressiveService {
   @Override
   public int onStartCommand(Intent intent, int flags, final int startId) {
     Bundle b = new Bundle();
+    if(intent == null)
+      stopSelf();
+
     isRootExplorer = intent.getBooleanExtra(TAG_IS_ROOT_EXPLORER, false);
     ArrayList<HybridFileParcelable> files = intent.getParcelableArrayListExtra(TAG_COPY_SOURCES);
     String targetPath = intent.getStringExtra(TAG_COPY_TARGET);

@@ -1990,6 +1990,7 @@ public class MainActivity extends PermissionsActivity
 
     @Override
     public void onProgressUpdate(HybridFileParcelable val, String query) {
+        if(getCurrentMainFragment() == null) return;
         getCurrentMainFragment().addSearchResult(val, query);
     }
 

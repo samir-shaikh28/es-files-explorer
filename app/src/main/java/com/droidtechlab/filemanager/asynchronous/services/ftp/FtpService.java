@@ -108,9 +108,9 @@ public class FtpService extends Service implements Runnable {
 
   // RequestStartStopReceiver listens for these actions to start/stop this server
   public static final String ACTION_START_FTPSERVER =
-      "com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER";
+      "com.droidtechlab.filemanager.asynchronous.services.ftp.FTPReceiver.ACTION_START_FTPSERVER";
   public static final String ACTION_STOP_FTPSERVER =
-      "com.droidtechlab.filemanager.asynchronous.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER";
+      "com.droidtechlab.filemanager.asynchronous.services.ftp.FTPReceiver.ACTION_STOP_FTPSERVER";
 
   public static final String TAG_STARTED_BY_TILE =
       "started_by_tile"; // attribute of action_started, used by notification
@@ -125,7 +125,11 @@ public class FtpService extends Service implements Runnable {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    isStartedByTile = intent.getBooleanExtra(TAG_STARTED_BY_TILE, false);
+    if(intent != null) {
+      isStartedByTile = intent.getBooleanExtra(TAG_STARTED_BY_TILE, false);
+    } else {
+      isStartedByTile = false;
+    }
     int attempts = 10;
     while (serverThread != null) {
       if (attempts > 0) {

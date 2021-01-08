@@ -81,7 +81,8 @@ public class OTGUtil {
     public static void getDocumentFiles(String path, Context context, OnFileFound fileFound) {
         Uri rootUriString = SingletonUsbOtg.getInstance().getUsbOtgRoot();
         if (rootUriString == null) {
-            Toast.makeText(context, "USB OTG root not set!, restart app and select otg root", Toast.LENGTH_LONG).show();
+            Log.i(OTGUtil.class.getSimpleName(), "USB OTG root not set!, restart app and select otg root");
+       //     Toast.makeText(context, "USB OTG root not set!, restart app and select otg root", Toast.LENGTH_LONG).show();
             return;
         }
 

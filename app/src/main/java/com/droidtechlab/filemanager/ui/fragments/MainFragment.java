@@ -207,7 +207,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     private LayoutElementParcelable back = null;
 
-    public static final int NUMBER_OF_ADS = 4;
+    public static final int NUMBER_OF_ADS = 5;
 
     // The AdLoader used to load ads.
     private AdLoader adLoader;
@@ -218,7 +218,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     private void loadNativeAds() {
 
-        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id));
+        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id_2));
         adLoader = builder.forUnifiedNativeAd(
                 new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
                     @Override
@@ -429,6 +429,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     void switchToGrid() {
+        if(consumeCallback()) return;
+
         IS_LIST = false;
 
         if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
@@ -448,6 +450,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     void switchToList() {
+        if(consumeCallback()) return;
+
         IS_LIST = true;
 
         if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
@@ -462,6 +466,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void switchView() {
+        if(consumeCallback()) return;
+
         boolean isPathLayoutGrid =
                 dataUtils.getListOrGridForPath(CURRENT_PATH, DataUtils.LIST) == DataUtils.GRID;
         reloadListElements(false, results, isPathLayoutGrid);
@@ -709,6 +715,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
                 // called when the user selects a contextual menu item
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
                     computeScroll();
                     ArrayList<LayoutElementParcelable> checkedItems = adapter.getCheckedItems();
                     switch (item.getItemId()) {
@@ -899,6 +906,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             };
 
     public void home() {
+        if(consumeCallback()) return;
+
         ma.loadlist((ma.home), false, OpenMode.FILE);
     }
 
@@ -912,6 +921,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     public void onListItemClicked(
             boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
+        if(consumeCallback()) return;
+
         if (results) {
             // check to initialize search results
             // if search task is been running, cancel it
@@ -985,6 +996,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     } else {
                         switch (e.getMode()) {
                             case SMB:
+                                if(consumeCallback()) return;
                                 launchSMB(e.generateBaseFile(), getMainActivity());
                                 break;
                             case SFTP:
@@ -1025,6 +1037,8 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateTabWithDb(Tab tab) {
+        if(consumeCallback()) return;
+
         CURRENT_PATH = tab.path;
         home = tab.home;
         loadlist(CURRENT_PATH, false, OpenMode.UNKNOWN);
@@ -1072,7 +1086,11 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     LoadFilesListTask loadFilesListTask;
 
-    /**
+    private Boolean consumeCallback() {
+        return isDetached() || isRemoving() || requireContext() == null;
+
+    }
+     /**
      * This loads a path into the MainFragment.
      *
      * @param path     the path to be loaded
@@ -1080,6 +1098,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      * @param openMode the mode in which the directory should be opened
      */
     public void loadlist(final String path, final boolean back, final OpenMode openMode) {
+        if(consumeCallback()) return;
         if (mActionMode != null) mActionMode.finish();
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -1819,6 +1838,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public static void launchSMB(final HybridFileParcelable baseFile, final Activity activity) {
+
         final Streamer s = Streamer.getInstance();
         new Thread() {
             public void run() {

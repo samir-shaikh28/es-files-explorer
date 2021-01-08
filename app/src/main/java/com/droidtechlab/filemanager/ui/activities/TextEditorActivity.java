@@ -147,6 +147,7 @@ public class TextEditorActivity extends ThemedActivity
     public static final int NORMAL = 0;
     public static final int EXCEPTION_STREAM_NOT_FOUND = -1;
     public static final int EXCEPTION_IO = -2;
+    public static final int EXCEPTION_MEMORY = -3;
 
 
     private RelativeLayout searchViewLayout;
@@ -423,8 +424,9 @@ public class TextEditorActivity extends ThemedActivity
             } catch (IOException e) {
                 e.printStackTrace();
                 return new ReadFileTask.ReturnedValues(EXCEPTION_IO);
+            } catch (OutOfMemoryError e) {
+                return new ReadFileTask.ReturnedValues(EXCEPTION_MEMORY);
             }
-
             return new ReadFileTask.ReturnedValues(stringBuilder.toString(), cachedFile);
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -488,6 +490,11 @@ public class TextEditorActivity extends ThemedActivity
                                 break;
                             case EXCEPTION_IO:
                                 Toast.makeText(getApplicationContext(), R.string.error_io, Toast.LENGTH_SHORT)
+                                        .show();
+                                finish();
+                                break;
+                            case EXCEPTION_MEMORY:
+                                Toast.makeText(getApplicationContext(), "File is too big to load.", Toast.LENGTH_SHORT)
                                         .show();
                                 finish();
                                 break;

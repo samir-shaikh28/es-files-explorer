@@ -388,7 +388,7 @@ public class HybridFile {
             case OTG:
             default:
                 StringBuilder builder = new StringBuilder(path);
-                return builder.substring(0, (builder.length() - (getName(context).length() + 1) != -1) ? (builder.length() - (getName(context).length() + 1)) : builder.length());
+                return builder.substring(0, (builder.length() - (getName(context).length() + 1) > 0) ? (builder.length() - (getName(context).length() + 1)) : builder.length());
         }
         return parentPath;
     }
