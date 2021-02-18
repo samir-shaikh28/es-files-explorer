@@ -242,7 +242,7 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
         if (fragments != null && fragments.size() != 0) {
             if (fragmentManager == null) return;
             for (Fragment fragment : fragments) {
-                if(fragment.isAdded()) {
+                if (fragment.isAdded()) {
                     fragmentManager.putFragment(outState, "tab" + i, fragment);
                     i++;
                 }
@@ -283,7 +283,7 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
             sharedPrefs
                     .edit()
                     .putInt(PreferencesConstants.PREFERENCE_CURRENT_TAB, MainActivity.currentTab)
-                    .commit();
+                    .apply();
         }
 
         //        Log.d(getClass().getSimpleName(), "Page Selected: " + MainActivity.currentTab, new
@@ -394,6 +394,8 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
     }
 
     private void addTab(@NonNull Tab tab, String path) {
+        if (mainActivity.isFinishing()) return;
+
         Fragment main = new MainFragment();
         Bundle b = new Bundle();
 
@@ -410,6 +412,7 @@ public class TabFragment extends Fragment implements ViewPager.OnPageChangeListe
         fragments.add(main);
         mSectionsPagerAdapter.notifyDataSetChanged();
         mViewPager.setOffscreenPageLimit(4);
+
     }
 
     public Fragment getCurrentTabFragment() {

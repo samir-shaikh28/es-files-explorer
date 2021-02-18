@@ -6,20 +6,19 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidtechlab.filemanager.R;
-import com.google.android.gms.ads.formats.MediaView;
-import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 public class UnifiedNativeAdViewHolder extends RecyclerView.ViewHolder {
 
-    private UnifiedNativeAdView adView;
+    private NativeAdView adView;
 
-    public UnifiedNativeAdView getAdView() {
+    public NativeAdView getAdView() {
         return adView;
     }
 
     public UnifiedNativeAdViewHolder(View view) {
         super(view);
-        adView = (UnifiedNativeAdView) view.findViewById(R.id.ad_view);
+        adView = (NativeAdView) view.findViewById(R.id.ad_view);
 
         // The MediaView will display a video asset if one is present in the ad, and the
         // first image asset otherwise.

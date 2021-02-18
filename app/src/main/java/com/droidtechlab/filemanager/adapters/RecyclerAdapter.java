@@ -73,9 +73,8 @@ import com.droidtechlab.filemanager.ui.views.RoundedImageView;
 import com.droidtechlab.filemanager.utils.AnimUtils;
 import com.droidtechlab.filemanager.utils.GlideConstants;
 import com.droidtechlab.filemanager.utils.Utils;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +160,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             SharedPreferences sharedPrefs,
             RecyclerView recyclerView,
             ArrayList<LayoutElementParcelable> itemsRaw,
-            List<UnifiedNativeAd> ads,
+            ArrayList<NativeAd> ads,
             Context context) {
         setHasStableIds(true);
 
@@ -399,12 +398,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyItemInserted(getItemCount());
     }
 
-    public void setItems(RecyclerView recyclerView, ArrayList<LayoutElementParcelable> arrayList, List<UnifiedNativeAd> ads) {
+    public void setItems(RecyclerView recyclerView, ArrayList<LayoutElementParcelable> arrayList, List<NativeAd> ads) {
         setItems(recyclerView, arrayList, ads, true);
     }
 
     private void setItems(
-            RecyclerView recyclerView, ArrayList<LayoutElementParcelable> arrayList, List<UnifiedNativeAd> ads, boolean invalidate) {
+            RecyclerView recyclerView, ArrayList<LayoutElementParcelable> arrayList, List<NativeAd> ads, boolean invalidate) {
         if (preloader != null) {
             recyclerView.removeOnScrollListener(preloader);
             preloader = null;
@@ -473,13 +472,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (ads.size() > 1 && ads.get(1) != null) {
                         itemsDigested.add(17, ads.get(1));
                     }
-                }
-                else if (itemsDigested.size() >= 8) {
+                } else if (itemsDigested.size() >= 8) {
                     if (ads.get(0) != null) {
                         itemsDigested.add(6, ads.get(0));
                     }
-                }
-                else if (itemsDigested.size() > 4 && ads.get(0) != null) {
+                } else if (itemsDigested.size() > 4 && ads.get(0) != null) {
                     itemsDigested.add(3, ads.get(0));
 
                 }
@@ -545,7 +542,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemViewType(int position) {
         Object recyclerViewItem = itemsDigested.get(position);
-        if (recyclerViewItem instanceof UnifiedNativeAd) {
+        if (recyclerViewItem instanceof NativeAd) {
             return TYPE_ADS;
         } else if (((ListItem) itemsDigested.get(position)).specialType != -1) {
             return ((ListItem) itemsDigested.get(position)).specialType;
@@ -554,8 +551,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private void populateNativeAdView(UnifiedNativeAd nativeAd,
-                                      UnifiedNativeAdView adView) {
+    private void populateNativeAdView(NativeAd nativeAd,
+                                      NativeAdView adView) {
 
 
         // Some assets are guaranteed to be in every UnifiedNativeAd.
@@ -676,7 +673,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(final RecyclerView.ViewHolder vholder, int p) {
 
         if (vholder instanceof UnifiedNativeAdViewHolder) {
-            UnifiedNativeAd nativeAd = (UnifiedNativeAd) itemsDigested.get(p);
+            NativeAd nativeAd = (NativeAd) itemsDigested.get(p);
             populateNativeAdView(nativeAd, ((UnifiedNativeAdViewHolder) vholder).getAdView());
         } else if (vholder instanceof ItemViewHolder) {
 
@@ -788,7 +785,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // setting icons for various cases
                 // apkIcon holder refers to square/non-circular drawable
                 // pictureIcon is circular drawable
-                if(rowItem != null ) {
+                if (rowItem != null) {
                     switch (rowItem.filetype) {
                         case Icons.IMAGE:
                         case Icons.VIDEO:
@@ -842,7 +839,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     holder.rl.setBackgroundResource(R.drawable.safr_ripple_black);
                 }
                 holder.rl.setSelected(false);
-                if (((ListItem) itemsDigested.get(p)).getChecked() == ListItem.CHECKED) {
+                if (rowItem != null && ((ListItem) itemsDigested.get(p)).getChecked() == ListItem.CHECKED) {
 
                     if (holder.checkImageView.getVisibility() == View.INVISIBLE)
                         holder.checkImageView.setVisibility(View.VISIBLE);
@@ -864,7 +861,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     // holder.genericText.setText("");
                 } else {
                     holder.checkImageView.setVisibility(View.INVISIBLE);
-                    if (!((rowItem.filetype == Icons.APK
+                    if (rowItem!= null && !((rowItem.filetype == Icons.APK
                             || rowItem.filetype == Icons.IMAGE
                             || rowItem.filetype == Icons.VIDEO)
                             && getBoolean(PREFERENCE_SHOW_THUMB))) {
@@ -886,17 +883,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         }
                     }
                 }
-                if (getBoolean(PREFERENCE_SHOW_PERMISSIONS))
+                if (rowItem != null && getBoolean(PREFERENCE_SHOW_PERMISSIONS))
                     holder.perm.setText(rowItem.permissions);
-                if (getBoolean(PREFERENCE_SHOW_LAST_MODIFIED)) {
+                if (rowItem != null && getBoolean(PREFERENCE_SHOW_LAST_MODIFIED)) {
                     holder.date.setText(rowItem.dateModification);
                 } else {
                     holder.date.setVisibility(View.GONE);
                 }
-                if (isBackButton) {
+                if (rowItem != null && isBackButton) {
                     holder.date.setText(rowItem.size);
                     holder.txtDesc.setText("");
-                } else if (getBoolean(PREFERENCE_SHOW_FILE_SIZE)) {
+                } else if (rowItem != null && getBoolean(PREFERENCE_SHOW_FILE_SIZE)) {
                     holder.txtDesc.setText(rowItem.size);
                 }
             } else {

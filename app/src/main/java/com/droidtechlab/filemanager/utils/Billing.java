@@ -126,7 +126,7 @@ public class Billing extends RecyclerView.Adapter<RecyclerView.ViewHolder>
    */
   private void popProductsList(BillingResult response, List<SkuDetails> skuDetailsList) {
     if (response.getResponseCode() == BillingClient.BillingResponseCode.OK
-        && skuDetailsList != null) {
+        && skuDetailsList != null && !activity.isFinishing() && !activity.isDestroyed()) {
       showPaymentsDialog(activity);
     }
   }

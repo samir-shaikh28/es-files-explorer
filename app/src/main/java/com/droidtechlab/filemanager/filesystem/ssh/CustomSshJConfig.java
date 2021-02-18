@@ -40,7 +40,9 @@ public class CustomSshJConfig extends DefaultConfig {
     // BouncyCastle bundled with Android before registering our BouncyCastle provider
     public static void init() {
         try {
+            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             Security.removeProvider("BC");
+
         } finally {
             Log.d("CustomSshJConfig", "NoSuchProviderExceptionFinally");
         }

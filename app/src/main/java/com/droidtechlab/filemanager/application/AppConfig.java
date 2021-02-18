@@ -41,6 +41,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.StrictMode;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -111,7 +112,7 @@ public class AppConfig extends GlideApplication {
    * something after execution in background
    */
   public void runInBackground(Runnable runnable) {
-    Completable.fromRunnable(runnable).subscribeOn(Schedulers.io()).subscribe();
+    Completable.fromRunnable(runnable).subscribeOn(Schedulers.io()).doOnError(throwable -> Log.d("ERR", throwable.getMessage())).subscribe();
   }
 
   /**

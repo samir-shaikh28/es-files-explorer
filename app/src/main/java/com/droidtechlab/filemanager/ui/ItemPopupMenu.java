@@ -43,6 +43,7 @@ import com.droidtechlab.filemanager.utils.DataUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;

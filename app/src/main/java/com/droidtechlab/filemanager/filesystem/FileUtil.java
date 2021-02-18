@@ -79,6 +79,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
+import timber.log.Timber;
 
 /**
  * Utility class for helping parsing file systems.
@@ -670,15 +671,17 @@ public abstract class FileUtil {
             outputWriter.write(data);
             return true;
         } catch (IOException io) {
-            Log.e(FileUtil.LOG, io.getMessage());
+            Timber.tag("fileUtil").e(io.getMessage());
             return false;
         } finally {
             try {
-                outputWriter.close();
-                out.flush();
-                out.close();
+                if( outputWriter != null) {
+                    outputWriter.close();
+                    out.flush();
+                    out.close();
+                }
             } catch (IOException e) {
-                Log.e(FileUtil.LOG, e.getMessage());
+                Timber.tag("FileUtil").e(e.getMessage());
             }
         }
     }
@@ -958,7 +961,7 @@ public abstract class FileUtil {
         for (int i = 0; i < parts.length; i++) {
             DocumentFile nextDocument = document == null ? null : document.findFile(parts[i]);
 
-            if (nextDocument == null) {
+            if (nextDocument == null  && document != null) {
                 if ((i < parts.length - 1) || isDirectory) {
                     nextDocument = document.createDirectory(parts[i]);
                 } else {

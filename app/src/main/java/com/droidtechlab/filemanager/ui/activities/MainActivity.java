@@ -637,8 +637,10 @@ public class MainActivity extends PermissionsActivity
         AppConfig.getInstance()
                 .runInBackground(
                         () ->
-                                FileUtil.mktextfile(
-                                        data.toString(), getCurrentMainFragment().getCurrentPath(), fileName));
+                            FileUtil.mktextfile(
+                                    data.toString(), getCurrentMainFragment().getCurrentPath(), fileName)
+
+                );
     }
 
     public void clearFabActionItems() {

@@ -86,6 +86,7 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import jcifs.smb.SmbFile;
+import timber.log.Timber;
 
 import static com.droidtechlab.filemanager.filesystem.EditableFileAbstraction.Scheme.CONTENT;
 
@@ -439,9 +440,9 @@ public class FileUtils {
                 if (activityIntent != null)
                     c.startActivity(activityIntent);
             } catch (ActivityNotFoundException e) {
-                android.util.Log.e(TAG, e.getMessage(), e);
+                Timber.tag(TAG).e(e);
                 Toast.makeText(c, R.string.no_app_found, Toast.LENGTH_SHORT).show();
-                openWithInternal(contentUri, c, useNewStack);
+               // openWithInternal(contentUri, c, useNewStack);
             }
         } else {
             openWithInternal(contentUri, c, useNewStack);
@@ -525,7 +526,7 @@ public class FileUtils {
                                 c.startActivity(intent);
                             } catch (Exception e) {
                                 Toast.makeText(c, R.string.no_app_found, Toast.LENGTH_SHORT).show();
-                                openWithInternal(uri, c, useNewStack);
+                            //    openWithInternal(uri, c, useNewStack);
                             }
                         });
 

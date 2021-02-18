@@ -75,9 +75,10 @@ public final class PasteHelper implements Parcelable {
 
     private PasteHelper(Parcel in) {
         operation = in.readInt();
-        paths =
-                (HybridFileParcelable[])
-                        in.readParcelableArray(HybridFileParcelable.class.getClassLoader());
+        paths = in.createTypedArray(HybridFileParcelable.CREATOR);
+//        paths =
+//                (HybridFileParcelable[])
+//                        in.readParcelableArray(HybridFileParcelable.class.getClassLoader());
     }
 
     @Override

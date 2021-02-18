@@ -258,9 +258,10 @@ public class FtpServerFragment extends Fragment {
                     }
                   }
 
-                  if (mSecureCheckBox.isChecked()) {
-                    setSecurePreference(true);
-                  } else setSecurePreference(false);
+                  setSecurePreference(false);
+//                  if (mSecureCheckBox.isChecked()) {
+//                    setSecurePreference(true);
+//                  } else setSecurePreference(false);
                 });
 
         loginDialogBuilder
@@ -531,7 +532,7 @@ public class FtpServerFragment extends Fragment {
     usernameTextInput = loginDialogView.findViewById(R.id.text_input_dialog_ftp_username);
     passwordTextInput = loginDialogView.findViewById(R.id.text_input_dialog_ftp_password);
     mAnonymousCheckBox = loginDialogView.findViewById(R.id.checkbox_ftp_anonymous);
-    mSecureCheckBox = loginDialogView.findViewById(R.id.checkbox_ftp_secure);
+//    mSecureCheckBox = loginDialogView.findViewById(R.id.checkbox_ftp_secure);
 
     mAnonymousCheckBox.setOnCheckedChangeListener(
             (buttonView, isChecked) -> {
@@ -553,9 +554,9 @@ public class FtpServerFragment extends Fragment {
       passwordEditText.setText(getPasswordFromPreferences());
     }
 
-    if (getSecurePreference()) {
-      mSecureCheckBox.setChecked(true);
-    } else mSecureCheckBox.setChecked(false);
+//    if (getSecurePreference()) {
+//      mSecureCheckBox.setChecked(true);
+//    } else mSecureCheckBox.setChecked(false);
   }
 
   /** @return address at which server is running */

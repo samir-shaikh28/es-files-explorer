@@ -112,7 +112,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdOptions;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.io.File;
@@ -213,30 +214,29 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     private AdLoader adLoader;
 
     // List of native ads that have been successfully loaded.
-    private ArrayList<UnifiedNativeAd> mNativeAds = new ArrayList<>();
+    private final ArrayList<NativeAd> mNativeAds = new ArrayList<>();
 
 
     private void loadNativeAds() {
 
-        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id_2));
-        adLoader = builder.forUnifiedNativeAd(
-                new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
-                    @Override
-                    public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
-                        // A native ad loaded successfully, check if the ad loader has finished loading
-                        // and if so, insert the ads into the list.
-                        mNativeAds.add(unifiedNativeAd);
+        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id_3));
 
-                        Log.i("AdLoadingTest", "title " + unifiedNativeAd.getHeadline());
-                        Log.i("AdLoadingTest", "button " + unifiedNativeAd.getCallToAction());
-                        Log.i("AdLoadingTest", "advertics " + unifiedNativeAd.getAdvertiser());
-                        Log.i("AdLoadingTest", "body " + unifiedNativeAd.getBody());
-                        Log.i("AdLoadingTest", "rating " + unifiedNativeAd.getStarRating());
-                        Log.i("AdLoadingTest", "ad loaded");
-                    }
-
-
-                }).withAdListener(
+        adLoader = builder.forNativeAd(nativeAd -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (getMainActivity() != null && getMainActivity().isDestroyed()) {
+                    nativeAd.destroy();
+                    return;
+                }
+            }
+            mNativeAds.add(nativeAd);
+            Log.i("AdLoadingTest", "title " + nativeAd.getHeadline());
+            Log.i("AdLoadingTest", "button " + nativeAd.getCallToAction());
+            Log.i("AdLoadingTest", "advertics " + nativeAd.getAdvertiser());
+            Log.i("AdLoadingTest", "body " + nativeAd.getBody());
+            Log.i("AdLoadingTest", "rating " + nativeAd.getStarRating());
+            Log.i("AdLoadingTest", "ad loaded");
+        }).withNativeAdOptions(new NativeAdOptions.Builder().build())
+                .withAdListener(
                 new AdListener() {
 
                     @Override
@@ -251,6 +251,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                         super.onAdClicked();
                     }
                 }).build();
+
 
         // Load the Native Express ad.
         adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
@@ -429,7 +430,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     void switchToGrid() {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         IS_LIST = false;
 
@@ -450,7 +451,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     void switchToList() {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         IS_LIST = true;
 
@@ -466,7 +467,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void switchView() {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         boolean isPathLayoutGrid =
                 dataUtils.getListOrGridForPath(CURRENT_PATH, DataUtils.LIST) == DataUtils.GRID;
@@ -906,7 +907,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             };
 
     public void home() {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         ma.loadlist((ma.home), false, OpenMode.FILE);
     }
@@ -921,7 +922,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      */
     public void onListItemClicked(
             boolean isBackButton, int position, LayoutElementParcelable e, ImageView imageView) {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         if (results) {
             // check to initialize search results
@@ -996,7 +997,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                     } else {
                         switch (e.getMode()) {
                             case SMB:
-                                if(consumeCallback()) return;
+                                if (consumeCallback()) return;
                                 launchSMB(e.generateBaseFile(), getMainActivity());
                                 break;
                             case SFTP:
@@ -1037,7 +1038,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateTabWithDb(Tab tab) {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
 
         CURRENT_PATH = tab.path;
         home = tab.home;
@@ -1087,10 +1088,11 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     LoadFilesListTask loadFilesListTask;
 
     private Boolean consumeCallback() {
-        return isDetached() || isRemoving() || requireContext() == null;
+        return isDetached() || isRemoving() || getContext() == null;
 
     }
-     /**
+
+    /**
      * This loads a path into the MainFragment.
      *
      * @param path     the path to be loaded
@@ -1098,7 +1100,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
      * @param openMode the mode in which the directory should be opened
      */
     public void loadlist(final String path, final boolean back, final OpenMode openMode) {
-        if(consumeCallback()) return;
+        if (consumeCallback()) return;
         if (mActionMode != null) mActionMode.finish();
 
         mSwipeRefreshLayout.setRefreshing(true);
@@ -1472,7 +1474,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             }
         } else {
             // to go back after search list have been popped
-            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentManager fm = getMainActivity().getSupportFragmentManager();
             SearchWorkerFragment fragment =
                     (SearchWorkerFragment) fm.findFragmentByTag(MainActivity.TAG_ASYNC_HELPER);
             if (fragment != null) {
