@@ -41,7 +41,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.core.util.Pair;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -442,7 +444,7 @@ public class FileUtils {
             } catch (ActivityNotFoundException e) {
                 Timber.tag(TAG).e(e);
                 Toast.makeText(c, R.string.no_app_found, Toast.LENGTH_SHORT).show();
-               // openWithInternal(contentUri, c, useNewStack);
+                // openWithInternal(contentUri, c, useNewStack);
             }
         } else {
             openWithInternal(contentUri, c, useNewStack);
@@ -526,7 +528,7 @@ public class FileUtils {
                                 c.startActivity(intent);
                             } catch (Exception e) {
                                 Toast.makeText(c, R.string.no_app_found, Toast.LENGTH_SHORT).show();
-                            //    openWithInternal(uri, c, useNewStack);
+                                //    openWithInternal(uri, c, useNewStack);
                             }
                         });
 
@@ -582,24 +584,76 @@ public class FileUtils {
 
     public static String[] getFolderNamesInPath(String path) {
         if (!path.endsWith("/")) path += "/";
+        @Nullable Pair<String, String> splitUri = splitUri(path);
+        if (splitUri != null) {
+            path = splitUri.second;
+        }
         return ("root" + path).split("/");
     }
 
     public static String[] getPathsInPath(String path) {
-        if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        path = path.trim();
 
         ArrayList<String> paths = new ArrayList<>();
-
-        while (path.length() > 0) {
-            paths.add(path);
-            path = path.substring(0, path.lastIndexOf("/"));
+        @Nullable String urlPrefix = null;
+        @Nullable Pair<String, String> splitUri = splitUri(path);
+        if (splitUri != null) {
+            urlPrefix = splitUri.first;
+            path = splitUri.second;
         }
 
-        paths.add("/");
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
+        while (path.length() > 0) {
+            if (urlPrefix != null) {
+                paths.add(urlPrefix + path);
+            } else {
+                paths.add(path);
+            }
+            if (path.contains("/")) {
+                path = path.substring(0, path.lastIndexOf('/'));
+            } else {
+                break;
+            }
+        }
+
+        if (urlPrefix != null) {
+            paths.add(urlPrefix);
+        } else {
+            paths.add("/");
+        }
         Collections.reverse(paths);
 
-        return paths.toArray(new String[paths.size()]);
+        return paths.toArray(new String[0]);
     }
+
+    /**
+     * Splits a given path to URI prefix (if exists) and path.
+     *
+     * @param path
+     * @return {@link Pair} tuple if given path is URI (scheme is not null). Tuple contains:
+     * <ul>
+     *   <li>First: URI section of the given path, if given path is an URI
+     *   <li>Second: Path section of the given path. Never null
+     * </ul>
+     */
+    public static @Nullable
+    Pair<String, String> splitUri(@NonNull final String path) {
+        Uri uri = Uri.parse(path);
+        if (uri.getScheme() != null) {
+            String urlPrefix = uri.getScheme() + "://" + uri.getEncodedAuthority();
+            String retPath = path.substring(urlPrefix.length());
+            return new Pair<>(urlPrefix, retPath);
+        } else {
+            return null;
+        }
+    }
+
 
     public static boolean canListFiles(File f) {
         return f.canRead() && f.isDirectory();
@@ -612,53 +666,54 @@ public class FileUtils {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(m);
         final Toast[] studioCount = {null};
 
-        if (f.getName().toLowerCase().endsWith(".apk")) {
-            GeneralDialogCreation.showPackageDialog(f, m);
-        } else if (defaultHandler && CompressedHelper.isFileExtractable(f.getPath())) {
-            GeneralDialogCreation.showArchiveDialog(f, m);
-        } else if (defaultHandler && f.getName().toLowerCase().endsWith(".db")) {
-            Intent intent = new Intent(m, DatabaseViewerActivity.class);
-            intent.putExtra("path", f.getPath());
-            m.startActivity(intent);
-        } else if (Icons.getTypeOfFile(f.getPath(), f.isDirectory()) == Icons.AUDIO) {
-            final int studio_count = sharedPreferences.getInt("studio", 0);
-            Uri uri = Uri.fromFile(f);
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, "audio/*");
+        try {
+            if (f.getName().toLowerCase().endsWith(".apk")) {
+                GeneralDialogCreation.showPackageDialog(f, m);
+            } else if (defaultHandler && CompressedHelper.isFileExtractable(f.getPath())) {
+                GeneralDialogCreation.showArchiveDialog(f, m);
+            } else if (defaultHandler && f.getName().toLowerCase().endsWith(".db")) {
+                Intent intent = new Intent(m, DatabaseViewerActivity.class);
+                intent.putExtra("path", f.getPath());
+                m.startActivity(intent);
+            } else if (Icons.getTypeOfFile(f.getPath(), f.isDirectory()) == Icons.AUDIO) {
+                final int studio_count = sharedPreferences.getInt("studio", 0);
+                Uri uri = Uri.fromFile(f);
+                final Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(uri, "audio/*");
 
-            // Behold! It's the  legendary easter egg!
-            if (studio_count != 0) {
-                new CountDownTimer(studio_count, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        int sec = (int) millisUntilFinished / 1000;
-                        if (studioCount[0] != null) studioCount[0].cancel();
-                        studioCount[0] = Toast.makeText(m, sec + "", Toast.LENGTH_LONG);
-                        studioCount[0].show();
-                    }
+                // Behold! It's the  legendary easter egg!
+                if (studio_count != 0) {
+                    new CountDownTimer(studio_count, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            int sec = (int) millisUntilFinished / 1000;
+                            if (studioCount[0] != null) studioCount[0].cancel();
+                            studioCount[0] = Toast.makeText(m, sec + "", Toast.LENGTH_LONG);
+                            studioCount[0].show();
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        if (studioCount[0] != null) studioCount[0].cancel();
-                        studioCount[0] = Toast.makeText(m, m.getString(R.string.opening), Toast.LENGTH_LONG);
-                        studioCount[0].show();
-                        m.startActivity(intent);
-                    }
-                }.start();
-            } else m.startActivity(intent);
-        } else {
-            try {
+                        @Override
+                        public void onFinish() {
+                            if (studioCount[0] != null) studioCount[0].cancel();
+                            studioCount[0] = Toast.makeText(m, m.getString(R.string.opening), Toast.LENGTH_LONG);
+                            studioCount[0].show();
+                            m.startActivity(intent);
+                        }
+                    }.start();
+                } else m.startActivity(intent);
+            } else {
                 openUnknownInternal(
                         FileProvider.getUriForFile(m, m.getPackageName(), f),
                         MimeTypes.getMimeType(f.getAbsolutePath(), false),
                         m,
                         false,
                         useNewStack);
-            } catch (Exception e) {
-                Toast.makeText(m, m.getString(R.string.no_app_found), Toast.LENGTH_LONG).show();
-                openWith(f, m, useNewStack);
+
             }
+        } catch (Exception e) {
+            Toast.makeText(m, m.getString(R.string.no_app_found), Toast.LENGTH_LONG).show();
+            openWith(f, m, useNewStack);
         }
     }
 
@@ -754,8 +809,12 @@ public class FileUtils {
             ParsePosition pos = new ParsePosition(0);
             SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm");
             Date stringDate = simpledateformat.parse(date, pos);
+            if (stringDate == null) {
+                Log.w(TAG, "parseName: unable to parse datetime string [" + date + "]");
+            }
             HybridFileParcelable baseFile =
-                    new HybridFileParcelable(name.toString(), array[0], stringDate.getTime(), Size, true);
+                    new HybridFileParcelable(
+                            name.toString(), array[0], stringDate != null ? stringDate.getTime() : 0, Size, true);
             baseFile.setLink(link.toString());
             return baseFile;
         } else {
@@ -810,6 +869,8 @@ public class FileUtils {
     }
 
     public static boolean isPathAccessible(String dir, SharedPreferences pref) {
+        Timber.tag(FileUtils.TAG).i("directory is " + dir + " and shared preference is null = " + (pref == null));
+
         File f = new File(dir);
         boolean showIfHidden = pref.getBoolean(PreferencesConstants.PREFERENCE_SHOW_HIDDENFILES, false),
                 isDirSelfOrParent = dir.endsWith("/.") || dir.endsWith("/.."),
@@ -833,7 +894,8 @@ public class FileUtils {
     /**
      * Converts ArrayList of HybridFileParcelable to ArrayList of File
      */
-    public static ArrayList<File> hybridListToFileArrayList(ArrayList<HybridFileParcelable> a) {
+    public static ArrayList<File> hybridListToFileArrayList
+    (ArrayList<HybridFileParcelable> a) {
         ArrayList<File> b = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             b.add(new File(a.get(i).getPath()));

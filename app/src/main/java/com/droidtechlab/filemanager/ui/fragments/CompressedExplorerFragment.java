@@ -51,6 +51,7 @@ import com.droidtechlab.filemanager.utils.Utils;
 import com.github.junrar.Archive;
 import com.google.android.material.appbar.AppBarLayout;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -129,6 +130,7 @@ public class CompressedExplorerFragment extends Fragment implements BottomBarBut
     utilsProvider = ((BasicActivity) getActivity()).getUtilsProvider();
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -412,6 +414,7 @@ public class CompressedExplorerFragment extends Fragment implements BottomBarBut
 
   @Override
   public void changePath(String folder) {
+    if(consumeCallback()) return;
     if (folder == null) folder = "";
     if (folder.startsWith("/")) folder = folder.substring(1);
 
@@ -466,7 +469,13 @@ public class CompressedExplorerFragment extends Fragment implements BottomBarBut
         .updatePath(path, false, null, OpenMode.FILE, folder, file, this);
   }
 
+  private Boolean consumeCallback() {
+    return isDetached() || isRemoving() || getContext() == null;
+
+  }
+
   private void createViews(List<CompressedObjectParcelable> items, String dir) {
+    if(consumeCallback()) return;
     if (compressedExplorerAdapter == null) {
       compressedExplorerAdapter =
           new CompressedExplorerAdapter(

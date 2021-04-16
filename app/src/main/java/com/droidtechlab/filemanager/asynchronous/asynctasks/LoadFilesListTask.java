@@ -122,6 +122,10 @@ public class LoadFilesListTask
           hFile = new HybridFile(OpenMode.SMB, path);
         }
 
+        if (!hFile.getPath().endsWith("/")) {
+          hFile.setPath(hFile.getPath() + "/");
+        }
+
         try {
           SmbFile[] smbFile = hFile.getSmbFile(5000).listFiles();
           list = nullCheckOrInterrupt(mainFragment, this).addToSmb(smbFile, path, showHiddenFiles);
@@ -132,7 +136,7 @@ public class LoadFilesListTask
           }
           return null;
         } catch (SmbException | NullPointerException e) {
-          e.printStackTrace();
+          Log.w(getClass().getSimpleName(), "Failed to load smb files for path: " + path, e);
           return null;
         }
         break;

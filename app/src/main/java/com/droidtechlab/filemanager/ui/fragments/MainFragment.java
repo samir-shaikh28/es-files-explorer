@@ -219,7 +219,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
 
     private void loadNativeAds() {
 
-        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id_3));
+        AdLoader.Builder builder = new AdLoader.Builder(requireContext(), getString(R.string.admob_unit_id_4));
 
         adLoader = builder.forNativeAd(nativeAd -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -237,20 +237,20 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
             Log.i("AdLoadingTest", "ad loaded");
         }).withNativeAdOptions(new NativeAdOptions.Builder().build())
                 .withAdListener(
-                new AdListener() {
+                        new AdListener() {
 
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                        super.onAdFailedToLoad(loadAdError);
-                        Log.e("AdLoadingTest", "ad loading failed: " + loadAdError.getMessage());
-                    }
+                            @Override
+                            public void onAdFailedToLoad(LoadAdError loadAdError) {
+                                super.onAdFailedToLoad(loadAdError);
+                                Log.e("AdLoadingTest", "ad loading failed: " + loadAdError.getMessage());
+                            }
 
 
-                    @Override
-                    public void onAdClicked() {
-                        super.onAdClicked();
-                    }
-                }).build();
+                            @Override
+                            public void onAdClicked() {
+                                super.onAdClicked();
+                            }
+                        }).build();
 
 
         // Load the Native Express ad.
@@ -565,12 +565,10 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
                 }
 
                 void initMenu(Menu menu) {
-          /*
-          menu.findItem(R.id.cpy).setIcon(icons.getCopyDrawable());
-          menu.findItem(R.id.cut).setIcon(icons.getCutDrawable());
-          menu.findItem(R.id.delete).setIcon(icons.getDeleteDrawable());
-          menu.findItem(R.id.all).setIcon(icons.getAllDrawable());
-          */
+        //          menu.findItem(R.id.cpy).setIcon(icons.getCopyDrawable());
+        //          menu.findItem(R.id.cut).setIcon(icons.getCutDrawable());
+        //          menu.findItem(R.id.delete).setIcon(icons.getDeleteDrawable());
+        //          menu.findItem(R.id.all).setIcon(icons.getAllDrawable());
                 }
 
                 // called when the action mode is created; startActionMode() was called
@@ -1038,7 +1036,7 @@ public class MainFragment extends Fragment implements BottomBarButtonPath {
     }
 
     public void updateTabWithDb(Tab tab) {
-        if (consumeCallback()) return;
+        if (consumeCallback() || tab == null) return;
 
         CURRENT_PATH = tab.path;
         home = tab.home;

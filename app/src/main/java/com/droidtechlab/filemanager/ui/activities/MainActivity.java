@@ -587,7 +587,7 @@ public class MainActivity extends PermissionsActivity
     }
 
     private void saveExternalIntent(final ArrayList<Uri> uris) {
-        if (uris != null && uris.size() > 0) {
+        if (uris != null && uris.size() > 0 && getCurrentMainFragment() != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 File folder = new File(getCurrentMainFragment().getCurrentPath());
                 int result = mainActivityHelper.checkFolder(folder, MainActivity.this);
@@ -1438,7 +1438,9 @@ public class MainActivity extends PermissionsActivity
     }
 
     public void setPagingEnabled(boolean b) {
-        getTabFragment().mViewPager.setPagingEnabled(b);
+        if(getTabFragment() != null && getTabFragment().mViewPager != null) {
+            getTabFragment().mViewPager.setPagingEnabled(b);
+        }
     }
 
     public File getUsbDrive() {

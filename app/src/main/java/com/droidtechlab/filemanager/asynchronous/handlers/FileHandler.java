@@ -55,7 +55,7 @@ public class FileHandler extends Handler {
         super.handleMessage(msg);
         final MainFragment main = mainFragment.get();
 
-        if (main == null || main.getActivity() == null) {
+        if (main == null || main.getActivity() == null || main.getContext() == null) {
             return;
         }
 
@@ -66,7 +66,7 @@ public class FileHandler extends Handler {
                 main.goBack();
                 break;
             case CustomFileObserver.NEW_ITEM:
-                if (main.getElementsList() == null && main.getContext() == null) {
+                if (main.getElementsList() == null) {
                     return;
                 }
                 HybridFile fileCreated = new HybridFile(main.openMode, main.getCurrentPath() + "/" + path);
